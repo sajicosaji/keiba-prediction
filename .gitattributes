@@ -1,0 +1,8 @@
+* text=auto
+*.yml text eol=lf
+*.yaml text eol=lf
+*.py text eol=lf
+*.bat text eol=crlf
+*.csv -text
+*.pkl binary
+*.json text eol=lf

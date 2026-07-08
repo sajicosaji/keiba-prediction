@@ -1,0 +1,8 @@
+data/discord_webhook.txt
+__pycache__/
+*.pyc
+*.pyo
+data/races_backup.csv
+data/*backup*
+data/odds/picks.csv
+_archive/
