@@ -463,6 +463,14 @@ def _parse_info_race(soup, race_id):
         if el:
             _fill_conditions(el.get_text(' ', strip=True), info)
             break
+    # 実開催日を抽出（タイトル等の "2026年7月5日" 形式。JRAのrace_idは
+    # 年+会場+回+日 構造で日付ではないため、必ず実日付に置き換える）
+    title = soup.find('title')
+    hay = (title.get_text(' ', strip=True) + ' ') if title else ''
+    hay += soup.get_text(' ', strip=True)[:5000]
+    m = re.search(r'(\d{4})年(\d{1,2})月(\d{1,2})日', hay)
+    if m:
+        info['race_date'] = f"{m.group(1)}{int(m.group(2)):02d}{int(m.group(3)):02d}"
     return info
 
 

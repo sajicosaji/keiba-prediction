@@ -4,5 +4,6 @@ __pycache__/
 *.pyo
 data/races_backup.csv
 data/*backup*
+data/races_before_datefix.csv
 data/odds/picks.csv
 _archive/

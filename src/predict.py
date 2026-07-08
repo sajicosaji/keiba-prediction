@@ -32,8 +32,8 @@ JRA_VENUES = {'01','02','03','04','05','06','07','08','09','10'}
 # バックテスト(2024-2025, walk-forward)で検証済みの買い条件
 # EVは市場ブレンド勝率 p = α*モデル + (1-α)*市場(オッズ逆数正規化) で計算する。
 # ブレンドは大穴でのモデル過信を抑え、回収率と安定性の両方を改善した。
-EV_MAIN_TH   = 1.2   # ◎: EV>=1.2 & オッズ<=50倍 → 検証回収率 168% (95%CI 138-201%)
-EV_LONG_TH   = 2.0   # ◎以外: EV>=2.0 & オッズ<=50倍 → 検証回収率 132% (95%CI 105-162%)
+EV_MAIN_TH   = 1.2   # ◎: EV>=1.2 & オッズ<=50倍 → 検証回収率 167% (95%CI 135-201%)
+EV_LONG_TH   = 2.0   # ◎以外: EV>=2.0 & オッズ<=50倍 → 検証回収率 124% (95%CI 96-154%)
 EV_ODDS_CAP  = 50.0
 BLEND_ALPHA  = 0.7   # モデル勝率の重み（市場勝率は 1-α）
 DEFAULT_TEMP = 0.9   # calibration.json が無い場合のフォールバック温度
@@ -635,6 +635,11 @@ def main():
 
     # race_month: 全馬共通の季節特徴量
     race_date_str = str(df['race_date'].iloc[0])[:8] if not df.empty else ''
+    # スクレイパーが実開催日を取れなかった場合（race_id先頭8桁の代用値）は
+    # 当日の日付を使う（予測は当日実行が前提）
+    if not race_date_str or race_date_str == str(args.race_id)[:8]:
+        race_date_str = pd.Timestamp.now().strftime('%Y%m%d')
+        df['race_date'] = race_date_str
     rdt = pd.to_datetime(race_date_str, format='%Y%m%d', errors='coerce')
     df['race_month'] = float(rdt.month) if not pd.isna(rdt) else np.nan
 
