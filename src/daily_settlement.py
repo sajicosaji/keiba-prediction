@@ -1,0 +1,174 @@
+"""
+当日の買い目精算スクリプト（GitHub Actions から夕方に自動実行）
+
+bet_log.csv からその日の買い推奨を取り出し、レース結果と確定オッズを
+netkeiba から取得して「的中・配当・回収率」を計算し、Discordへ通知する。
+精算結果は data/settle_log.csv に蓄積され、累計成績も併せて表示する。
+
+使い方: python daily_settlement.py                    # 本日分を精算（表示のみ）
+        python daily_settlement.py --discord          # Discordにも送信
+        python daily_settlement.py --date 2026-07-11  # 日付指定
+※金額は1点100円のフラット賭け換算。
+"""
+import os
+import argparse
+import csv
+from datetime import datetime
+from pathlib import Path
+from zoneinfo import ZoneInfo
+
+import pandas as pd
+
+import sys
+SRC = Path(__file__).parent
+sys.path.insert(0, str(SRC))
+from scraper import scrape_race_result
+from predict import fetch_live_odds
+from analysis import VENUE_NAME
+
+JST = ZoneInfo('Asia/Tokyo')
+DATA_DIR   = SRC.parent / 'data'
+BET_LOG    = DATA_DIR / 'bet_log.csv'
+SETTLE_LOG = DATA_DIR / 'settle_log.csv'
+WEBHOOK_FILE = DATA_DIR / 'discord_webhook.txt'
+
+
+def send_discord(text):
+    url = os.environ.get('DISCORD_WEBHOOK_URL', '').strip()
+    if not url and WEBHOOK_FILE.exists():
+        url = WEBHOOK_FILE.read_text(encoding='utf-8-sig').strip()
+    if not url:
+        print('Discord: webhook URL がありません。')
+        return
+    try:
+        import requests
+        r = requests.post(url, json={'content': text}, timeout=10)
+        print('Discord送信完了' if r.status_code in (200, 204) else f'Discord送信失敗: {r.status_code}')
+    except Exception as e:
+        print(f'Discord送信エラー: {e}')
+
+
+def append_settle_log(rows):
+    """精算結果を settle_log.csv に追記（同一 race_id+horse_num は上書きしない）"""
+    existing = set()
+    if SETTLE_LOG.exists():
+        old = pd.read_csv(SETTLE_LOG, dtype=str, encoding='utf-8-sig')
+        existing = set(zip(old['race_id'], old['horse_num']))
+    new_file = not SETTLE_LOG.exists()
+    with open(SETTLE_LOG, 'a', newline='', encoding='utf-8-sig') as f:
+        w = csv.writer(f)
+        if new_file:
+            w.writerow(['date', 'race_id', 'horse_num', 'horse_name', 'kind',
+                        'pos', 'final_odds', 'stake', 'payout'])
+        for r in rows:
+            if (str(r['race_id']), str(r['horse_num'])) in existing:
+                continue
+            w.writerow([r['date'], r['race_id'], r['horse_num'], r['horse_name'],
+                        r['kind'], r['pos'], r['final_odds'], r['stake'], r['payout']])
+
+
+def cumulative_summary():
+    if not SETTLE_LOG.exists():
+        return ''
+    df = pd.read_csv(SETTLE_LOG, encoding='utf-8-sig')
+    inv = df['stake'].sum()
+    ret = df['payout'].sum()
+    hit = (df['payout'] > 0).sum()
+    if inv <= 0:
+        return ''
+    return (f'累計: {len(df)}点 的中{hit}回 投資{inv:,.0f}円 '
+            f'回収{ret:,.0f}円 回収率{ret/inv*100:.1f}%')
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument('--discord', action='store_true')
+    ap.add_argument('--date', default=None, help='YYYY-MM-DD（デフォルト: 本日JST）')
+    args = ap.parse_args()
+
+    target = args.date or datetime.now(JST).strftime('%Y-%m-%d')
+    label  = f'{int(target[5:7])}/{int(target[8:10])}'
+    print(f'精算対象日: {target}')
+
+    if not BET_LOG.exists():
+        print('bet_log.csv がありません（買い推奨がまだ出ていない）。')
+        return
+
+    bets = pd.read_csv(BET_LOG, dtype=str, encoding='utf-8-sig')
+    bets = bets[bets['logged_at'].str.startswith(target)]
+    bets = bets.drop_duplicates(subset=['race_id', 'horse_num'], keep='last')
+    if bets.empty:
+        print('本日の買い推奨はありませんでした。')
+        if args.discord:
+            send_discord(f'🏁 **{label} の買い目結果**\n'
+                         f'本日は期待値条件を満たすレースがなく、全て見送りでした。')
+        return
+
+    print(f'  本日の買い目: {len(bets)}点')
+
+    # レースごとに結果と確定オッズを取得
+    results, odds_final = {}, {}
+    for rid in bets['race_id'].unique():
+        rows = scrape_race_result(str(rid))
+        if rows:
+            results[rid] = {str(r.get('horse_num')): r.get('finishing_pos')
+                            for r in rows}
+        odds_final[rid] = fetch_live_odds(str(rid))
+
+    lines, settle_rows = [], []
+    inv = ret = 0
+    pending = 0
+    for _, b in bets.iterrows():
+        rid, hn = str(b['race_id']), str(b['horse_num'])
+        name = str(b.get('horse_name', ''))
+        kind = str(b.get('kind', ''))
+        venue = VENUE_NAME.get(rid[4:6], '')
+        rno   = int(rid[10:12]) if rid[10:12].isdigit() else '?'
+        pos_raw = results.get(rid, {}).get(hn)
+        pos = pd.to_numeric(pos_raw, errors='coerce')
+        if pd.isna(pos):
+            pending += 1
+            lines.append(f'▶ {kind} {name} ({venue}{rno}R) → 結果未確定')
+            continue
+        pos = int(pos)
+        fo = odds_final.get(rid, {}).get(int(hn), (None,))[0]
+        if fo is None:
+            fo = float(b.get('odds', 0) or 0)  # 取得失敗時は記録時オッズで代用
+        stake = 100
+        payout = round(fo * 100) if pos == 1 else 0
+        inv += stake
+        ret += payout
+        mark = '🎯' if pos == 1 else '✗'
+        pl = payout - stake
+        lines.append(f'▶ {kind} {name} ({venue}{rno}R) {fo:.1f}倍 → {pos}着 {mark} {pl:+,}円')
+        settle_rows.append(dict(date=target, race_id=rid, horse_num=hn, horse_name=name,
+                                kind=kind, pos=pos, final_odds=fo, stake=stake, payout=payout))
+
+    if settle_rows:
+        append_settle_log(settle_rows)
+
+    summary = ''
+    if inv > 0:
+        roi = ret / inv * 100
+        emoji = '🎉' if roi >= 100 else '📉'
+        summary = f'{emoji} 投資 {inv:,}円 / 回収 {ret:,}円 / **回収率 {roi:.0f}%**'
+    cum = cumulative_summary()
+
+    msg_lines = [f'🏁 **{label} の買い目結果**（1点100円換算）'] + lines
+    if summary:
+        msg_lines.append('―――――――――――')
+        msg_lines.append(summary)
+    if pending:
+        msg_lines.append(f'（結果未確定 {pending}点は次回集計）')
+    if cum:
+        msg_lines.append(f'📈 {cum}')
+    msg = '\n'.join(msg_lines)
+
+    print()
+    print(msg)
+    if args.discord:
+        send_discord(msg)
+
+
+if __name__ == '__main__':
+    main()

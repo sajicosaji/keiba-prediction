@@ -5,6 +5,8 @@ on:
     # 予想送信: 15分おき（JST 土日月 9:00〜16:45 = UTC 0:00〜7:45）
     #   月曜は祝日開催用。開催がない日は数十秒で終了する
     - cron: "0,15,30,45 0-7 * * 6,0,1"
+    # 当日精算: 買い目の配当・回収率を通知（JST 土日月 17:30 = UTC 8:30）
+    - cron: "30 8 * * 6,0,1"
     # 週次: データ更新+成績サマリー（JST 月曜22:00 = UTC 月曜13:00）
     - cron: "0 13 * * 1"
     # 月次: モデル再訓練+勝率較正（JST 2日 3:00 = UTC 1日 18:00）
@@ -16,6 +18,7 @@ on:
         type: choice
         options:
           - predict
+          - settle
           - weekly
           - retrain
         default: predict
@@ -69,6 +72,48 @@ jobs:
             exit 0
           fi
           git commit -m "log: bet recommendations"
+          git pull --rebase origin main
+          git push origin main
+
+  settle:
+    if: >-
+      (github.event_name == 'schedule' && github.event.schedule == '30 8 * * 6,0,1') ||
+      (github.event_name == 'workflow_dispatch' && inputs.mode == 'settle')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+          cache-dependency-path: src/requirements.txt
+
+      - name: Install dependencies
+        run: pip install -r src/requirements.txt
+
+      - name: Settle today's bets
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          PYTHONIOENCODING: "utf-8"
+        run: python src/daily_settlement.py --discord
+
+      - name: Commit settle log
+        run: |
+          if [ ! -f data/settle_log.csv ]; then
+            echo "No settle log."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/settle_log.csv
+          if git diff --cached --quiet; then
+            echo "No settle changes."
+            exit 0
+          fi
+          git commit -m "log: daily settlement"
           git pull --rebase origin main
           git push origin main
 
