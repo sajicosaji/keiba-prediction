@@ -62,13 +62,17 @@ def main():
         if ahead_min <= mins_to_start < ahead_max:
             print(f'\n→ 送信: {race["start_time"]} {race["venue"]} {race["race_name"]} '
                   f'({race["race_id"]} / あと{mins_to_start:.0f}分)')
-            subprocess.run(
+            proc = subprocess.run(
                 [sys.executable, str(SRC / 'predict.py'),
                  race['race_id'], '--discord', '--no-pedigree'],
                 check=False,
             )
-            mark_sent(race['race_id'])
-            sent += 1
+            # 予測が失敗した場合は送信済みにしない（次の実行で再試行される）
+            if proc.returncode == 0:
+                mark_sent(race['race_id'])
+                sent += 1
+            else:
+                print(f'  予測失敗 (exit={proc.returncode}) → 未送信のまま次回再試行')
 
     if sent == 0:
         print('  このタイミングで送信対象のレースなし')

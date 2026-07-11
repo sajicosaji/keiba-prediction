@@ -186,6 +186,7 @@ def log_recommendations(recs, race_id, race_name, combo_recs=None):
         return
     import csv
     from datetime import datetime
+    from zoneinfo import ZoneInfo
     path = DATA_DIR / 'bet_log.csv'
     new_file = not path.exists()
     try:
@@ -194,7 +195,8 @@ def log_recommendations(recs, race_id, race_name, combo_recs=None):
             if new_file:
                 w.writerow(['logged_at', 'race_id', 'race_name', 'kind',
                             'horse_num', 'horse_name', 'odds', 'p_bet', 'ev', 'kelly_pct'])
-            now = datetime.now().strftime('%Y-%m-%d %H:%M')
+            # クラウド実行時はランナーがUTCのため、必ずJSTで記録する
+            now = datetime.now(ZoneInfo('Asia/Tokyo')).strftime('%Y-%m-%d %H:%M')
             for kind, row in (recs or []):
                 w.writerow([now, race_id, race_name, kind,
                             row.get('horse_num', ''), row.get('horse_name', ''),

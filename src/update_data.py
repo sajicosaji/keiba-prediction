@@ -23,10 +23,15 @@ LOG_FILE  = DATA_DIR / 'update_log.txt'
 JRA_VENUES = {'01','02','03','04','05','06','07','08','09','10'}
 
 def get_latest_collected_date():
-    """races.csvに収録されているJRAレースの最新日付（YYYYMMDD）を返す"""
+    """races.csvに収録されているJRAレースの最新開催日（YYYYMMDD）を返す。
+
+    ※JRAの race_id 先頭8桁は「年+会場+回」で日付ではないため、
+      必ず race_date 列（実開催日）を使うこと。
+    """
     if not RACES_CSV.exists():
         return None
     latest = '20220101'
+    today = date.today().strftime('%Y%m%d')
     with open(RACES_CSV, encoding='utf-8') as f:
         reader = csv.DictReader(f)
         for row in reader:
@@ -34,12 +39,12 @@ def get_latest_collected_date():
             # JRAレースのみ（venue code 01-10）
             if len(rid) >= 6 and rid[4:6] not in JRA_VENUES:
                 continue
-            d = rid[:8]  # race_idの先頭8桁がYYYYMMDD相当
-            # 有効な日付チェック（月01-12、日01-31）
+            d = str(row.get('race_date', '') or '')[:8]
+            # 有効な日付チェック（月01-12、日01-31、未来日は除外）
             if (d.isdigit() and len(d) == 8
                     and '01' <= d[4:6] <= '12'
                     and '01' <= d[6:8] <= '31'
-                    and d > latest):
+                    and latest < d <= today):
                 latest = d
     return latest
 
