@@ -2,11 +2,11 @@ name: Keiba Auto Discord
 
 on:
   schedule:
-    # 予想送信: 15分おき（JST 土日月 9:00〜16:45 = UTC 0:00〜7:45）
-    #   月曜は祝日開催用。開催がない日は数十秒で終了する
-    - cron: "0,15,30,45 0-7 * * 6,0,1"
-    # 当日精算: 買い目の配当・回収率を通知（JST 土日月 17:30 = UTC 8:30）
-    - cron: "30 8 * * 6,0,1"
+    # 予想送信: 15分おき（JST 9:00〜16:45 = UTC 0:00〜7:45、毎日）
+    #   開催がない日は数十秒で終了する。送信済みは sent_log.csv で管理
+    - cron: "*/15 0-7 * * *"
+    # 当日精算: 買い目の配当・回収率を通知（JST 17:30 = UTC 8:30、毎日）
+    - cron: "30 8 * * *"
     # 週次: データ更新+成績サマリー（JST 月曜22:00 = UTC 月曜13:00）
     - cron: "0 13 * * 1"
     # 月次: モデル再訓練+勝率較正（JST 2日 3:00 = UTC 1日 18:00）
@@ -33,7 +33,7 @@ permissions:
 jobs:
   predict:
     if: >-
-      (github.event_name == 'schedule' && github.event.schedule == '0,15,30,45 0-7 * * 6,0,1') ||
+      (github.event_name == 'schedule' && github.event.schedule == '*/15 0-7 * * *') ||
       (github.event_name == 'workflow_dispatch' && inputs.mode == 'predict')
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -53,31 +53,28 @@ jobs:
       - name: Check and send predictions
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-          AHEAD_MINUTES: "15"
-          CHECK_INTERVAL: "15"
+          AHEAD_MIN: "8"
+          AHEAD_MAX: "40"
           PYTHONIOENCODING: "utf-8"
         run: python src/check_and_send.py
 
-      - name: Commit bet log
+      - name: Commit logs
         run: |
-          if [ ! -f data/bet_log.csv ]; then
-            echo "No bet log yet."
-            exit 0
-          fi
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/bet_log.csv
+          if [ -f data/bet_log.csv ]; then git add data/bet_log.csv; fi
+          if [ -f data/sent_log.csv ]; then git add data/sent_log.csv; fi
           if git diff --cached --quiet; then
-            echo "No new recommendations."
+            echo "No new logs."
             exit 0
           fi
-          git commit -m "log: bet recommendations"
+          git commit -m "log: predictions sent"
           git pull --rebase origin main
           git push origin main
 
   settle:
     if: >-
-      (github.event_name == 'schedule' && github.event.schedule == '30 8 * * 6,0,1') ||
+      (github.event_name == 'schedule' && github.event.schedule == '30 8 * * *') ||
       (github.event_name == 'workflow_dispatch' && inputs.mode == 'settle')
     runs-on: ubuntu-latest
     timeout-minutes: 30

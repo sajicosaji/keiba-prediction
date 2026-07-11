@@ -90,14 +90,17 @@ def main():
     label  = f'{int(target[5:7])}/{int(target[8:10])}'
     print(f'精算対象日: {target}')
 
-    if not BET_LOG.exists():
-        print('bet_log.csv がありません（買い推奨がまだ出ていない）。')
-        return
-
-    bets = pd.read_csv(BET_LOG, dtype=str, encoding='utf-8-sig')
-    bets = bets[bets['logged_at'].str.startswith(target)]
-    bets = bets.drop_duplicates(subset=['race_id', 'horse_num'], keep='last')
+    bets = pd.DataFrame()
+    if BET_LOG.exists():
+        bets = pd.read_csv(BET_LOG, dtype=str, encoding='utf-8-sig')
+        bets = bets[bets['logged_at'].str.startswith(target)]
+        bets = bets.drop_duplicates(subset=['race_id', 'horse_num'], keep='last')
     if bets.empty:
+        # 開催日でなければ黙って終了（非開催日にメッセージを送らない）
+        from scraper import get_today_races
+        if not get_today_races():
+            print('本日は開催なし。通知しません。')
+            return
         print('本日の買い推奨はありませんでした。')
         if args.discord:
             send_discord(f'🏁 **{label} の買い目結果**\n'
