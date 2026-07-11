@@ -42,6 +42,19 @@ DEFAULT_TEMP = 0.9   # calibration.json が無い場合のフォールバック�
 KELLY_FRAC   = 0.25  # 1/4ケリー
 KELLY_CAP    = 0.02  # 1点あたり資金の2%まで
 
+# 賭け金（1開催日 約5,000円設計。EVが高いほど増額）
+def stake_yen(kind, ev):
+    """買い目種別とEVから推奨賭け金（円）を返す"""
+    if kind == '◎単勝':
+        if ev >= 3.0:
+            return 1000
+        if ev >= 2.2:
+            return 800
+        return 600
+    if kind == '穴単勝':
+        return 300
+    return 200  # 馬連ほか
+
 # 馬連（試験運用: 検証は2日分72レースのみ。EV>=1.5&60倍以下で回収率107-162%）
 # ワイド・三連系は同検証で回収率100%未満だったため不採用
 UMAREN_EV_TH    = 1.5
@@ -212,19 +225,22 @@ def log_recommendations(recs, race_id, race_name, combo_recs=None):
             w = csv.writer(f)
             if new_file:
                 w.writerow(['logged_at', 'race_id', 'race_name', 'kind',
-                            'horse_num', 'horse_name', 'odds', 'p_bet', 'ev', 'kelly_pct'])
+                            'horse_num', 'horse_name', 'odds', 'p_bet', 'ev',
+                            'kelly_pct', 'stake'])
             # クラウド実行時はランナーがUTCのため、必ずJSTで記録する
             now = datetime.now(ZoneInfo('Asia/Tokyo')).strftime('%Y-%m-%d %H:%M')
             for kind, row in (recs or []):
                 w.writerow([now, race_id, race_name, kind,
                             row.get('horse_num', ''), row.get('horse_name', ''),
                             f"{row['live_odds']:.1f}", f"{row['p_bet']:.4f}",
-                            f"{row['ev']:.2f}", f"{kelly_pct(row['p_bet'], row['live_odds']):.2f}"])
+                            f"{row['ev']:.2f}", f"{kelly_pct(row['p_bet'], row['live_odds']):.2f}",
+                            stake_yen(kind, row['ev'])])
             for c in (combo_recs or []):
                 w.writerow([now, race_id, race_name, c['kind'],
                             c['nums'], c['names'],
                             f"{c['odds']:.1f}", f"{c['p']:.4f}",
-                            f"{c['ev']:.2f}", f"{kelly_pct(c['p'], c['odds']):.2f}"])
+                            f"{c['ev']:.2f}", f"{kelly_pct(c['p'], c['odds']):.2f}",
+                            stake_yen(c['kind'], c['ev'])])
     except Exception as e:
         print(f'  bet_log 書き込みエラー: {e}')
 
@@ -631,17 +647,18 @@ def _build_discord_message(df, race_name, surface, distance, track, venue_name,
         if has_bets:
             desc = []
             for kind, row in (ev_recs or []):
-                kp = kelly_pct(row['p_bet'], row['live_odds'])
                 hn = str(row.get('horse_num', '')).strip()
                 hn_s = f'{int(hn)}番 ' if hn.isdigit() else ''
-                desc.append(f'▶ **{kind}  {hn_s}{row["horse_name"]}**')
+                yen = stake_yen(kind, row['ev'])
+                desc.append(f'▶ **{kind}  {hn_s}{row["horse_name"]}**　**（{yen:,}円）**')
                 desc.append(f'　 {row["live_odds"]:.1f}倍 / 勝率{row["p_bet"]*100:.0f}% / '
-                            f'EV {row["ev"]:.2f} / 賭け金: 資金の{kp:.1f}%')
+                            f'EV {row["ev"]:.2f}')
             if umaren_recs:
                 ax = umaren_recs[0]
                 partners = '・'.join(str(c['partner_num']) for c in umaren_recs)
+                u_yen = stake_yen('馬連', 0)
                 desc.append(f'▶ **馬連ながし  軸 {ax["axis_num"]}番 {ax["axis_name"]}'
-                            f' ⇔ 相手 {partners}番**（試験運用・少額）')
+                            f' ⇔ 相手 {partners}番**　**（各{u_yen}円）**（試験運用）')
                 for c in umaren_recs:
                     desc.append(f'　 {c["nums"]}: {c["partner_name"]} '
                                 f'{c["odds"]:.1f}倍 / 的中率{c["p"]*100:.0f}% / EV {c["ev"]:.2f}')
@@ -902,10 +919,9 @@ def main():
             print(f'\n  💰 買い推奨（検証済み条件: ◎EV≥{EV_MAIN_TH}&{EV_MAIN_CAP:.0f}倍以下 / '
                   f'穴EV≥{EV_LONG_TH}&{EV_LONG_CAP:.0f}倍以下・最大{EV_LONG_MAX}点）:')
             for kind, row in ev_recs:
-                kp = kelly_pct(row['p_bet'], row['live_odds'])
-                print(f'    ▶ {kind}  {row["horse_name"]}  '
-                      f'(勝率{row["p_bet"]*100:.1f}% × {row["live_odds"]:.1f}倍 = EV {row["ev"]:.2f}'
-                      f' / 推奨賭け金: 資金の{kp:.1f}%)')
+                yen = stake_yen(kind, row['ev'])
+                print(f'    ▶ {kind}  {row["horse_name"]}  （{yen:,}円）  '
+                      f'(勝率{row["p_bet"]*100:.1f}% × {row["live_odds"]:.1f}倍 = EV {row["ev"]:.2f})')
         else:
             print('\n  買い推奨なし（期待値の閾値を満たす馬なし → 見送り推奨）')
         if umaren_recs:

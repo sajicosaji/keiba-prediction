@@ -171,7 +171,11 @@ def main():
         venue = VENUE_NAME.get(rid[4:6], '')
         rno   = int(rid[10:12]) if rid[10:12].isdigit() else '?'
         race_res = results.get(rid, {})
-        stake = 100
+        # 推奨金額（bet_logのstake列。旧形式の記録は100円扱い）
+        try:
+            stake = int(float(b.get('stake') or 100))
+        except (ValueError, TypeError):
+            stake = 100
 
         if '-' in hn:  # 馬連（馬番 "3-7" 形式）
             a, b2 = hn.split('-')
@@ -189,7 +193,7 @@ def main():
                 f'{int(a):02d}{int(b2):02d}')
             if fo is None:
                 fo = float(b.get('odds', 0) or 0)
-            payout = round(fo * 100) if hit else 0
+            payout = round(fo * stake) if hit else 0
             inv += stake
             ret += payout
             mark = '🎯' if hit else '✗'
@@ -210,7 +214,7 @@ def main():
         fo = odds_final.get(rid, {}).get(int(hn), (None,))[0]
         if fo is None:
             fo = float(b.get('odds', 0) or 0)  # 取得失敗時は記録時オッズで代用
-        payout = round(fo * 100) if pos == 1 else 0
+        payout = round(fo * stake) if pos == 1 else 0
         inv += stake
         ret += payout
         mark = '🎯' if pos == 1 else '✗'
@@ -230,7 +234,7 @@ def main():
         summary = f'{emoji} 投資 {inv:,}円 / 回収 {ret:,}円 / **回収率 {roi:.0f}%**'
     cum = cumulative_summary()
 
-    msg_lines = [f'🏁 **{label} の買い目結果**（1点100円換算）'] + lines
+    msg_lines = [f'🏁 **{label} の買い目結果**（推奨金額ベース）'] + lines
     if summary:
         msg_lines.append('―――――――――――')
         msg_lines.append(summary)
