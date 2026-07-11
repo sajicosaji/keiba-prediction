@@ -26,6 +26,42 @@ from scraper import scrape_race_result
 from predict import fetch_live_odds, fetch_combo_odds
 from analysis import VENUE_NAME
 
+
+def fetch_result_live(race_id):
+    """race.netkeiba の結果ページから {馬番: 着順} を取得。
+
+    db.netkeiba のレースページは当日中に更新されないことがあるため、
+    当日精算では必ずこちら（レース確定直後から見られる）を先に使う。
+    """
+    import re
+    import requests
+    from bs4 import BeautifulSoup
+    try:
+        r = requests.get('https://race.netkeiba.com/race/result.html',
+                         params={'race_id': str(race_id)},
+                         headers={'User-Agent': 'Mozilla/5.0',
+                                  'Referer': 'https://race.netkeiba.com/'},
+                         timeout=15)
+        r.encoding = 'UTF-8'
+        soup = BeautifulSoup(r.text, 'lxml')
+        wrap = soup.find(class_=re.compile('ResultTableWrap'))
+        out = {}
+        if wrap:
+            table = wrap.find('table')
+            if table:
+                for tr in table.find_all('tr')[1:]:
+                    tds = tr.find_all('td')
+                    if len(tds) < 4:
+                        continue
+                    pos_txt = tds[0].get_text(strip=True)
+                    num_txt = tds[2].get_text(strip=True)
+                    if pos_txt.isdigit() and num_txt.isdigit():
+                        out[num_txt] = int(pos_txt)
+        return out
+    except Exception as e:
+        print(f'  結果取得エラー {race_id}: {e}')
+        return {}
+
 JST = ZoneInfo('Asia/Tokyo')
 DATA_DIR   = SRC.parent / 'data'
 BET_LOG    = DATA_DIR / 'bet_log.csv'
@@ -113,10 +149,14 @@ def main():
     results, odds_final, umaren_final = {}, {}, {}
     has_umaren = (bets['kind'] == '馬連').any()
     for rid in bets['race_id'].unique():
-        rows = scrape_race_result(str(rid))
-        if rows:
-            results[rid] = {str(r.get('horse_num')): r.get('finishing_pos')
-                            for r in rows}
+        # 当日反映される結果ページを優先、ダメならdbページ
+        res_map = fetch_result_live(str(rid))
+        if not res_map:
+            rows = scrape_race_result(str(rid))
+            res_map = {str(r.get('horse_num')): r.get('finishing_pos')
+                       for r in rows} if rows else {}
+        if res_map:
+            results[rid] = res_map
         odds_final[rid] = fetch_live_odds(str(rid))
         if has_umaren and (bets[(bets['race_id'] == rid) & (bets['kind'] == '馬連')]).shape[0]:
             umaren_final[rid] = fetch_combo_odds(str(rid), '4')
