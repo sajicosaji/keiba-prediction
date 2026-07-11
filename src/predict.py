@@ -538,13 +538,23 @@ def _fmt(val, fmt, suffix='', na='---'):
 def _build_discord_message(df, race_name, surface, distance, track, venue_name,
                             races_df, pace_info='', ev_recs=None, has_odds=False,
                             umaren_recs=None):
-    """Discord に送信するメッセージを組み立てる（印のある5頭のみ）"""
+    """Discord に送信するメッセージを組み立てる（印のある5頭のみ）
+    Returns: (本文, embeds) のタプル。買い目がある時は緑の埋め込みボックス付き。
+    """
     cond = f'{surface}{distance}m {track}'
     if venue_name:
         cond = f'{venue_name} {cond}'
 
+    has_bets = bool(ev_recs or umaren_recs)
+    if has_bets:
+        title = f'🚨💰 **買い目あり！【{race_name}】** 💰🚨'
+    elif has_odds:
+        title = f'💤 【見送り】{race_name}'
+    else:
+        title = f'🏇 **【{race_name}】**'
+
     lines = [
-        f'🏇 **【{race_name}】**',
+        title,
         f'📍 {cond} | {len(df)}頭',
         '```',
     ]
@@ -590,31 +600,39 @@ def _build_discord_message(df, race_name, surface, distance, track, venue_name,
     if pace_info:
         lines.append(f'🔀 {pace_info}')
 
-    # 期待値ベースの買い推奨
+    # 期待値ベースの買い推奨 → 目立つ緑の埋め込みボックスにする
+    embeds = []
     if has_odds:
-        if ev_recs:
-            lines.append('💰 **買い推奨**')
-            for kind, row in ev_recs:
+        if has_bets:
+            desc = []
+            for kind, row in (ev_recs or []):
                 kp = kelly_pct(row['p_bet'], row['live_odds'])
-                lines.append(f'  ▶ {kind} **{row["horse_name"]}** '
-                             f'(勝率{row["p_bet"]*100:.0f}% × {row["live_odds"]:.1f}倍 = EV {row["ev"]:.2f}'
-                             f' / 資金の{kp:.1f}%)')
-        elif not umaren_recs:
+                desc.append(f'▶ **{kind} {row["horse_name"]}**')
+                desc.append(f'　 {row["live_odds"]:.1f}倍 / 勝率{row["p_bet"]*100:.0f}% / '
+                            f'EV {row["ev"]:.2f} / 賭け金: 資金の{kp:.1f}%')
+            for c in (umaren_recs or []):
+                desc.append(f'▶ **馬連 {c["nums"]}**（試験運用・少額）')
+                desc.append(f'　 {c["names"]}')
+                desc.append(f'　 {c["odds"]:.1f}倍 / 的中率{c["p"]*100:.0f}% / EV {c["ev"]:.2f}')
+            embeds.append({
+                'title': '💰 買い目',
+                'description': '\n'.join(desc),
+                'color': 0x00C853,  # 緑
+            })
+        else:
             lines.append('💤 期待値条件を満たす馬なし → **見送り推奨**')
-        if umaren_recs:
-            lines.append('🎲 **馬連**（試験運用・少額推奨）')
-            for c in umaren_recs:
-                lines.append(f'  ▶ 馬連 **{c["nums"]}** {c["names"]} '
-                             f'({c["p"]*100:.0f}% × {c["odds"]:.1f}倍 = EV {c["ev"]:.2f})')
 
-    return '\n'.join(lines)
+    return '\n'.join(lines), embeds
 
 
-def send_discord(message: str, webhook_url: str) -> bool:
+def send_discord(message: str, webhook_url: str, embeds=None) -> bool:
     """Discord ウェブフックにメッセージを送信。成功で True を返す"""
     try:
         import requests
-        r = requests.post(webhook_url, json={'content': message}, timeout=10)
+        payload = {'content': message}
+        if embeds:
+            payload['embeds'] = embeds
+        r = requests.post(webhook_url, json=payload, timeout=10)
         return r.status_code in (200, 204)
     except Exception as e:
         print(f'  Discord 送信エラー: {e}')
@@ -1015,12 +1033,12 @@ def main():
             else:
                 pace_info = ''
 
-            msg = _build_discord_message(
+            msg, embeds = _build_discord_message(
                 df, race_name, surface, distance, track, venue_name, races_df, pace_info,
                 ev_recs=ev_recs, has_odds=bool(live_odds_map), umaren_recs=umaren_recs,
             )
             print('\nDiscordに送信中...')
-            ok = send_discord(msg, webhook_url)
+            ok = send_discord(msg, webhook_url, embeds=embeds)
             print('  送信完了！' if ok else '  送信失敗。')
 
 
