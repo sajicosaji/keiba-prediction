@@ -23,7 +23,7 @@ import sys
 SRC = Path(__file__).parent
 sys.path.insert(0, str(SRC))
 from scraper import scrape_race_result
-from predict import fetch_live_odds
+from predict import fetch_live_odds, fetch_combo_odds
 from analysis import VENUE_NAME
 
 JST = ZoneInfo('Asia/Tokyo')
@@ -107,13 +107,16 @@ def main():
     print(f'  本日の買い目: {len(bets)}点')
 
     # レースごとに結果と確定オッズを取得
-    results, odds_final = {}, {}
+    results, odds_final, umaren_final = {}, {}, {}
+    has_umaren = (bets['kind'] == '馬連').any()
     for rid in bets['race_id'].unique():
         rows = scrape_race_result(str(rid))
         if rows:
             results[rid] = {str(r.get('horse_num')): r.get('finishing_pos')
                             for r in rows}
         odds_final[rid] = fetch_live_odds(str(rid))
+        if has_umaren and (bets[(bets['race_id'] == rid) & (bets['kind'] == '馬連')]).shape[0]:
+            umaren_final[rid] = fetch_combo_odds(str(rid), '4')
 
     lines, settle_rows = [], []
     inv = ret = 0
@@ -124,7 +127,37 @@ def main():
         kind = str(b.get('kind', ''))
         venue = VENUE_NAME.get(rid[4:6], '')
         rno   = int(rid[10:12]) if rid[10:12].isdigit() else '?'
-        pos_raw = results.get(rid, {}).get(hn)
+        race_res = results.get(rid, {})
+        stake = 100
+
+        if '-' in hn:  # 馬連（馬番 "3-7" 形式）
+            a, b2 = hn.split('-')
+            pa = pd.to_numeric(race_res.get(a), errors='coerce')
+            pb = pd.to_numeric(race_res.get(b2), errors='coerce')
+            # レース結果が取れていない場合は未確定
+            if not race_res:
+                pending += 1
+                lines.append(f'▶ {kind} {hn} {name} ({venue}{rno}R) → 結果未確定')
+                continue
+            top2 = {n for n, p_ in race_res.items()
+                    if pd.to_numeric(p_, errors='coerce') in (1, 2)}
+            hit = {a, b2} == top2
+            fo = umaren_final.get(rid, {}).get(
+                f'{int(a):02d}{int(b2):02d}')
+            if fo is None:
+                fo = float(b.get('odds', 0) or 0)
+            payout = round(fo * 100) if hit else 0
+            inv += stake
+            ret += payout
+            mark = '🎯' if hit else '✗'
+            res_s = f'{int(pa)}着/{int(pb)}着' if pd.notna(pa) and pd.notna(pb) else '着外含む'
+            lines.append(f'▶ {kind} {hn} ({venue}{rno}R) {fo:.1f}倍 → {res_s} {mark} {payout-stake:+,}円')
+            settle_rows.append(dict(date=target, race_id=rid, horse_num=hn, horse_name=name,
+                                    kind=kind, pos=(1 if hit else 0), final_odds=fo,
+                                    stake=stake, payout=payout))
+            continue
+
+        pos_raw = race_res.get(hn)
         pos = pd.to_numeric(pos_raw, errors='coerce')
         if pd.isna(pos):
             pending += 1
@@ -134,7 +167,6 @@ def main():
         fo = odds_final.get(rid, {}).get(int(hn), (None,))[0]
         if fo is None:
             fo = float(b.get('odds', 0) or 0)  # 取得失敗時は記録時オッズで代用
-        stake = 100
         payout = round(fo * 100) if pos == 1 else 0
         inv += stake
         ret += payout

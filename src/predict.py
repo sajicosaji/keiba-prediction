@@ -40,6 +40,72 @@ DEFAULT_TEMP = 0.9   # calibration.json が無い場合のフォールバック�
 KELLY_FRAC   = 0.25  # 1/4ケリー
 KELLY_CAP    = 0.02  # 1点あたり資金の2%まで
 
+# 馬連（試験運用: 検証は2日分72レースのみ。EV>=1.5&60倍以下で回収率107-162%）
+# ワイド・三連系は同検証で回収率100%未満だったため不採用
+UMAREN_EV_TH    = 1.5
+UMAREN_ODDS_CAP = 60.0
+UMAREN_MAX_BETS = 3     # 1レース最大3点
+
+
+def fetch_combo_odds(race_id, odds_type='4'):
+    """netkeiba APIから連系オッズを取得 {'0102': オッズ, ...}（4=馬連, 5=ワイド）"""
+    try:
+        import requests
+        r = requests.get(
+            'https://race.netkeiba.com/api/api_get_jra_odds.html',
+            params={'race_id': str(race_id), 'type': str(odds_type), 'action': 'update'},
+            headers={'User-Agent': 'Mozilla/5.0', 'Referer': 'https://race.netkeiba.com/'},
+            timeout=15,
+        )
+        out = {}
+        for combos in r.json()['data']['odds'].values():
+            for k, v in combos.items():
+                try:
+                    out[k] = float(str(v[0]).replace(',', ''))
+                except (ValueError, TypeError, IndexError):
+                    continue
+        return out
+    except Exception as e:
+        print(f'  馬連オッズ取得エラー: {e}')
+        return {}
+
+
+def _harville_pair(p, i, j):
+    """i,j が1・2着（順不同）になる確率（Harville法）"""
+    return p[i] * p[j] / (1 - p[i]) + p[j] * p[i] / (1 - p[j])
+
+
+def compute_umaren(df, race_id):
+    """予測上位5頭のペアから期待値の高い馬連候補を返す"""
+    from itertools import combinations
+    if 'p_bet' not in df.columns or df['p_bet'].isna().all():
+        return []
+    odds_map = fetch_combo_odds(race_id, '4')
+    if not odds_map:
+        return []
+    p = df['p_bet'].fillna(0.001).clip(lower=1e-4, upper=0.98).values
+    nums = pd.to_numeric(df['horse_num'], errors='coerce')
+    cands = []
+    top_n = min(5, len(df))
+    for i, j in combinations(range(top_n), 2):
+        ni, nj = nums.iloc[i], nums.iloc[j]
+        if pd.isna(ni) or pd.isna(nj):
+            continue
+        a, b = sorted([int(ni), int(nj)])
+        o = odds_map.get(f'{a:02d}{b:02d}')
+        if not o or o > UMAREN_ODDS_CAP:
+            continue
+        prob = _harville_pair(p, i, j)
+        ev = prob * o
+        if ev >= UMAREN_EV_TH:
+            cands.append({
+                'kind': '馬連', 'nums': f'{a}-{b}',
+                'names': f'{df.iloc[i]["horse_name"]}×{df.iloc[j]["horse_name"]}',
+                'odds': o, 'p': prob, 'ev': ev,
+            })
+    cands.sort(key=lambda x: -x['ev'])
+    return cands[:UMAREN_MAX_BETS]
+
 
 def fetch_live_odds(race_id):
     """netkeiba APIから現在の単勝オッズを取得 {馬番int: (オッズ, 人気)}"""
@@ -114,9 +180,9 @@ def kelly_pct(p, odds):
     return max(0.0, min(f * KELLY_FRAC, KELLY_CAP)) * 100
 
 
-def log_recommendations(recs, race_id, race_name):
+def log_recommendations(recs, race_id, race_name, combo_recs=None):
     """買い推奨を data/bet_log.csv に追記（実運用成績の検証用）"""
-    if not recs:
+    if not recs and not combo_recs:
         return
     import csv
     from datetime import datetime
@@ -129,11 +195,16 @@ def log_recommendations(recs, race_id, race_name):
                 w.writerow(['logged_at', 'race_id', 'race_name', 'kind',
                             'horse_num', 'horse_name', 'odds', 'p_bet', 'ev', 'kelly_pct'])
             now = datetime.now().strftime('%Y-%m-%d %H:%M')
-            for kind, row in recs:
+            for kind, row in (recs or []):
                 w.writerow([now, race_id, race_name, kind,
                             row.get('horse_num', ''), row.get('horse_name', ''),
                             f"{row['live_odds']:.1f}", f"{row['p_bet']:.4f}",
                             f"{row['ev']:.2f}", f"{kelly_pct(row['p_bet'], row['live_odds']):.2f}"])
+            for c in (combo_recs or []):
+                w.writerow([now, race_id, race_name, c['kind'],
+                            c['nums'], c['names'],
+                            f"{c['odds']:.1f}", f"{c['p']:.4f}",
+                            f"{c['ev']:.2f}", f"{kelly_pct(c['p'], c['odds']):.2f}"])
     except Exception as e:
         print(f'  bet_log 書き込みエラー: {e}')
 
@@ -465,7 +536,8 @@ def _fmt(val, fmt, suffix='', na='---'):
 
 
 def _build_discord_message(df, race_name, surface, distance, track, venue_name,
-                            races_df, pace_info='', ev_recs=None, has_odds=False):
+                            races_df, pace_info='', ev_recs=None, has_odds=False,
+                            umaren_recs=None):
     """Discord に送信するメッセージを組み立てる（印のある5頭のみ）"""
     cond = f'{surface}{distance}m {track}'
     if venue_name:
@@ -527,8 +599,13 @@ def _build_discord_message(df, race_name, surface, distance, track, venue_name,
                 lines.append(f'  ▶ {kind} **{row["horse_name"]}** '
                              f'(勝率{row["p_bet"]*100:.0f}% × {row["live_odds"]:.1f}倍 = EV {row["ev"]:.2f}'
                              f' / 資金の{kp:.1f}%)')
-        else:
+        elif not umaren_recs:
             lines.append('💤 期待値条件を満たす馬なし → **見送り推奨**')
+        if umaren_recs:
+            lines.append('🎲 **馬連**（試験運用・少額推奨）')
+            for c in umaren_recs:
+                lines.append(f'  ▶ 馬連 **{c["nums"]}** {c["names"]} '
+                             f'({c["p"]*100:.0f}% × {c["odds"]:.1f}倍 = EV {c["ev"]:.2f})')
 
     return '\n'.join(lines)
 
@@ -684,6 +761,7 @@ def main():
     # ---- 勝率較正・期待値（EV）計算 ----
     print('現在オッズを取得してEVを計算中...')
     df, ev_recs, live_odds_map = compute_ev(df, args.race_id)
+    umaren_recs = compute_umaren(df, args.race_id) if live_odds_map else []
 
     # 調教データ取得（予測時のみ、結果モードではスキップ）
     training_map = {}
@@ -780,6 +858,11 @@ def main():
                       f' / 推奨賭け金: 資金の{kp:.1f}%)')
         else:
             print('\n  買い推奨なし（期待値の閾値を満たす馬なし → 見送り推奨）')
+        if umaren_recs:
+            print(f'\n  🎲 馬連（試験運用: EV≥{UMAREN_EV_TH}・{UMAREN_ODDS_CAP:.0f}倍以下）:')
+            for c in umaren_recs:
+                print(f'    ▶ 馬連 {c["nums"]}  {c["names"]}  '
+                      f'({c["p"]*100:.1f}% × {c["odds"]:.1f}倍 = EV {c["ev"]:.2f})')
     else:
         print('  オッズ未取得のためEV計算をスキップ（勝率のみ参考）')
         for i, (_, row) in enumerate(df.head(5).iterrows()):
@@ -789,8 +872,8 @@ def main():
     print(f'{"="*W}')
 
     # 買い推奨を記録（実運用の成績検証用。結果検証モードでは記録しない）
-    if not args.result and ev_recs:
-        log_recommendations(ev_recs, args.race_id, race_name)
+    if not args.result and (ev_recs or umaren_recs):
+        log_recommendations(ev_recs, args.race_id, race_name, combo_recs=umaren_recs)
 
     # ---- 詳細診断 ----
     print('\n\n' + '='*W)
@@ -934,7 +1017,7 @@ def main():
 
             msg = _build_discord_message(
                 df, race_name, surface, distance, track, venue_name, races_df, pace_info,
-                ev_recs=ev_recs, has_odds=bool(live_odds_map),
+                ev_recs=ev_recs, has_odds=bool(live_odds_map), umaren_recs=umaren_recs,
             )
             print('\nDiscordに送信中...')
             ok = send_discord(msg, webhook_url)

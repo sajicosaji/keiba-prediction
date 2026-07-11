@@ -53,45 +53,42 @@ def main():
         return
 
     bets = pd.read_csv(BET_LOG, dtype=str, encoding='utf-8-sig')
-    # 同一レース・同一馬は最後の記録だけ採用（再実行の重複除去）
-    bets = bets.drop_duplicates(subset=['race_id', 'horse_num'], keep='last').copy()
-    bets['odds'] = pd.to_numeric(bets['odds'], errors='coerce')
+    bets = bets.drop_duplicates(subset=['race_id', 'horse_num'], keep='last')
 
-    races = pd.read_csv(RACES, dtype=str, on_bad_lines='skip',
-                        usecols=['race_id', 'horse_num', 'finishing_pos'])
-    races['pos'] = pd.to_numeric(races['finishing_pos'], errors='coerce')
-    res = races.dropna(subset=['pos']).set_index(['race_id', 'horse_num'])['pos']
-
-    bets['pos'] = bets.set_index(['race_id', 'horse_num']).index.map(res)
-    done    = bets[bets['pos'].notna()].copy()
-    pending = len(bets) - len(done)
-
-    out('=' * 64)
-    out('  買い推奨の実運用成績（100円/点・記録時オッズで計算）')
-    out('=' * 64)
-    if done.empty:
-        out(f'  結果待ち: {pending}件（データ更新後に反映されます）')
+    SETTLE_LOG = DATA_DIR / 'settle_log.csv'
+    if not SETTLE_LOG.exists():
+        out(f'精算記録がまだありません（買い推奨 {len(bets)}件は当日17:30に精算されます）。')
         if args.discord:
-            send_discord('📊 **買い推奨の成績**\n' + '\n'.join(lines[2:]))
+            send_discord('📊 **買い推奨の成績**\n' + '\n'.join(lines))
         return
+
+    st = pd.read_csv(SETTLE_LOG, encoding='utf-8-sig')
+    st = st.drop_duplicates(subset=['race_id', 'horse_num'], keep='last')
+    settled_keys = set(zip(st['race_id'].astype(str), st['horse_num'].astype(str)))
+    pending = sum(1 for _, b in bets.iterrows()
+                  if (str(b['race_id']), str(b['horse_num'])) not in settled_keys)
+
+    out('=' * 64)
+    out('  買い推奨の実運用成績（100円/点・確定オッズで精算）')
+    out('=' * 64)
 
     def block(sub, label):
         n = len(sub)
         if n == 0:
             return
-        win = sub[sub['pos'] == 1]
-        ret = win['odds'].sum() * 100
-        roi = ret / (n * 100) * 100
-        out(f'  {label:<12} {n:>4}点  的中{len(win):>3}回 ({len(win)/n*100:4.1f}%)  '
-            f'投資{n*100:>8,}円  回収{ret:>9,.0f}円  回収率{roi:6.1f}%')
+        inv = sub['stake'].sum()
+        ret = sub['payout'].sum()
+        hit = (sub['payout'] > 0).sum()
+        out(f'  {label:<12} {n:>4}点  的中{hit:>3}回 ({hit/n*100:4.1f}%)  '
+            f'投資{inv:>8,.0f}円  回収{ret:>9,.0f}円  回収率{ret/inv*100:6.1f}%')
 
-    block(done, '全体')
-    for kind in done['kind'].unique():
-        block(done[done['kind'] == kind], kind)
+    block(st, '全体')
+    for kind in st['kind'].unique():
+        block(st[st['kind'] == kind], str(kind))
     if pending:
-        out(f'  結果待ち: {pending}件')
+        out(f'  未精算: {pending}件')
     out('=' * 64)
-    out('  ※検証時の期待回収率: ◎単勝168% / 穴単勝132%（2024-2025バックテスト）')
+    out('  ※検証時の期待回収率: ◎単勝167% / 穴単勝124% / 馬連は試験運用')
 
     if args.discord:
         body = '\n'.join(l for l in lines if not set(l.strip()) == {'='})
