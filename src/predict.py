@@ -76,8 +76,11 @@ def _harville_pair(p, i, j):
 
 
 def compute_umaren(df, race_id):
-    """予測上位5頭のペアから期待値の高い馬連候補を返す"""
-    from itertools import combinations
+    """◎を軸にした馬連ながし。相手は上位6頭のうちペアEVが閾値以上の馬のみ。
+
+    固定流し・BOXは検証で回収率を大きく落とした（各点が単独で期待値プラスの
+    場合のみ買うのが利益の源泉）ため、EVフィルタ付きの流しとする。
+    """
     if 'p_bet' not in df.columns or df['p_bet'].isna().all():
         return []
     odds_map = fetch_combo_odds(race_id, '4')
@@ -85,22 +88,30 @@ def compute_umaren(df, race_id):
         return []
     p = df['p_bet'].fillna(0.001).clip(lower=1e-4, upper=0.98).values
     nums = pd.to_numeric(df['horse_num'], errors='coerce')
+
+    axis = 0  # ◎（final_rank 1位、df はランク順ソート済み）
+    if pd.isna(nums.iloc[axis]):
+        return []
+    axis_num = int(nums.iloc[axis])
+
     cands = []
-    top_n = min(5, len(df))
-    for i, j in combinations(range(top_n), 2):
-        ni, nj = nums.iloc[i], nums.iloc[j]
-        if pd.isna(ni) or pd.isna(nj):
+    top_n = min(6, len(df))
+    for k in range(1, top_n):
+        nk = nums.iloc[k]
+        if pd.isna(nk):
             continue
-        a, b = sorted([int(ni), int(nj)])
+        a, b = sorted([axis_num, int(nk)])
         o = odds_map.get(f'{a:02d}{b:02d}')
         if not o or o > UMAREN_ODDS_CAP:
             continue
-        prob = _harville_pair(p, i, j)
+        prob = _harville_pair(p, axis, k)
         ev = prob * o
         if ev >= UMAREN_EV_TH:
             cands.append({
                 'kind': '馬連', 'nums': f'{a}-{b}',
-                'names': f'{df.iloc[i]["horse_name"]}×{df.iloc[j]["horse_name"]}',
+                'axis_num': axis_num, 'axis_name': str(df.iloc[axis]['horse_name']),
+                'partner_num': int(nk), 'partner_name': str(df.iloc[k]['horse_name']),
+                'names': f'{df.iloc[axis]["horse_name"]}×{df.iloc[k]["horse_name"]}',
                 'odds': o, 'p': prob, 'ev': ev,
             })
     cands.sort(key=lambda x: -x['ev'])
@@ -619,10 +630,14 @@ def _build_discord_message(df, race_name, surface, distance, track, venue_name,
                 desc.append(f'▶ **{kind}  {hn_s}{row["horse_name"]}**')
                 desc.append(f'　 {row["live_odds"]:.1f}倍 / 勝率{row["p_bet"]*100:.0f}% / '
                             f'EV {row["ev"]:.2f} / 賭け金: 資金の{kp:.1f}%')
-            for c in (umaren_recs or []):
-                desc.append(f'▶ **馬連  {c["nums"]}番**（試験運用・少額）')
-                desc.append(f'　 {c["names"]}')
-                desc.append(f'　 {c["odds"]:.1f}倍 / 的中率{c["p"]*100:.0f}% / EV {c["ev"]:.2f}')
+            if umaren_recs:
+                ax = umaren_recs[0]
+                partners = '・'.join(str(c['partner_num']) for c in umaren_recs)
+                desc.append(f'▶ **馬連ながし  軸 {ax["axis_num"]}番 {ax["axis_name"]}'
+                            f' ⇔ 相手 {partners}番**（試験運用・少額）')
+                for c in umaren_recs:
+                    desc.append(f'　 {c["nums"]}: {c["partner_name"]} '
+                                f'{c["odds"]:.1f}倍 / 的中率{c["p"]*100:.0f}% / EV {c["ev"]:.2f}')
             embeds.append({
                 'title': f'💰 買い目　{race_label}',
                 'description': '\n'.join(desc),
@@ -886,9 +901,12 @@ def main():
         else:
             print('\n  買い推奨なし（期待値の閾値を満たす馬なし → 見送り推奨）')
         if umaren_recs:
-            print(f'\n  🎲 馬連（試験運用: EV≥{UMAREN_EV_TH}・{UMAREN_ODDS_CAP:.0f}倍以下）:')
+            ax = umaren_recs[0]
+            partners = '・'.join(str(c['partner_num']) for c in umaren_recs)
+            print(f'\n  🎲 馬連ながし（試験運用: EV≥{UMAREN_EV_TH}・{UMAREN_ODDS_CAP:.0f}倍以下）:')
+            print(f'    軸 {ax["axis_num"]}番 {ax["axis_name"]} ⇔ 相手 {partners}番')
             for c in umaren_recs:
-                print(f'    ▶ 馬連 {c["nums"]}  {c["names"]}  '
+                print(f'    ▶ {c["nums"]}  {c["names"]}  '
                       f'({c["p"]*100:.1f}% × {c["odds"]:.1f}倍 = EV {c["ev"]:.2f})')
     else:
         print('  オッズ未取得のためEV計算をスキップ（勝率のみ参考）')
