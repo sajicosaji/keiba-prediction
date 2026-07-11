@@ -212,12 +212,16 @@ def scrape_race_entry(race_id, delay=1.5):
                 if m:
                     horse_id = m.group(1)
 
+        # 枠番・馬番はクラス名が番号付き（Waku1〜8 / Umaban1〜18）のため正規表現で探す
+        frame_el = tr.find('td', class_=re.compile(r'^Waku\d+$'))
+        umaban_el = tr.find('td', class_=re.compile(r'^Umaban\d+$'))
+
         row = dict(info)
         row.update({
             'horse_id':       horse_id,
             'finishing_pos':  None,
-            'frame':          _find(tr, 'td', 'Waku'),
-            'horse_num':      _find(tr, 'td', 'Umaban'),
+            'frame':          (frame_el.get_text(strip=True) if frame_el else '') or _find(tr, 'td', 'Waku'),
+            'horse_num':      (umaban_el.get_text(strip=True) if umaban_el else '') or _find(tr, 'td', 'Umaban'),
             'horse_name':     horse_name,
             'sex_age':        _find(tr, 'td', 'Barei'),
             'weight_carried': _find(tr, 'td', 'Futan'),
