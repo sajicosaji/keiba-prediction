@@ -54,7 +54,7 @@ jobs:
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
           AHEAD_MIN: "8"
-          AHEAD_MAX: "40"
+          AHEAD_MAX: "75"
           PYTHONIOENCODING: "utf-8"
         run: python src/check_and_send.py
 
