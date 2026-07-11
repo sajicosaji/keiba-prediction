@@ -215,7 +215,8 @@ def main():
         ret += payout
         mark = '🎯' if pos == 1 else '✗'
         pl = payout - stake
-        lines.append(f'▶ {kind} {name} ({venue}{rno}R) {fo:.1f}倍 → {pos}着 {mark} {pl:+,}円')
+        hn_s = f'{int(hn)}番 ' if str(hn).isdigit() else ''
+        lines.append(f'▶ {kind} {hn_s}{name} ({venue}{rno}R) {fo:.1f}倍 → {pos}着 {mark} {pl:+,}円')
         settle_rows.append(dict(date=target, race_id=rid, horse_num=hn, horse_name=name,
                                 kind=kind, pos=pos, final_odds=fo, stake=stake, payout=payout))
 

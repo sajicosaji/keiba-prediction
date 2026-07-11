@@ -547,13 +547,18 @@ def _build_discord_message(df, race_name, surface, distance, track, venue_name,
     if venue_name:
         cond = f'{venue_name} {cond}'
 
+    # 会場＋レース番号（例: 小倉11R）を先頭に出す
+    rid = str(df['race_id'].iloc[0]) if 'race_id' in df.columns and len(df) else ''
+    rno = f'{int(rid[10:12])}R' if len(rid) == 12 and rid[10:12].isdigit() else ''
+    race_label = f'{venue_name}{rno} {race_name}'.strip()
+
     has_bets = bool(ev_recs or umaren_recs)
     if has_bets:
-        title = f'🚨💰 **買い目あり！【{race_name}】** 💰🚨'
+        title = f'🚨💰 **買い目あり！【{race_label}】** 💰🚨'
     elif has_odds:
-        title = f'💤 【見送り】{race_name}'
+        title = f'💤 【見送り】{race_label}'
     else:
-        title = f'🏇 **【{race_name}】**'
+        title = f'🏇 **【{race_label}】**'
 
     lines = [
         title,
@@ -609,15 +614,17 @@ def _build_discord_message(df, race_name, surface, distance, track, venue_name,
             desc = []
             for kind, row in (ev_recs or []):
                 kp = kelly_pct(row['p_bet'], row['live_odds'])
-                desc.append(f'▶ **{kind} {row["horse_name"]}**')
+                hn = str(row.get('horse_num', '')).strip()
+                hn_s = f'{int(hn)}番 ' if hn.isdigit() else ''
+                desc.append(f'▶ **{kind}  {hn_s}{row["horse_name"]}**')
                 desc.append(f'　 {row["live_odds"]:.1f}倍 / 勝率{row["p_bet"]*100:.0f}% / '
                             f'EV {row["ev"]:.2f} / 賭け金: 資金の{kp:.1f}%')
             for c in (umaren_recs or []):
-                desc.append(f'▶ **馬連 {c["nums"]}**（試験運用・少額）')
+                desc.append(f'▶ **馬連  {c["nums"]}番**（試験運用・少額）')
                 desc.append(f'　 {c["names"]}')
                 desc.append(f'　 {c["odds"]:.1f}倍 / 的中率{c["p"]*100:.0f}% / EV {c["ev"]:.2f}')
             embeds.append({
-                'title': '💰 買い目',
+                'title': f'💰 買い目　{race_label}',
                 'description': '\n'.join(desc),
                 'color': 0x00C853,  # 緑
             })
