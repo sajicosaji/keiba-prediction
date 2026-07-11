@@ -32,9 +32,11 @@ JRA_VENUES = {'01','02','03','04','05','06','07','08','09','10'}
 # バックテスト(2024-2025, walk-forward)で検証済みの買い条件
 # EVは市場ブレンド勝率 p = α*モデル + (1-α)*市場(オッズ逆数正規化) で計算する。
 # ブレンドは大穴でのモデル過信を抑え、回収率と安定性の両方を改善した。
-EV_MAIN_TH   = 1.2   # ◎: EV>=1.2 & オッズ<=50倍 → 検証回収率 167% (95%CI 135-201%)
-EV_LONG_TH   = 2.0   # ◎以外: EV>=2.0 & オッズ<=50倍 → 検証回収率 124% (95%CI 96-154%)
-EV_ODDS_CAP  = 50.0
+EV_MAIN_TH    = 1.3   # ◎: EV>=1.3 & オッズ<=50倍 → 検証回収率 171% (約27%のレースで発火)
+EV_MAIN_CAP   = 50.0
+EV_LONG_TH    = 2.0   # ◎以外: EV>=2.0 & オッズ<=30倍・1レース1点 → 検証回収率 129% (約16%)
+EV_LONG_CAP   = 30.0  # 穴はオッズ上限を厳しく（30倍超の穴は検証で回収率が崩れる）
+EV_LONG_MAX   = 1     # 穴単勝は1レース最大1点（EV最大のみ）
 BLEND_ALPHA  = 0.7   # モデル勝率の重み（市場勝率は 1-α）
 DEFAULT_TEMP = 0.9   # calibration.json が無い場合のフォールバック温度
 KELLY_FRAC   = 0.25  # 1/4ケリー
@@ -172,14 +174,19 @@ def compute_ev(df, race_id):
         df['ev'] = df['p_bet'] * df['live_odds']
 
     recs = []
+    long_cands = []
     for _, row in df.iterrows():
         ev, o = row.get('ev'), row.get('live_odds')
-        if pd.isna(ev) or pd.isna(o) or o > EV_ODDS_CAP or o <= 1.0:
+        if pd.isna(ev) or pd.isna(o) or o <= 1.0:
             continue
-        if row['final_rank'] == 1 and ev >= EV_MAIN_TH:
+        if row['final_rank'] == 1 and ev >= EV_MAIN_TH and o <= EV_MAIN_CAP:
             recs.append(('◎単勝', row))
-        elif row['final_rank'] != 1 and ev >= EV_LONG_TH:
-            recs.append(('穴単勝', row))
+        elif row['final_rank'] != 1 and ev >= EV_LONG_TH and o <= EV_LONG_CAP:
+            long_cands.append(row)
+    # 穴単勝はEVが最大のものだけ（1レース最大 EV_LONG_MAX 点）
+    long_cands.sort(key=lambda r: -r['ev'])
+    for row in long_cands[:EV_LONG_MAX]:
+        recs.append(('穴単勝', row))
     return df, recs, odds_map
 
 
@@ -892,7 +899,8 @@ def main():
             ev_s = f'EV={evv:.2f}' if pd.notna(evv) else 'EV=---'
             print(f'  {MARKS[i]} {str(row["horse_name"]):<14} 勝率{pw_s}  {o_s}  {ev_s}')
         if ev_recs:
-            print(f'\n  💰 買い推奨（検証済み条件: ◎EV≥{EV_MAIN_TH} / 他EV≥{EV_LONG_TH}、オッズ{EV_ODDS_CAP:.0f}倍以下）:')
+            print(f'\n  💰 買い推奨（検証済み条件: ◎EV≥{EV_MAIN_TH}&{EV_MAIN_CAP:.0f}倍以下 / '
+                  f'穴EV≥{EV_LONG_TH}&{EV_LONG_CAP:.0f}倍以下・最大{EV_LONG_MAX}点）:')
             for kind, row in ev_recs:
                 kp = kelly_pct(row['p_bet'], row['live_odds'])
                 print(f'    ▶ {kind}  {row["horse_name"]}  '
