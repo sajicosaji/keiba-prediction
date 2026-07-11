@@ -44,7 +44,7 @@ KELLY_CAP    = 0.02  # 1点あたり資金の2%まで
 # ワイド・三連系は同検証で回収率100%未満だったため不採用
 UMAREN_EV_TH    = 1.5
 UMAREN_ODDS_CAP = 60.0
-UMAREN_MAX_BETS = 3     # 1レース最大3点
+UMAREN_MAX_BETS = 5     # 1レース最大5点（EV条件を満たす点のみ→実質EVフィルタ付き流し）
 
 
 def fetch_combo_odds(race_id, odds_type='4'):
