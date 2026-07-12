@@ -2,15 +2,16 @@ name: Keiba Auto Discord
 
 on:
   schedule:
-    # 予想送信: 15分おき（JST 9:00〜16:45 = UTC 0:00〜7:45、毎日）
+    # 予想送信: 15分おき（JST 9:07〜16:52 = UTC 0:07〜7:52、毎日）
+    #   ※キリ番(0/15/30/45分)はGitHubのcron混雑でスキップされやすいためズラしている
     #   開催がない日は数十秒で終了する。送信済みは sent_log.csv で管理
-    - cron: "*/15 0-7 * * *"
-    # 当日精算: 買い目の配当・回収率を通知（JST 17:30 = UTC 8:30、毎日）
-    - cron: "30 8 * * *"
-    # 週次: データ更新+成績サマリー（JST 月曜22:00 = UTC 月曜13:00）
-    - cron: "0 13 * * 1"
-    # 月次: モデル再訓練+勝率較正（JST 2日 3:00 = UTC 1日 18:00）
-    - cron: "0 18 1 * *"
+    - cron: "7,22,37,52 0-7 * * *"
+    # 当日精算: 買い目の配当・回収率を通知（JST 17:47 = UTC 8:47、毎日）
+    - cron: "47 8 * * *"
+    # 週次: データ更新+成績サマリー（JST 月曜22:13 = UTC 月曜13:13）
+    - cron: "13 13 * * 1"
+    # 月次: モデル再訓練+勝率較正（JST 2日 3:23 = UTC 1日 18:23）
+    - cron: "23 18 1 * *"
   workflow_dispatch:
     inputs:
       mode:
@@ -33,7 +34,7 @@ permissions:
 jobs:
   predict:
     if: >-
-      (github.event_name == 'schedule' && github.event.schedule == '*/15 0-7 * * *') ||
+      (github.event_name == 'schedule' && github.event.schedule == '7,22,37,52 0-7 * * *') ||
       (github.event_name == 'workflow_dispatch' && inputs.mode == 'predict')
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -74,7 +75,7 @@ jobs:
 
   settle:
     if: >-
-      (github.event_name == 'schedule' && github.event.schedule == '30 8 * * *') ||
+      (github.event_name == 'schedule' && github.event.schedule == '47 8 * * *') ||
       (github.event_name == 'workflow_dispatch' && inputs.mode == 'settle')
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -116,7 +117,7 @@ jobs:
 
   weekly:
     if: >-
-      (github.event_name == 'schedule' && github.event.schedule == '0 13 * * 1') ||
+      (github.event_name == 'schedule' && github.event.schedule == '13 13 * * 1') ||
       (github.event_name == 'workflow_dispatch' && inputs.mode == 'weekly')
     runs-on: ubuntu-latest
     timeout-minutes: 120
@@ -159,7 +160,7 @@ jobs:
 
   retrain:
     if: >-
-      (github.event_name == 'schedule' && github.event.schedule == '0 18 1 * *') ||
+      (github.event_name == 'schedule' && github.event.schedule == '23 18 1 * *') ||
       (github.event_name == 'workflow_dispatch' && inputs.mode == 'retrain')
     runs-on: ubuntu-latest
     timeout-minutes: 300
