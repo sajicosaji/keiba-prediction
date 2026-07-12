@@ -1,0 +1,118 @@
+name: Keiba Day Runner
+
+# GitHubの定時実行(cron)が不安定な日のための「1日当番ジョブ」。
+# 手動起動すると、レース終了までクラウド上でループして予測送信を続け、
+# 最後に当日精算まで実行して終了する。PCは一切不要。
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: keiba-bot
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  # 前半: 〜16:20 JST (07:20 UTC) まで13分おきに予測チェック
+  morning:
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+          cache-dependency-path: src/requirements.txt
+
+      - name: Install dependencies
+        run: pip install -r src/requirements.txt
+
+      - name: Predict loop until 07:20 UTC
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          AHEAD_MIN: "8"
+          AHEAD_MAX: "40"
+          PYTHONIOENCODING: "utf-8"
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          end=$(date -u -d "today 07:20" +%s)
+          while [ "$(date -u +%s)" -lt "$end" ]; do
+            python src/check_and_send.py || true
+            if [ -f data/bet_log.csv ]; then git add data/bet_log.csv; fi
+            if [ -f data/sent_log.csv ]; then git add data/sent_log.csv; fi
+            if ! git diff --cached --quiet; then
+              git commit -m "log: predictions sent (day runner)"
+              for i in 1 2 3; do
+                git pull --rebase origin main && git push origin main && break
+                sleep 10
+              done
+            fi
+            sleep 780
+          done
+          echo "morning loop done"
+
+  # 後半: 16:20〜最終レースまで予測を続け、17:47 JST に精算して終了
+  afternoon:
+    needs: morning
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+          cache-dependency-path: src/requirements.txt
+
+      - name: Install dependencies
+        run: pip install -r src/requirements.txt
+
+      - name: Predict until close, then settle
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          AHEAD_MIN: "8"
+          AHEAD_MAX: "40"
+          PYTHONIOENCODING: "utf-8"
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          end=$(date -u -d "today 07:55" +%s)
+          while [ "$(date -u +%s)" -lt "$end" ]; do
+            python src/check_and_send.py || true
+            if [ -f data/bet_log.csv ]; then git add data/bet_log.csv; fi
+            if [ -f data/sent_log.csv ]; then git add data/sent_log.csv; fi
+            if ! git diff --cached --quiet; then
+              git commit -m "log: predictions sent (day runner)"
+              for i in 1 2 3; do
+                git pull --rebase origin main && git push origin main && break
+                sleep 10
+              done
+            fi
+            sleep 780
+          done
+          # 17:47 JST (08:47 UTC) まで待って精算
+          settle_at=$(date -u -d "today 08:47" +%s)
+          now=$(date -u +%s)
+          if [ "$now" -lt "$settle_at" ]; then
+            sleep $((settle_at - now))
+          fi
+          python src/daily_settlement.py --discord || true
+          if [ -f data/settle_log.csv ]; then
+            git add data/settle_log.csv
+            if ! git diff --cached --quiet; then
+              git commit -m "log: daily settlement (day runner)"
+              for i in 1 2 3; do
+                git pull --rebase origin main && git push origin main && break
+                sleep 10
+              done
+            fi
+          fi
+          echo "day runner finished"
