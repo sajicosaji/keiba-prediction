@@ -55,11 +55,11 @@ def stake_yen(kind, ev):
         return 300
     return 200  # 馬連ほか
 
-# 馬連（試験運用: 検証は2日分72レースのみ。EV>=1.5&60倍以下で回収率107-162%）
+# 馬連（試験運用: 検証は2日分72レースのみ。閾値を上げるほど頻度低下・回収率向上を確認）
 # ワイド・三連系は同検証で回収率100%未満だったため不採用
-UMAREN_EV_TH    = 1.5
+UMAREN_EV_TH    = 2.0
 UMAREN_ODDS_CAP = 60.0
-UMAREN_MAX_BETS = 3     # 1レース最大3点（EV上位から。点数は絞る方針）
+UMAREN_MAX_BETS = 1     # 1レース最大1点（EV最大のみ。厳選方針）
 
 
 def fetch_combo_odds(race_id, odds_type='4'):
@@ -1058,7 +1058,10 @@ def main():
         print(f'検証結果: 1着的中={win}  3着以内的中={hit}/3頭')
 
     # ---- Discord 送信 ----
-    if args.discord:
+    # 買い目が無いレースは通知しない（見送りの大量通知を避ける方針）
+    if args.discord and not (ev_recs or umaren_recs):
+        print('\n買い推奨なし → Discord送信はスキップします。')
+    elif args.discord:
         # 環境変数優先（GitHub Actions用）、なければローカルのファイルから
         webhook_url = os.environ.get('DISCORD_WEBHOOK_URL', '').strip()
         if not webhook_url and WEBHOOK_FILE.exists():
