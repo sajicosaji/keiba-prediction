@@ -55,11 +55,17 @@ def stake_yen(kind, ev):
         return 300
     return 200  # 馬連ほか
 
-# 馬連（試験運用: 検証は2日分72レースのみ。閾値を上げるほど頻度低下・回収率向上を確認）
-# ワイド・三連系は同検証で回収率100%未満だったため不採用
-UMAREN_EV_TH    = 2.0
-UMAREN_ODDS_CAP = 60.0
-UMAREN_MAX_BETS = 1     # 1レース最大1点（EV最大のみ。厳選方針）
+# 馬連（試験運用: 検証は2日分72レースのみ）
+# レース選定と点数選定を分離: 「勝負レース」かどうかは軸の最良の相手EVで判定し、
+# 選ばれたレース内では複数の相手（最大4点）に流す。点数間は合成オッズ
+# （1/オッズ比例配分でどの点が当たっても揃う最低回収率）が5倍を下回らない範囲でのみ増やす。
+# ワイド・三連系は同検証で回収率100%未満だったため不採用。
+UMAREN_ODDS_CAP   = 60.0
+UMAREN_RACE_TH    = 3.0   # レース選定: 軸の最良相手EV>=これで「勝負レース」と判定（1日約6R相当）
+UMAREN_PT_TH      = 0.5   # 点数選定: このEV以上の相手を候補にする
+UMAREN_SYNTH_FLOOR = 5.0  # 合成オッズがこれを下回ったら点数を増やさない
+UMAREN_MAX_BETS   = 4     # 1レース最大4点
+UMAREN_STAKE_TOTAL = 600  # 1レースあたりの合計賭け金（円）。1/オッズ比例で按分
 
 
 def fetch_combo_odds(race_id, odds_type='4'):
@@ -91,10 +97,16 @@ def _harville_pair(p, i, j):
 
 
 def compute_umaren(df, race_id):
-    """◎を軸にした馬連ながし。相手は上位6頭のうちペアEVが閾値以上の馬のみ。
+    """◎を軸にした馬連ながし。レース選定と点数選定を分離する2段構え。
 
-    固定流し・BOXは検証で回収率を大きく落とした（各点が単独で期待値プラスの
-    場合のみ買うのが利益の源泉）ため、EVフィルタ付きの流しとする。
+    ①レース選定: 軸に対する相手候補（上位6頭）のうち最良のEVが UMAREN_RACE_TH
+      未満なら「勝負レースではない」として見送る。
+    ②点数選定: 選ばれたレースで、EV>=UMAREN_PT_TH の相手をEV降順に追加していき、
+      合成オッズ（1/オッズ比例配分でどの点が当たっても揃う最低回収率）が
+      UMAREN_SYNTH_FLOOR を下回る手前で打ち止め（最大 UMAREN_MAX_BETS 点）。
+      賭け金は合計 UMAREN_STAKE_TOTAL 円を 1/オッズ比例で按分する。
+    固定流し・BOXは検証で回収率を落とした（各点が単独で期待値プラスの場合のみ
+    買うのが利益の源泉）ため、必ずEVフィルタを通す。
     """
     if 'p_bet' not in df.columns or df['p_bet'].isna().all():
         return []
@@ -109,7 +121,7 @@ def compute_umaren(df, race_id):
         return []
     axis_num = int(nums.iloc[axis])
 
-    cands = []
+    evs = []
     top_n = min(6, len(df))
     for k in range(1, top_n):
         nk = nums.iloc[k]
@@ -120,17 +132,38 @@ def compute_umaren(df, race_id):
         if not o or o > UMAREN_ODDS_CAP:
             continue
         prob = _harville_pair(p, axis, k)
-        ev = prob * o
-        if ev >= UMAREN_EV_TH:
-            cands.append({
-                'kind': '馬連', 'nums': f'{a}-{b}',
-                'axis_num': axis_num, 'axis_name': str(df.iloc[axis]['horse_name']),
-                'partner_num': int(nk), 'partner_name': str(df.iloc[k]['horse_name']),
-                'names': f'{df.iloc[axis]["horse_name"]}×{df.iloc[k]["horse_name"]}',
-                'odds': o, 'p': prob, 'ev': ev,
-            })
-    cands.sort(key=lambda x: -x['ev'])
-    return cands[:UMAREN_MAX_BETS]
+        evs.append((prob * o, k, o, prob))
+
+    if not evs or max(e[0] for e in evs) < UMAREN_RACE_TH:
+        return []  # 勝負レースではない → 見送り
+
+    pt_cands = sorted([e for e in evs if e[0] >= UMAREN_PT_TH], key=lambda x: -x[0])
+    chosen = []
+    for ev, k, o, prob in pt_cands:
+        trial = chosen + [(ev, k, o, prob)]
+        synth = 1.0 / sum(1.0 / t[2] for t in trial)
+        if synth >= UMAREN_SYNTH_FLOOR and len(trial) <= UMAREN_MAX_BETS:
+            chosen = trial
+        else:
+            break
+    if not chosen:
+        return []
+
+    weights = [1.0 / o for _, _, o, _ in chosen]
+    wsum = sum(weights)
+    cands = []
+    for (ev, k, o, prob), w in zip(chosen, weights):
+        nk = int(nums.iloc[k])
+        a, b = sorted([axis_num, nk])
+        stake = round(UMAREN_STAKE_TOTAL * w / wsum / 100) * 100  # 100円単位に丸め
+        cands.append({
+            'kind': '馬連', 'nums': f'{a}-{b}',
+            'axis_num': axis_num, 'axis_name': str(df.iloc[axis]['horse_name']),
+            'partner_num': nk, 'partner_name': str(df.iloc[k]['horse_name']),
+            'names': f'{df.iloc[axis]["horse_name"]}×{df.iloc[k]["horse_name"]}',
+            'odds': o, 'p': prob, 'ev': ev, 'stake': max(stake, 100),
+        })
+    return cands
 
 
 def fetch_live_odds(race_id):
@@ -240,7 +273,7 @@ def log_recommendations(recs, race_id, race_name, combo_recs=None):
                             c['nums'], c['names'],
                             f"{c['odds']:.1f}", f"{c['p']:.4f}",
                             f"{c['ev']:.2f}", f"{kelly_pct(c['p'], c['odds']):.2f}",
-                            stake_yen(c['kind'], c['ev'])])
+                            c.get('stake', stake_yen(c['kind'], c['ev']))])
     except Exception as e:
         print(f'  bet_log 書き込みエラー: {e}')
 
@@ -655,13 +688,13 @@ def _build_discord_message(df, race_name, surface, distance, track, venue_name,
                             f'EV {row["ev"]:.2f}')
             if umaren_recs:
                 ax = umaren_recs[0]
+                total_yen = sum(c.get('stake', 0) for c in umaren_recs)
                 partners = '・'.join(str(c['partner_num']) for c in umaren_recs)
-                u_yen = stake_yen('馬連', 0)
                 desc.append(f'▶ **馬連ながし  軸 {ax["axis_num"]}番 {ax["axis_name"]}'
-                            f' ⇔ 相手 {partners}番**　**（各{u_yen}円）**（試験運用）')
+                            f' ⇔ 相手 {partners}番**　**（合計{total_yen:,}円）**（試験運用）')
                 for c in umaren_recs:
                     desc.append(f'　 {c["nums"]}: {c["partner_name"]} '
-                                f'{c["odds"]:.1f}倍 / 的中率{c["p"]*100:.0f}% / EV {c["ev"]:.2f}')
+                                f'{c["odds"]:.1f}倍 / 的中率{c["p"]*100:.0f}% / EV {c["ev"]:.2f} / {c["stake"]}円')
             embeds.append({
                 'title': f'💰 買い目　{race_label}',
                 'description': '\n'.join(desc),
@@ -927,10 +960,11 @@ def main():
         if umaren_recs:
             ax = umaren_recs[0]
             partners = '・'.join(str(c['partner_num']) for c in umaren_recs)
-            print(f'\n  🎲 馬連ながし（試験運用: EV≥{UMAREN_EV_TH}・{UMAREN_ODDS_CAP:.0f}倍以下）:')
+            total_yen = sum(c.get('stake', 0) for c in umaren_recs)
+            print(f'\n  🎲 馬連ながし（試験運用: レース選定EV≥{UMAREN_RACE_TH}・{UMAREN_ODDS_CAP:.0f}倍以下、合計{total_yen:,}円）:')
             print(f'    軸 {ax["axis_num"]}番 {ax["axis_name"]} ⇔ 相手 {partners}番')
             for c in umaren_recs:
-                print(f'    ▶ {c["nums"]}  {c["names"]}  '
+                print(f'    ▶ {c["nums"]}  {c["names"]}  {c["stake"]}円 '
                       f'({c["p"]*100:.1f}% × {c["odds"]:.1f}倍 = EV {c["ev"]:.2f})')
     else:
         print('  オッズ未取得のためEV計算をスキップ（勝率のみ参考）')
