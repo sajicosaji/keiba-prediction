@@ -1,0 +1,54 @@
+name: Keiba Data Rebuild
+
+# races.csv の列ズレを全JRAレース再収集で修復する一回限りの重いジョブ。
+# 手動起動すると、時間予算内で800レースずつ再収集→コミットを繰り返す。
+# 途中で落ちても、再起動すれば未修復レースの続きから再開できる。
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: keiba-bot
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+          cache-dependency-path: src/requirements.txt
+
+      - name: Install dependencies
+        run: pip install -r src/requirements.txt
+
+      - name: Rebuild loop (800 races per chunk, commit each)
+        env:
+          PYTHONIOENCODING: "utf-8"
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          for i in $(seq 1 14); do
+            echo "===== chunk $i ====="
+            python src/rebuild_race_data.py --limit 800 --delay 1.0
+            git add data/races.csv
+            if git diff --cached --quiet; then
+              echo "No changes in chunk $i -> rebuild complete."
+              break
+            fi
+            git commit -m "data: rebuild race columns (chunk $i)"
+            for t in 1 2 3; do
+              git pull --rebase origin main && git push origin main && break
+              sleep 10
+            done
+          done
+          echo "rebuild job finished"

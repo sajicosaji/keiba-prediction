@@ -116,8 +116,34 @@ def scrape_race_result(race_id, delay=1.5):
         time.sleep(delay)
         return []
 
+    # ヘッダー名から列インデックスを特定する（netkeibaは「タイム指数」列を
+    # 途中に追加することがあり、位置固定だと全列がズレるため）
+    trs = table.find_all('tr')
+    header_cells = trs[0].find_all(['th', 'td']) if trs else []
+    col = {}
+    for i, cell in enumerate(header_cells):
+        h = cell.get_text(strip=True)
+        if h == '通過' and 'passing' not in col:
+            col['passing'] = i
+        elif h in ('上り', '上がり') and 'last_3f' not in col:
+            col['last_3f'] = i
+        elif h == '単勝' and 'odds' not in col:
+            col['odds'] = i
+        elif h == '人気' and 'popularity' not in col:
+            col['popularity'] = i
+        elif h == '馬体重' and 'horse_weight' not in col:
+            col['horse_weight'] = i
+        elif h == '調教師' and 'trainer' not in col:
+            col['trainer'] = i
+
+    def cell(td, name, default_idx=None):
+        idx = col.get(name, default_idx)
+        if idx is not None and idx < len(td):
+            return td[idx].get_text(strip=True)
+        return ''
+
     rows = []
-    for tr in table.find_all('tr')[1:]:
+    for tr in trs[1:]:
         td = tr.find_all('td')
         if len(td) < 11:
             continue
@@ -129,6 +155,14 @@ def scrape_race_result(race_id, delay=1.5):
             m = re.search(r'/horse/(\d+)/', a.get('href', ''))
             if m:
                 horse_id = m.group(1)
+
+        # 通過順位（"1-1-1-1" / "6-5" など）→ c1〜c4
+        passing = cell(td, 'passing')
+        parts = [x for x in passing.split('-') if x.strip().isdigit()]
+        c1 = parts[0] if len(parts) >= 1 else ''
+        c2 = parts[1] if len(parts) >= 2 else ''
+        c3 = parts[2] if len(parts) >= 3 else ''
+        c4 = parts[-1] if parts else ''  # 最後の通過順位（≒ゴール前の位置）
 
         row = dict(info)
         row.update({
@@ -142,32 +176,22 @@ def scrape_race_result(race_id, delay=1.5):
             'jockey':         td[6].get_text(strip=True),
             'time':           td[7].get_text(strip=True),
             'margin':         td[8].get_text(strip=True),
-            'popularity':     td[9].get_text(strip=True) if len(td) > 9 else '',
-            'odds':           td[10].get_text(strip=True) if len(td) > 10 else '',
-            'last_3f':        td[11].get_text(strip=True) if len(td) > 11 else '',
-            'trainer':        td[13].get_text(strip=True) if len(td) > 13 else '',
-            'horse_weight':   td[14].get_text(strip=True) if len(td) > 14 else '',
-            # コーナー（後でfill）
-            'c1_pos': '', 'c2_pos': '', 'c3_pos': '', 'c4_pos': '', 'running_style': '',
+            'popularity':     cell(td, 'popularity'),
+            'odds':           cell(td, 'odds'),
+            'last_3f':        cell(td, 'last_3f'),
+            'trainer':        cell(td, 'trainer'),
+            'horse_weight':   cell(td, 'horse_weight'),
+            'c1_pos': c1, 'c2_pos': c2, 'c3_pos': c3, 'c4_pos': c4,
+            'running_style': '',
         })
         rows.append(row)
 
-    # コーナー通過順位を解析して各馬に付与
+    # 脚質を c1（1コーナー位置）と頭数から判定
     field_size = len(rows)
-    corner_data = _parse_corner_positions(soup)
-    if corner_data:
-        for row in rows:
-            try:
-                hnum = int(row.get('horse_num', 0))
-            except (ValueError, TypeError):
-                hnum = 0
-            cd = corner_data.get(hnum, {})
-            row['c1_pos'] = cd.get('c1', '')
-            row['c2_pos'] = cd.get('c2', '')
-            row['c3_pos'] = cd.get('c3', '')
-            row['c4_pos'] = cd.get('c4', '')
-            c1 = cd.get('c1')
-            row['running_style'] = _corner_running_style(c1, field_size) if c1 else ''
+    for row in rows:
+        c1v = row.get('c1_pos', '')
+        if str(c1v).isdigit():
+            row['running_style'] = _corner_running_style(int(c1v), field_size)
 
     time.sleep(delay)
     return rows

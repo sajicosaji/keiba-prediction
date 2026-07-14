@@ -5,5 +5,7 @@ __pycache__/
 data/races_backup.csv
 data/*backup*
 data/races_before_datefix.csv
+data/races_before_rebuild.csv
+data/races_backup_no_corners.csv
 data/odds/picks.csv
 _archive/
