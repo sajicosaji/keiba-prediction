@@ -1,0 +1,58 @@
+name: Keiba Retrain (Optuna)
+
+# Optunaハイパーパラメータ最適化つきの再訓練＋較正。
+# データ再収集(rebuild)の後に手動起動する。通常の月次再訓練(keiba.yml)より重い。
+
+on:
+  workflow_dispatch:
+    inputs:
+      trials:
+        description: "Optuna トライアル数"
+        default: "40"
+
+concurrency:
+  group: keiba-bot
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  retrain-tune:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+          cache-dependency-path: src/requirements.txt
+
+      - name: Install dependencies
+        run: pip install -r src/requirements.txt
+
+      - name: Retrain with Optuna
+        env:
+          PYTHONIOENCODING: "utf-8"
+        run: python src/train_model.py --tune --tune-trials ${{ inputs.trials }}
+
+      - name: Calibrate win probability
+        env:
+          PYTHONIOENCODING: "utf-8"
+        run: python src/calibrate_temperature.py
+
+      - name: Commit model files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/model.pkl data/stats.pkl data/calibration.json
+          if git diff --cached --quiet; then
+            echo "No model changes."
+            exit 0
+          fi
+          git commit -m "model: retrain with Optuna + calibration (rebuilt data)"
+          git pull --rebase origin main
+          git push origin main
