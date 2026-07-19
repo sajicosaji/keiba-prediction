@@ -41,7 +41,7 @@ jobs:
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
           AHEAD_MIN: "8"
-          AHEAD_MAX: "40"
+          AHEAD_MAX: "30"
           PYTHONIOENCODING: "utf-8"
         run: |
           git config user.name "github-actions[bot]"
@@ -80,7 +80,7 @@ jobs:
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
           AHEAD_MIN: "8"
-          AHEAD_MAX: "40"
+          AHEAD_MAX: "30"
           PYTHONIOENCODING: "utf-8"
         run: |
           git config user.name "github-actions[bot]"
