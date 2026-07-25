@@ -2,12 +2,14 @@ name: Keiba Auto Discord
 
 on:
   schedule:
-    # 予想送信: 15分おき（JST 9:07〜16:52 = UTC 0:07〜7:52、毎日）
+    # 予想送信: 15分おき（JST 9:07〜19:52 = UTC 0:07〜10:52、毎日）
     #   ※キリ番(0/15/30/45分)はGitHubのcron混雑でスキップされやすいためズラしている
+    #   夏の薄暮開催で最終18:30発走もあるため夕方まで広げている
     #   開催がない日は数十秒で終了する。送信済みは sent_log.csv で管理
-    - cron: "7,22,37,52 0-7 * * *"
-    # 当日精算: 買い目の配当・回収率を通知（JST 17:47 = UTC 8:47、毎日）
-    - cron: "47 8 * * *"
+    - cron: "7,22,37,52 0-10 * * *"
+    # 当日精算: 買い目の配当・回収率を通知（JST 19:00 = UTC 10:00、毎日）
+    #   薄暮の最終レース(18:30発走・結果18:35頃)確定後に精算する
+    - cron: "0 10 * * *"
     # 週次: データ更新+成績サマリー（JST 月曜22:13 = UTC 月曜13:13）
     - cron: "13 13 * * 1"
     # 月次: モデル再訓練+勝率較正（JST 2日 3:23 = UTC 1日 18:23）
@@ -34,7 +36,7 @@ permissions:
 jobs:
   predict:
     if: >-
-      (github.event_name == 'schedule' && github.event.schedule == '7,22,37,52 0-7 * * *') ||
+      (github.event_name == 'schedule' && github.event.schedule == '7,22,37,52 0-10 * * *') ||
       (github.event_name == 'workflow_dispatch' && inputs.mode == 'predict')
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -75,7 +77,7 @@ jobs:
 
   settle:
     if: >-
-      (github.event_name == 'schedule' && github.event.schedule == '47 8 * * *') ||
+      (github.event_name == 'schedule' && github.event.schedule == '0 10 * * *') ||
       (github.event_name == 'workflow_dispatch' && inputs.mode == 'settle')
     runs-on: ubuntu-latest
     timeout-minutes: 30

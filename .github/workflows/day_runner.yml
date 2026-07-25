@@ -26,7 +26,7 @@ permissions:
 jobs:
   morning:
     runs-on: ubuntu-latest
-    timeout-minutes: 300
+    timeout-minutes: 330
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python
@@ -37,7 +37,7 @@ jobs:
           cache-dependency-path: src/requirements.txt
       - name: Install dependencies
         run: pip install -r src/requirements.txt
-      - name: Predict loop until 04:00 UTC (JST 13:00)
+      - name: Predict loop until 05:00 UTC (JST 14:00)
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
           AHEAD_MIN: "8"
@@ -46,7 +46,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          end=$(date -u -d "$(date -u +%Y-%m-%d) 04:00" +%s)
+          end=$(date -u -d "$(date -u +%Y-%m-%d) 05:00" +%s)
           while [ "$(date -u +%s)" -lt "$end" ]; do
             python src/check_and_send.py || true
             if [ -f data/bet_log.csv ]; then git add data/bet_log.csv; fi
@@ -76,7 +76,9 @@ jobs:
           cache-dependency-path: src/requirements.txt
       - name: Install dependencies
         run: pip install -r src/requirements.txt
-      - name: Predict until 07:55 UTC, then settle at 08:47 UTC
+      # 予測は18:40 JST(09:40 UTC)まで＝夏の薄暮開催(最終18:30発走)に対応。
+      # 精算は keiba.yml の 19:00 JST cron に一本化したので、ここでは行わない。
+      - name: Predict until 09:40 UTC (JST 18:40)
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
           AHEAD_MIN: "8"
@@ -85,7 +87,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          end=$(date -u -d "$(date -u +%Y-%m-%d) 07:55" +%s)
+          end=$(date -u -d "$(date -u +%Y-%m-%d) 09:40" +%s)
           while [ "$(date -u +%s)" -lt "$end" ]; do
             python src/check_and_send.py || true
             if [ -f data/bet_log.csv ]; then git add data/bet_log.csv; fi
@@ -99,18 +101,4 @@ jobs:
             fi
             sleep 780
           done
-          settle_at=$(date -u -d "$(date -u +%Y-%m-%d) 08:47" +%s)
-          now=$(date -u +%s)
-          if [ "$now" -lt "$settle_at" ]; then sleep $((settle_at - now)); fi
-          python src/daily_settlement.py --discord || true
-          if [ -f data/settle_log.csv ]; then
-            git add data/settle_log.csv
-            if ! git diff --cached --quiet; then
-              git commit -m "log: daily settlement (day runner)"
-              for t in 1 2 3; do
-                git pull --rebase origin main && git push origin main && break
-                sleep 10
-              done
-            fi
-          fi
           echo "day runner finished"
