@@ -1,0 +1,55 @@
+name: Keiba Day Runner Watchdog
+
+# レース時間帯(JST 9〜18時)に約20分おきに起動し、
+# 「day_runner が今ちゃんと動いているか」を確認する見張り番。
+# 動いていなければ自動で day_runner を再起動する = 自己修復。
+# GitHub/クラウドの"起動時刻の遅延"に対する保険で、1回の起動に依存しない。
+# 各実行は数十秒で終わる軽量ジョブ。
+
+on:
+  schedule:
+    # JST 9:01〜17:41 を約20分おき（UTC 0:01〜8:41、土日月）
+    - cron: "1,21,41 0-8 * * 6,0,1"
+  workflow_dispatch:
+
+permissions:
+  actions: write   # day_runner を dispatch するため
+  contents: read
+
+concurrency:
+  group: keiba-watchdog
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Ensure day_runner is running (self-heal)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          # in_progress または queued の day_runner 実行があるか数える
+          active=$(gh api "/repos/${{ github.repository }}/actions/workflows/day_runner.yml/runs?per_page=15" \
+            --jq '[.workflow_runs[] | select(.status=="in_progress" or .status=="queued")] | length' 2>/dev/null || echo "err")
+
+          if [ "$active" = "err" ]; then
+            echo "run一覧の取得に失敗。安全側でスキップ。"; exit 0
+          fi
+          echo "現在アクティブな day_runner: $active 本"
+
+          if [ "${active:-0}" -gt 0 ]; then
+            echo "day_runner は稼働中。何もしない。"; exit 0
+          fi
+
+          # 動いていない → 再起動（自己修復）
+          echo "day_runner が動いていない → 再起動します"
+          gh workflow run day_runner.yml -R "${{ github.repository }}" --ref main
+
+          # 再起動したことを Discord に一報（正常日は発火しないので通知は出ない）
+          if [ -n "$DISCORD_WEBHOOK_URL" ]; then
+            now=$(TZ=Asia/Tokyo date '+%H:%M')
+            printf '{"content":"🔧 競馬BOTの起動が確認できなかったため、%s に自動で再起動しました（自己修復）。この後の予想は通常どおり届きます。"}' "$now" > /tmp/wd.json
+            curl -s -o /dev/null -H "Content-Type: application/json" -X POST -d @/tmp/wd.json "$DISCORD_WEBHOOK_URL" || true
+          fi
