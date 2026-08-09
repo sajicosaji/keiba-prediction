@@ -30,6 +30,28 @@ jobs:
     timeout-minutes: 330
     steps:
       - uses: actions/checkout@v4
+      - name: Notify monitoring start (once/day)
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          today=$(TZ=Asia/Tokyo date +%Y-%m-%d)
+          mark=data/heartbeat_log.csv
+          if [ -f "$mark" ] && grep -q "^$today" "$mark"; then
+            echo "heartbeat already sent for $today"; exit 0
+          fi
+          if [ -n "$DISCORD_WEBHOOK_URL" ]; then
+            curl -s -o /dev/null -H "Content-Type: application/json" -X POST \
+              -d "{\"content\": \"🏇 競馬BOT 本日の監視を開始しました（$today）\\n買い目が出たレースだけ、この後お知らせします。\"}" \
+              "$DISCORD_WEBHOOK_URL" || true
+          fi
+          echo "$today,$(TZ=Asia/Tokyo date +%H:%M)" >> "$mark"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add "$mark"
+          if ! git diff --cached --quiet; then
+            git commit -m "log: monitoring start heartbeat ($today)"
+            for t in 1 2 3; do git pull --rebase origin main && git push origin main && break; sleep 5; done
+          fi
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
