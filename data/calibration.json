@@ -1,6 +1,6 @@
 {
   "T": 1.1,
-  "fitted_on": "2026-08-01",
+  "fitted_on": "2026-09-01",
   "holdout_days": 180,
-  "holdout_races": 1770
+  "holdout_races": 1776
 }
