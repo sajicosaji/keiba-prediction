@@ -730,16 +730,18 @@ def main():
 
     X = df[FEATURE_COLS].fillna(df[FEATURE_COLS].median()).values
 
+    # 2026-09 3年バックテスト(2023/24/25)で、正則化を強めた設定が現行より
+    # ◎勝率・ベタ買いROIとも一貫して上回ると検証済み（過学習の抑制）。
     ranker_params = dict(
         objective='lambdarank',
         metric='ndcg',
-        n_estimators=1000,
-        learning_rate=0.05,
-        max_depth=6,
-        num_leaves=63,
-        min_child_samples=20,
-        subsample=0.8,
-        colsample_bytree=0.8,
+        n_estimators=1500,
+        learning_rate=0.03,
+        max_depth=5,
+        num_leaves=31,
+        min_child_samples=40,
+        subsample=0.7,
+        colsample_bytree=0.7,
         random_state=42,
         n_jobs=-1,
         verbose=-1,
