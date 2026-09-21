@@ -1,0 +1,39 @@
+name: Keiba G1 Preview
+
+# G1レースの詳細予想を当日昼までにDiscordへ配信する。
+# race_id を指定して手動/外部から起動(workflow_dispatch)。
+# 血統ONでpredict.pyを回し、印・期待値・展開の要点を投稿する。
+
+on:
+  workflow_dispatch:
+    inputs:
+      race_id:
+        description: "G1のrace_id (例: 202606040911)"
+        required: true
+
+concurrency:
+  group: keiba-g1preview
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+          cache-dependency-path: src/requirements.txt
+      - name: Install dependencies
+        run: pip install -r src/requirements.txt
+      - name: Predict G1 and post to Discord
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          PYTHONIOENCODING: "utf-8"
+        run: python src/g1_post.py --race-id "${{ github.event.inputs.race_id }}"
