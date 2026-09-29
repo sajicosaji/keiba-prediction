@@ -242,6 +242,39 @@ def compute_ev(df, race_id):
     return df, recs, odds_map
 
 
+def log_all_predictions(df, race_id):
+    """
+    【検証データ蓄積・記録のみ】全馬の予想確率とその時点のオッズを
+    data/pred_log/YYYY-MM.csv に追記する。買い判定には一切関与しない。
+    リアルタイム記録なので先読みバイアスが無い＝将来の改善案を公正に判定する素材。
+    失敗しても予測・送信を止めないよう例外は握りつぶす。
+    """
+    try:
+        import csv
+        from datetime import datetime
+        from zoneinfo import ZoneInfo
+        now = datetime.now(ZoneInfo('Asia/Tokyo'))
+        d = DATA_DIR / 'pred_log'
+        d.mkdir(exist_ok=True)
+        path = d / f'{now.strftime("%Y-%m")}.csv'
+        new_file = not path.exists()
+        with open(path, 'a', newline='', encoding='utf-8') as f:
+            w = csv.writer(f)
+            if new_file:
+                w.writerow(['logged_at', 'race_id', 'horse_num', 'horse_name',
+                            'model_rank', 'p_win', 'p_bet', 'live_odds', 'ev'])
+            ts = now.strftime('%Y-%m-%d %H:%M')
+            for _, r in df.iterrows():
+                def fmt(v, nd):
+                    return '' if pd.isna(v) else f'{v:.{nd}f}'
+                w.writerow([ts, race_id, r.get('horse_num', ''), r.get('horse_name', ''),
+                            r.get('final_rank', ''), fmt(r.get('p_win'), 4),
+                            fmt(r.get('p_bet'), 4), fmt(r.get('live_odds'), 1),
+                            fmt(r.get('ev'), 3)])
+    except Exception as e:
+        print(f'  (pred_log記録スキップ: {e})')
+
+
 def kelly_pct(p, odds):
     """1/4ケリーの推奨賭け金（資金比%）。上限 KELLY_CAP"""
     if pd.isna(p) or pd.isna(odds) or odds <= 1.0:
@@ -866,6 +899,8 @@ def main():
     # ---- 勝率較正・期待値（EV）計算 ----
     print('現在オッズを取得してEVを計算中...')
     df, ev_recs, live_odds_map = compute_ev(df, args.race_id)
+    if args.discord:  # 本番(自動監視)実行時のみ記録。手元の試し打ちは記録しない
+        log_all_predictions(df, args.race_id)
     umaren_recs = compute_umaren(df, args.race_id) if live_odds_map else []
 
     # 調教データ取得（予測時のみ、結果モードではスキップ）
