@@ -137,6 +137,8 @@ jobs:
 
       - name: Update race data
         env:
+          # 取り込みが止まって races.csv が古いままの時だけ警告をDiscordへ送る（update_data.py）
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
           PYTHONIOENCODING: "utf-8"
         run: python src/update_data.py
 

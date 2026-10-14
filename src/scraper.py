@@ -20,31 +20,46 @@ def _get(url, params=None, encoding='EUC-JP'):
 JRA_VENUES = {'01','02','03','04','05','06','07','08','09','10'}
 
 def get_race_ids(year, delay=1.5, jra_only=True, start_mon=1, end_mon=12):
-    """指定年・月範囲のレースIDを取得（デフォルトはJRAのみ）"""
+    """指定年・月範囲のレースIDを取得（デフォルトはJRAのみ）
+
+    開催カレンダー(月ごと) → 開催日ごとのレース一覧 の順にたどって集める。
+    ※以前は db.netkeiba.com のレース検索(pid=race_list)を使っていたが、
+      2026-09頃から検索が「URL: ...」の赤字1行しか返さなくなり、
+      週次更新が毎回0件（races.csv が 8/30 で停止）になっていたため切り替えた。
+    """
+    from datetime import datetime, timedelta, timezone
+    # 結果が出そろった日まで（JST20時を過ぎたら当日分も含める）。
+    # 未確定レースを取り込むと着順が空のまま「取得済み」扱いになるため除外する。
+    cutoff = (datetime.now(timezone(timedelta(hours=9))) - timedelta(hours=20)).strftime('%Y%m%d')
     ids = set()
-    page = 1
-    while True:
-        params = dict(pid='race_list', start_year=year, start_mon=start_mon,
-                      end_year=year, end_mon=end_mon, action='OK', page=page)
+    for mon in range(start_mon, end_mon + 1):
+        prefix = f'{year}{mon:02d}'
+        if prefix > cutoff[:6]:
+            break
         try:
-            res = _get(BASE_DB + '/', params=params)
+            res = _get(f'{BASE_RACE}/top/calendar.html',
+                       params=dict(year=year, month=mon), encoding='UTF-8')
         except Exception as e:
-            print(f'  ID収集エラー(p{page}): {e}')
+            print(f'  カレンダー取得エラー({prefix}): {e}')
             time.sleep(delay * 3)
-            break
-        found = set(re.findall(r'/race/(\d{12})/', res.text))
-        if not found:
-            break
-        if jra_only:
-            found = {r for r in found if r[4:6] in JRA_VENUES}
-        ids |= found
-        soup = BeautifulSoup(res.text, 'lxml')
-        has_next = any(a.get_text(strip=True) == '次'
-                       for a in soup.find_all('a', href=True))
-        if not has_next:
-            break
-        page += 1
+            continue
+        days = sorted({d for d in re.findall(r'kaisai_date=(\d{8})', res.text)
+                       if d.startswith(prefix) and d <= cutoff})
+        print(f'  {year}/{mon:02d}: 開催日 {len(days)}日 {days}')
         time.sleep(delay)
+        for d in days:
+            try:
+                res = _get(f'{BASE_RACE}/top/race_list_sub.html',
+                           params=dict(kaisai_date=d), encoding='UTF-8')
+            except Exception as e:
+                print(f'  レース一覧取得エラー({d}): {e}')
+                time.sleep(delay * 3)
+                continue
+            found = set(re.findall(r'race_id=(\d{12})', res.text))
+            if jra_only:
+                found = {r for r in found if r[4:6] in JRA_VENUES}
+            ids |= found
+            time.sleep(delay)
     return sorted(ids)
 
 

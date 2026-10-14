@@ -38,6 +38,9 @@ JRA_VENUES = {'01','02','03','04','05','06','07','08','09','10'}
 # 注: 実運用の発走前オッズは確定オッズより高めで、EVが水増しされる傾向。
 # バックテスト(確定オッズ)ではEVを上げるほど回収率が下がる(EV1.8=125%,2.5=92%)ため
 # 高EV=良ではない。頻度を抑えるためEV2.2(回収121%維持)+発走30分前オッズで運用する。
+# 2026-10 点検: 市場を超える根拠は確認できず、買い目に選ばれた馬ではモデル勝率が
+# 実際より大きく出やすい(実運用の的中は見込みの半分以下)。判定・bet_log は紙上の記録として
+# そのまま残し、通知は「記録用(検証中・購入非推奨)」表示＋市場の勝率(オッズから計算)を併記する。
 EV_MAIN_TH    = 2.2   # ◎: EV>=2.2 & オッズ<=50倍 → 修復後回収率 121% (1日約3.2R)
 EV_MAIN_CAP   = 50.0
 EV_LONG_TH    = 2.8   # ◎以外: EV>=2.8 & オッズ<=30倍・1レース1点 → 修復後回収率 99% (1日約0.9R)
@@ -66,6 +69,9 @@ def stake_yen(kind, ev):
 # 選ばれたレース内では複数の相手（最大4点）に流す。点数間は合成オッズ
 # （1/オッズ比例配分でどの点が当たっても揃う最低回収率）が5倍を下回らない範囲でのみ増やす。
 # ワイド・三連系は同検証で回収率100%未満だったため不採用。
+# 2026-10 停止: 根拠が2日分の検証だけの試験運用で、実運用48点の回収率も72%だったため。
+# 再開する時は True に戻すだけ（下の設定値・関数はそのまま残してある）。
+UMAREN_ENABLED    = False
 UMAREN_ODDS_CAP   = 60.0
 UMAREN_RACE_TH    = 3.0   # レース選定: 軸の最良相手EV>=これで「勝負レース」と判定（1日約6R相当）
 UMAREN_PT_TH      = 0.5   # 点数選定: このEV以上の相手を候補にする
@@ -210,6 +216,7 @@ def compute_ev(df, race_id):
 
     df['live_odds'] = np.nan
     df['p_bet'] = df['p_win']
+    df['p_mkt'] = np.nan  # 表示用の市場勝率（判定には使わない）
     df['ev'] = np.nan
     odds_map = fetch_live_odds(race_id)
     if odds_map:
@@ -221,6 +228,7 @@ def compute_ev(df, race_id):
         tot = inv.sum(skipna=True)
         if tot > 0:
             p_mkt = inv / tot
+            df['p_mkt'] = p_mkt
             blended = BLEND_ALPHA * df['p_win'] + (1 - BLEND_ALPHA) * p_mkt
             df['p_bet'] = blended.fillna(df['p_win'])
         df['ev'] = df['p_bet'] * df['live_odds']
@@ -660,7 +668,8 @@ def _build_discord_message(df, race_name, surface, distance, track, venue_name,
 
     has_bets = bool(ev_recs or umaren_recs)
     if has_bets:
-        title = f'🚨💰 **買い目あり！【{race_label}】** 💰🚨'
+        # 2026-10 点検後: 買い目は紙上の記録用（購入を勧める表示にしない）
+        title = f'📝 **記録用の買い目【{race_label}】**（検証中・購入非推奨）'
     elif has_odds:
         title = f'💤 【見送り】{race_label}'
     else:
@@ -713,7 +722,7 @@ def _build_discord_message(df, race_name, surface, distance, track, venue_name,
     if pace_info:
         lines.append(f'🔀 {pace_info}')
 
-    # 期待値ベースの買い推奨 → 目立つ緑の埋め込みボックスにする
+    # 期待値ベースの買い目 → 記録用（検証中・購入非推奨）と分かる灰色の埋め込みボックスにする
     embeds = []
     if has_odds:
         if has_bets:
@@ -722,9 +731,12 @@ def _build_discord_message(df, race_name, surface, distance, track, venue_name,
                 hn = str(row.get('horse_num', '')).strip()
                 hn_s = f'{int(hn)}番 ' if hn.isdigit() else ''
                 yen = stake_yen(kind, row['ev'])
-                desc.append(f'▶ **{kind}  {hn_s}{row["horse_name"]}**　**（{yen:,}円）**')
-                desc.append(f'　 {row["live_odds"]:.1f}倍 / 勝率{row["p_bet"]*100:.0f}% / '
-                            f'EV {row["ev"]:.2f}')
+                pm = row.get('p_mkt')
+                pm_s = f'{pm*100:.0f}%' if pd.notna(pm) else '---'
+                mev_s = f'{pm*row["live_odds"]:.2f}' if pd.notna(pm) else '---'
+                desc.append(f'▶ **{kind}  {hn_s}{row["horse_name"]}**　（記録上{yen:,}円）')
+                desc.append(f'　 {row["live_odds"]:.1f}倍 / 勝率 モデル{row["p_bet"]*100:.0f}%・'
+                            f'市場{pm_s} / EV {row["ev"]:.2f}（市場の勝率なら{mev_s}）')
             if umaren_recs:
                 ax = umaren_recs[0]
                 total_yen = sum(c.get('stake', 0) for c in umaren_recs)
@@ -734,10 +746,13 @@ def _build_discord_message(df, race_name, surface, distance, track, venue_name,
                 for c in umaren_recs:
                     desc.append(f'　 {c["nums"]}: {c["partner_name"]} '
                                 f'{c["odds"]:.1f}倍 / 的中率{c["p"]*100:.0f}% / EV {c["ev"]:.2f} / {c["stake"]}円')
+            desc.append('※記録用（検証中・購入非推奨）。市場=オッズから計算した勝率。'
+                        'モデル勝率は買い目に選ばれた馬では実際より大きく出やすい'
+                        '（実運用の的中は見込みの半分以下）。')
             embeds.append({
-                'title': f'💰 買い目　{race_label}',
+                'title': f'📝 記録用の買い目（検証中・購入非推奨）　{race_label}',
                 'description': '\n'.join(desc),
-                'color': 0x00C853,  # 緑
+                'color': 0x9E9E9E,  # 灰（購入を促す緑はやめた）
             })
         else:
             lines.append('💤 期待値条件を満たす馬なし → **見送り推奨**')
@@ -901,7 +916,8 @@ def main():
     df, ev_recs, live_odds_map = compute_ev(df, args.race_id)
     if args.discord:  # 本番(自動監視)実行時のみ記録。手元の試し打ちは記録しない
         log_all_predictions(df, args.race_id)
-    umaren_recs = compute_umaren(df, args.race_id) if live_odds_map else []
+    # 馬連は停止中（UMAREN_ENABLED）。pred_log の記録より後なので止めても記録には影響しない
+    umaren_recs = compute_umaren(df, args.race_id) if (UMAREN_ENABLED and live_odds_map) else []
 
     # 調教データ取得（予測時のみ、結果モードではスキップ）
     training_map = {}
@@ -985,19 +1001,24 @@ def main():
     if live_odds_map:
         for i, (_, row) in enumerate(df.head(5).iterrows()):
             pw, o, evv = row.get('p_bet'), row.get('live_odds'), row.get('ev')
+            pm = row.get('p_mkt')
             pw_s = f'{pw*100:4.1f}%' if pd.notna(pw) else ' ---'
+            pm_s = f'(市場{pm*100:4.1f}%)' if pd.notna(pm) else '(市場 ---)'
             o_s  = f'{o:6.1f}倍' if pd.notna(o) else '   ---'
             ev_s = f'EV={evv:.2f}' if pd.notna(evv) else 'EV=---'
-            print(f'  {MARKS[i]} {str(row["horse_name"]):<14} 勝率{pw_s}  {o_s}  {ev_s}')
+            print(f'  {MARKS[i]} {str(row["horse_name"]):<14} 勝率{pw_s}{pm_s}  {o_s}  {ev_s}')
         if ev_recs:
-            print(f'\n  💰 買い推奨（検証済み条件: ◎EV≥{EV_MAIN_TH}&{EV_MAIN_CAP:.0f}倍以下 / '
+            print(f'\n  📝 記録用の買い目（検証中・購入非推奨。条件: ◎EV≥{EV_MAIN_TH}&{EV_MAIN_CAP:.0f}倍以下 / '
                   f'穴EV≥{EV_LONG_TH}&{EV_LONG_CAP:.0f}倍以下・最大{EV_LONG_MAX}点）:')
             for kind, row in ev_recs:
                 yen = stake_yen(kind, row['ev'])
-                print(f'    ▶ {kind}  {row["horse_name"]}  （{yen:,}円）  '
-                      f'(勝率{row["p_bet"]*100:.1f}% × {row["live_odds"]:.1f}倍 = EV {row["ev"]:.2f})')
+                pm = row.get('p_mkt')
+                mkt_s = (f' / 市場の勝率{pm*100:.1f}%ならEV {pm*row["live_odds"]:.2f}'
+                         if pd.notna(pm) else '')
+                print(f'    ▶ {kind}  {row["horse_name"]}  （記録上{yen:,}円）  '
+                      f'(勝率{row["p_bet"]*100:.1f}% × {row["live_odds"]:.1f}倍 = EV {row["ev"]:.2f}{mkt_s})')
         else:
-            print('\n  買い推奨なし（期待値の閾値を満たす馬なし → 見送り推奨）')
+            print('\n  記録用の買い目なし（期待値の閾値を満たす馬なし → 見送り）')
         if umaren_recs:
             ax = umaren_recs[0]
             partners = '・'.join(str(c['partner_num']) for c in umaren_recs)
@@ -1007,6 +1028,8 @@ def main():
             for c in umaren_recs:
                 print(f'    ▶ {c["nums"]}  {c["names"]}  {c["stake"]}円 '
                       f'({c["p"]*100:.1f}% × {c["odds"]:.1f}倍 = EV {c["ev"]:.2f})')
+        print('  ※市場=オッズから計算した勝率。モデル勝率は買い目に選ばれた馬では'
+              '実際より大きく出やすい（実運用の的中は見込みの半分以下）。')
     else:
         print('  オッズ未取得のためEV計算をスキップ（勝率のみ参考）')
         for i, (_, row) in enumerate(df.head(5).iterrows()):

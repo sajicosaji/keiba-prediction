@@ -10,6 +10,7 @@ races.csv の最新日付を確認し、今日までの不足分を自動収集�
 """
 import argparse
 import csv
+import os
 import subprocess
 import sys
 from datetime import date, datetime
@@ -77,6 +78,38 @@ def write_log(message):
         f.write(f'[{ts}] {message}\n')
 
 
+STALE_DAYS = 8  # 最新開催日からこれ以上空いたら「週末分を取り込めていない」とみなす
+
+def warn_if_stale(added):
+    """races.csv が古いままなら update_log・Actions注釈・Discord に警告を出す。
+
+    2026-09〜10月、レース検索の仕様変更で5週連続「0行追加」になっていたのに
+    「最新の状態です」と表示され誰も気付けなかった反省から追加。
+    Discordは環境変数 DISCORD_WEBHOOK_URL がある時（Actionsの週次ジョブ）だけ送る。
+    """
+    latest = get_latest_collected_date()
+    if not latest:
+        return False
+    days = (date.today() - datetime.strptime(latest, '%Y%m%d').date()).days
+    if days < STALE_DAYS:
+        return False
+    msg = (f'【警告】races.csv の最新開催日が {latest[:4]}/{latest[4:6]}/{latest[6:8]} のまま'
+           f'{days}日経過（今回 {added}行追加）。週末の結果を取り込めていません。'
+           f'netkeiba側の変更で取得が壊れている可能性があります。')
+    print(f'\n{msg}')
+    if os.environ.get('GITHUB_ACTIONS'):
+        print(f'::warning::{msg}')  # Actionsの実行画面に黄色い注釈を出す
+    write_log(msg)
+    url = os.environ.get('DISCORD_WEBHOOK_URL', '').strip()
+    if url:
+        try:
+            import requests
+            requests.post(url, json={'content': f'**データ更新の警告**\n{msg}'}, timeout=10)
+        except Exception as e:
+            print(f'Discord送信エラー: {e}')
+    return True
+
+
 _SRC = Path(__file__).parent
 
 def rebuild_stats():
@@ -132,12 +165,13 @@ def main():
 
     print(f'\n収集完了: {added:,}行 追加 → 合計 {after:,}行')
     write_log(f'更新完了: {added}行追加, 合計{after}行, 対象年={years}')
+    stale = warn_if_stale(added)
 
     if added > 0 and not args.skip_stats:
         rebuild_stats()
         print('\n=== 更新完了 ===')
         print('次は 3_モデル訓練.bat でモデルを再訓練してください。')
-    elif added == 0:
+    elif added == 0 and not stale:
         print('\n新しいレースはありませんでした（最新の状態です）。')
 
     print('=' * 55)
