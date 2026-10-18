@@ -1,80 +1,8 @@
 {
- "generated_at": "2026-10-18 22:58",
+ "generated_at": "2026-10-19 01:36",
  "schedule": {
-  "checked_at": "2026-10-18 22:58",
+  "checked_at": "2026-10-19 01:36",
   "designated": [
-   {
-    "date": "2026-10-17",
-    "name": "コーフィールドカップ",
-    "en": "Caulfield Cup",
-    "course": "芝・左 2,400 メートル",
-    "country": "オーストラリア",
-    "track": "コーフィールド",
-    "sale": false
-   },
-   {
-    "date": "2026-10-17",
-    "name": "ジエベレスト",
-    "en": "The Everest",
-    "course": "芝・右 1,200 メートル",
-    "country": "オーストラリア",
-    "track": "ランドウィック",
-    "sale": false
-   },
-   {
-    "date": "2026-10-17",
-    "name": "豪キングチャールズ3世ステークス",
-    "en": "King Charles Ⅲ Stakes",
-    "course": "芝・右 1,600 メートル",
-    "country": "オーストラリア",
-    "track": "ランドウィック",
-    "sale": false
-   },
-   {
-    "date": "2026-10-17",
-    "name": "英チャンピオンズロングディスタンスカップ",
-    "en": "British Champions Long Distance Cup Stakes",
-    "course": "芝・右 3,190 メートル",
-    "country": "イギリス",
-    "track": "アスコット",
-    "sale": false
-   },
-   {
-    "date": "2026-10-17",
-    "name": "英チャンピオンズスプリントステークス",
-    "en": "British Champions Sprint Stakes",
-    "course": "芝・直線 1,200 メートル",
-    "country": "イギリス",
-    "track": "アスコット",
-    "sale": false
-   },
-   {
-    "date": "2026-10-17",
-    "name": "英チャンピオンズフィリーズ&メアズステークス",
-    "en": "British Champions Fillies & Mares Stakes",
-    "course": "芝・右 2,390 メートル",
-    "country": "イギリス",
-    "track": "アスコット",
-    "sale": false
-   },
-   {
-    "date": "2026-10-17",
-    "name": "クイーンエリザベス2世ステークス",
-    "en": "Queen Elizabeth Ⅱ Stakes",
-    "course": "芝・直線 1,600 メートル",
-    "country": "イギリス",
-    "track": "アスコット",
-    "sale": false
-   },
-   {
-    "date": "2026-10-17",
-    "name": "チャンピオンステークス",
-    "en": "Champion Stakes",
-    "course": "芝・右 1,990 メートル",
-    "country": "イギリス",
-    "track": "アスコット",
-    "sale": false
-   },
    {
     "date": "2026-10-24",
     "name": "コックスプレート",
