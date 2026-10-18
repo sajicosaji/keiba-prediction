@@ -1,0 +1,262 @@
+{
+ "generated_at": "2026-10-18 20:15",
+ "schedule": {
+  "checked_at": "2026-10-18 20:15",
+  "designated": [
+   {
+    "date": "2026-10-17",
+    "name": "コーフィールドカップ",
+    "en": "Caulfield Cup",
+    "course": "芝・左 2,400 メートル",
+    "country": "オーストラリア",
+    "track": "コーフィールド",
+    "sale": false
+   },
+   {
+    "date": "2026-10-17",
+    "name": "ジエベレスト",
+    "en": "The Everest",
+    "course": "芝・右 1,200 メートル",
+    "country": "オーストラリア",
+    "track": "ランドウィック",
+    "sale": false
+   },
+   {
+    "date": "2026-10-17",
+    "name": "豪キングチャールズ3世ステークス King Charles Ⅲ",
+    "en": "Stakes",
+    "course": "芝・右 1,600 メートル",
+    "country": "オーストラリア",
+    "track": "ランドウィック",
+    "sale": false
+   },
+   {
+    "date": "2026-10-17",
+    "name": "英チャンピオンズロングディスタンスカップ",
+    "en": "British Champions Long Distance Cup Stakes",
+    "course": "芝・右 3,190 メートル",
+    "country": "イギリス",
+    "track": "アスコット",
+    "sale": false
+   },
+   {
+    "date": "2026-10-17",
+    "name": "英チャンピオンズスプリントステークス",
+    "en": "British Champions Sprint Stakes",
+    "course": "芝・直線 1,200 メートル",
+    "country": "イギリス",
+    "track": "アスコット",
+    "sale": false
+   },
+   {
+    "date": "2026-10-17",
+    "name": "英チャンピオンズフィリーズ&メアズステークス",
+    "en": "British Champions Fillies & Mares Stakes",
+    "course": "芝・右 2,390 メートル",
+    "country": "イギリス",
+    "track": "アスコット",
+    "sale": false
+   },
+   {
+    "date": "2026-10-17",
+    "name": "クイーンエリザベス2世ステークス",
+    "en": "Queen Elizabeth Ⅱ Stakes",
+    "course": "芝・直線 1,600 メートル",
+    "country": "イギリス",
+    "track": "アスコット",
+    "sale": false
+   },
+   {
+    "date": "2026-10-17",
+    "name": "チャンピオンステークス",
+    "en": "Champion Stakes",
+    "course": "芝・右 1,990 メートル",
+    "country": "イギリス",
+    "track": "アスコット",
+    "sale": false
+   },
+   {
+    "date": "2026-10-24",
+    "name": "コックスプレート",
+    "en": "W. S. Cox Plate",
+    "course": "芝・左 2,040 メートル",
+    "country": "オーストラリア",
+    "track": "フレミントン",
+    "sale": false
+   },
+   {
+    "date": "2026-10-25",
+    "name": "ロワイヤルオーク賞",
+    "en": "Prix Royal-Oak",
+    "course": "芝・左 3,100 メートル",
+    "country": "フランス",
+    "track": "サンクルー",
+    "sale": false
+   },
+   {
+    "date": "2026-10-31",
+    "name": "ブリーダーズカップダートマイル",
+    "en": "Breeders' Cup Dirt Mile",
+    "course": "ダート・左 1,600 メートル",
+    "country": "アメリカ合衆国",
+    "track": "キーンランド",
+    "sale": false
+   },
+   {
+    "date": "2026-10-31",
+    "name": "ブリーダーズカップターフスプリント",
+    "en": "Breeders' Cup Turf Sprint",
+    "course": "芝・左 1,100 メートル",
+    "country": "アメリカ合衆国",
+    "track": "キーンランド",
+    "sale": false
+   },
+   {
+    "date": "2026-10-31",
+    "name": "ブリーダーズカップスプリント",
+    "en": "Breeders' Cup Sprint",
+    "course": "ダート・左 1,200 メートル",
+    "country": "アメリカ合衆国",
+    "track": "キーンランド",
+    "sale": false
+   },
+   {
+    "date": "2026-10-31",
+    "name": "ブリーダーズカップフィリー&メアターフ",
+    "en": "Breeders' Cup Filly & Mare Turf",
+    "course": "芝・左 1,900 メートル",
+    "country": "アメリカ合衆国",
+    "track": "キーンランド",
+    "sale": false
+   },
+   {
+    "date": "2026-10-31",
+    "name": "ブリーダーズカップフィリー&メアスプリント",
+    "en": "Breeders' Cup Filly & Mare Sprint",
+    "course": "ダート・左 1,400 メートル",
+    "country": "アメリカ合衆国",
+    "track": "キーンランド",
+    "sale": false
+   },
+   {
+    "date": "2026-10-31",
+    "name": "ブリーダーズカップマイル",
+    "en": "Breeders' Cup Mile",
+    "course": "芝・左 1,600 メートル",
+    "country": "アメリカ合衆国",
+    "track": "キーンランド",
+    "sale": false
+   },
+   {
+    "date": "2026-10-31",
+    "name": "ブリーダーズカップディスタフ",
+    "en": "Breeders' Cup Distaff",
+    "course": "ダート・左 1,800 メートル",
+    "country": "アメリカ合衆国",
+    "track": "キーンランド",
+    "sale": false
+   },
+   {
+    "date": "2026-10-31",
+    "name": "ブリーダーズカップターフ",
+    "en": "Breeders' Cup Turf",
+    "course": "芝・左 2,400 メートル",
+    "country": "アメリカ合衆国",
+    "track": "キーンランド",
+    "sale": false
+   },
+   {
+    "date": "2026-10-31",
+    "name": "ブリーダーズカップクラシック",
+    "en": "Breeders' Cup Classic",
+    "course": "ダート・左 2,000 メートル",
+    "country": "アメリカ合衆国",
+    "track": "キーンランド",
+    "sale": false
+   },
+   {
+    "date": "2026-11-03",
+    "name": "メルボルンカップ",
+    "en": "Melbourne Cup",
+    "course": "芝・左 3,200 メートル",
+    "country": "オーストラリア",
+    "track": "フレミントン",
+    "sale": false
+   },
+   {
+    "date": "2026-11-07",
+    "name": "チャンピオンズスプリント",
+    "en": "Champions Sprint",
+    "course": "芝・直線 1,200 メートル",
+    "country": "オーストラリア",
+    "track": "フレミントン",
+    "sale": false
+   },
+   {
+    "date": "2026-11-07",
+    "name": "豪チャンピオンズマイル",
+    "en": "Champions Mile",
+    "course": "芝・左 1,600 メートル",
+    "country": "オーストラリア",
+    "track": "フレミントン",
+    "sale": false
+   },
+   {
+    "date": "2026-11-07",
+    "name": "チャンピオンズステークス",
+    "en": "Champions Stakes",
+    "course": "芝・左 2,000 メートル",
+    "country": "オーストラリア",
+    "track": "フレミントン",
+    "sale": false
+   },
+   {
+    "date": "2026-12-13",
+    "name": "香港ヴァーズ",
+    "en": "Hong Kong Vase",
+    "course": "芝・右 2,400 メートル",
+    "country": "香港",
+    "track": "シャティン",
+    "sale": false
+   },
+   {
+    "date": "2026-12-13",
+    "name": "香港スプリント",
+    "en": "Hong Kong Sprint",
+    "course": "芝・右 1,200 メートル",
+    "country": "香港",
+    "track": "シャティン",
+    "sale": false
+   },
+   {
+    "date": "2026-12-13",
+    "name": "香港マイル",
+    "en": "Hong Kong Mile",
+    "course": "芝・右 1,600 メートル",
+    "country": "香港",
+    "track": "シャティン",
+    "sale": false
+   },
+   {
+    "date": "2026-12-13",
+    "name": "香港カップ",
+    "en": "Hong Kong Cup",
+    "course": "芝・右 2,000 メートル",
+    "country": "香港",
+    "track": "シャティン",
+    "sale": false
+   }
+  ],
+  "decided": []
+ },
+ "races": [],
+ "record": {
+  "bets": 0,
+  "stake": 0,
+  "payout": 0,
+  "hits": 0,
+  "roi": 0,
+  "list": []
+ },
+ "rule": "日本馬は買わない / 現地の勝率×JRA単勝=期待値1.2以上 / JRA20倍以下"
+}

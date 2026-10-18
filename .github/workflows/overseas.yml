@@ -1,0 +1,50 @@
+name: Keiba Overseas (JRA海外発売)
+
+# JRAが馬券を売る海外レースの見張り(src/overseas.py)。
+#   - 日程の更新・発売決定の知らせ・1週間前からの毎日のまとめ(18時以降)・答え合わせ
+#   - 発走30時間前からは途切れずに見張り、発走3時間前からは約8分おきにオッズを確認し、
+#     発走15分前ごろに「投票用 最終版」をDiscordへ。1回の実行は約5時間40分で、続きは自分で次を起動する。
+# 下の cron は予備(GitHubのcronは数時間遅れることがあるので、締切に合わせる役は自己起動の連鎖が担う)。
+on:
+  schedule:
+    - cron: "23 1,7,10,13,19 * * *"   # JST 10:23 / 16:23 / 19:23 / 22:23 / 4:23
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "watch=見張り(通常) / daily=日程とまとめだけ"
+        type: choice
+        options: [watch, daily]
+        default: watch
+
+concurrency:
+  group: keiba-overseas
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  actions: write   # 時間切れの時に次の見張りを起動するため
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+          cache-dependency-path: src/requirements.txt
+      - name: Install dependencies
+        run: pip install -r src/requirements.txt
+      - name: Watch JRA overseas sales
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          GH_TOKEN: ${{ github.token }}
+          PYTHONIOENCODING: "utf-8"
+        run: python src/overseas.py ${{ github.event.inputs.mode || 'watch' }}
+      - name: Save records
+        if: always()
+        run: |
+          bash tools/push_logs.sh "log: overseas" data/overseas

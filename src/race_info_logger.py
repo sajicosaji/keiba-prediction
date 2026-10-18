@@ -3,7 +3,7 @@
 day_runner のループ(約13分おき)から毎回呼ばれ、レースごとに次の3回だけ記録する:
   - morning : その日最初に見たとき(発走400分前以内) … 出馬表(騎手・斤量・天候・馬場)＋調教評価
   - weights : 発走70分前以降で、馬体重が発表されたら1回 … 馬体重(増減)
-  - final   : 発走15〜3分前 … 取消・除外、騎手の乗り替わり、馬場・天候の最終
+  - final   : 発走20〜2分前 … 取消・除外、騎手の乗り替わり、馬場・天候の最終
 出力: data/race_info/YYYY-MM.csv(出馬表) と data/race_info/oikiri_YYYY-MM.csv(調教評価)
 買い判定には一切関与しない。目的は「市場が十分に使っていない当日情報があるか」を、
 あとで事前登録した方法で検証するための材料集め(2026-10 点検の結論: 勝つには新しい情報が要る)。
@@ -27,7 +27,8 @@ JST = ZoneInfo('Asia/Tokyo')
 OUT_DIR = SRC.parent / 'data' / 'race_info'
 H = {'User-Agent': 'Mozilla/5.0'}
 JRA_VENUES = {'01', '02', '03', '04', '05', '06', '07', '08', '09', '10'}
-MORNING_MAX, WEIGHT_FROM, FINAL_FROM, FINAL_TO = 400, 70, 15, 3
+# 直前は発走20〜2分前(2026-10-18に15〜3分前から拡大。ループは約16分おきなので、12分幅だと1日5〜6レース取りこぼしていた)
+MORNING_MAX, WEIGHT_FROM, FINAL_FROM, FINAL_TO = 400, 70, 20, 2
 REQ_INTERVAL, MAX_REQ = 3.0, 24
 HEADER = ['logged_at', 'race_id', 'start_time', 'mins_to_post', 'phase', 'weather', 'track',
           'horse_num', 'horse_name', 'status', 'jockey', 'weight_carried', 'body_weight', 'weight_diff']

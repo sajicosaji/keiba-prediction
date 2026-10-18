@@ -93,11 +93,11 @@ jobs:
       - name: Install dependencies
         run: pip install -r src/requirements.txt
 
-      - name: JRA overseas sales and WIN5 watch (record only)
+      - name: WIN5 carryover watch (record only)
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
           PYTHONIOENCODING: "utf-8"
-        run: python src/jra_info_logger.py overseas win5 || true
+        run: python src/jra_info_logger.py win5 || true   # 海外発売は overseas.yml に移した
 
       - name: Settle today's bets
         env:
@@ -106,17 +106,11 @@ jobs:
         run: python src/daily_settlement.py --discord
 
       - name: Commit settle log
+        env:
+          PYTHONIOENCODING: "utf-8"
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/settle_log.csv data/jra_info 2>/dev/null || true
-          if git diff --cached --quiet; then
-            echo "No settle changes."
-            exit 0
-          fi
-          git commit -m "log: daily settlement"
-          git pull --rebase origin main
-          git push origin main
+          python src/site_data.py || true   # 答え合わせの結果をサイトにも
+          bash tools/push_logs.sh "log: daily settlement" data/settle_log.csv data/jra_info data/site
 
   weekly:
     if: >-

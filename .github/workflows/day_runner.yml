@@ -1,12 +1,12 @@
 name: Keiba Day Runner
 
-# 1日当番ジョブ。土日月の朝に自動起動し、レース終了までクラウド上で
-# 予測送信を続け、最後に当日精算まで実行して終了する。PCは一切不要。
-# GitHubの15分おきcron(keiba.yml)が昼にスキップされても、この当番が全日カバーする。
+# 1日当番ジョブ。土日月の朝に自動起動し、レース終了までクラウド上で予想・記録を続ける。PCは一切不要。
+# 起動はクラウドの外部トリガー(9:05/14:05 JST)が本命、下のcronと watchdog は予備。
 #
-# 時刻はUTC基準。JST 9:00-16:50のレース = UTC 0:00-7:50。
-#   morning:   起動〜UTC 04:00(JST 13:00) を13分おきに予測
-#   afternoon: UTC 04:00〜07:55(JST 16:55) を予測、UTC 08:47(JST 17:47)に精算
+# 時刻はUTC基準。
+#   morning:   起動〜UTC 05:00(JST 14:00) をループ
+#   afternoon: 〜UTC 09:40(JST 18:40) をループし、最後に日報。精算は keiba.yml(毎晩)。
+# 1周 = 記録係と予想を回す → サイト用データを作る → push → 13分休む(約16分おき)。
 
 on:
   workflow_dispatch:
@@ -16,10 +16,11 @@ on:
     - cron: "2,12,22,32,47 0 * * 6,0,1"
 
 concurrency:
-  # 当番ジョブ専用グループ。2回目の起動が1回目をキャンセルして最新に集約。
-  # 予測cron(keiba-bot)とは別グループなので互いに干渉しない。
+  # 動いている当番は止めない(2026-10-18 修正)。以前は true で、4時間遅れで届いたcronの起動が
+  # 朝から動いていた当番を13時台に止め、予想の取りこぼしと記録の書き込み衝突を起こしていた。
+  # false なら後から来た起動は待機し、当番が終わってから走ってすぐ終わる(時刻を過ぎているため)。
   group: keiba-dayrunner
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 permissions:
   contents: write
@@ -39,19 +40,16 @@ jobs:
           if [ -f "$mark" ] && grep -q "^$today" "$mark"; then
             echo "heartbeat already sent for $today"; exit 0
           fi
+          if [ "$(date -u +%H)" -ge 9 ]; then
+            echo "当番の時間外(遅れて届いた起動)。何もしない"; exit 0
+          fi
           if [ -n "$DISCORD_WEBHOOK_URL" ]; then
             curl -s -o /dev/null -H "Content-Type: application/json" -X POST \
-              -d "{\"content\": \"🏇 競馬BOT 本日の監視を開始しました（$today）\\n買い目が出たレースだけ、この後お知らせします。\"}" \
+              -d "{\"content\": \"🏇 競馬BOT 本日の監視を開始しました（$today）\\n予想は記録用(検証中)。G1の日は昼までにG1予想も届きます。\"}" \
               "$DISCORD_WEBHOOK_URL" || true
           fi
           echo "$today,$(TZ=Asia/Tokyo date +%H:%M)" >> "$mark"
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add "$mark"
-          if ! git diff --cached --quiet; then
-            git commit -m "log: monitoring start heartbeat ($today)"
-            for t in 1 2 3; do git pull --rebase origin main && git push origin main && break; sleep 5; done
-          fi
+          bash tools/push_logs.sh "log: monitoring start heartbeat ($today)" "$mark"
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -66,16 +64,15 @@ jobs:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
           PYTHONIOENCODING: "utf-8"
         run: |
+          if [ "$(date -u +%s)" -ge "$(date -u -d "$(date -u +%Y-%m-%d) 09:40" +%s)" ]; then
+            echo "当番の時間外(遅れて届いた起動)。何もしない"; exit 0
+          fi
           python src/update_data.py || true
           python src/data_guard.py || true   # 帳簿が最新か確認。古ければDiscordに警告
           python src/jra_info_logger.py baba win5 || true   # JRA公式の馬場(クッション値・含水率)とWIN5の記録(買い判定には無関係)
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/races.csv data/horse_stats.csv data/update_log.txt data/ledger_status.json data/jra_info 2>/dev/null || true
-          if ! git diff --cached --quiet; then
-            git commit -m "data: race results update (day runner morning)"
-            for t in 1 2 3; do git pull --rebase origin main && git push origin main && break; sleep 10; done
-          fi
+          python src/site_data.py || true   # サイト用データ(GitHubから直接読まれる)
+          bash tools/push_logs.sh "data: race results update (day runner morning)" \
+            data/races.csv data/horse_stats.csv data/update_log.txt data/ledger_status.json data/jra_info data/site
       - name: Predict loop until 05:00 UTC (JST 14:00)
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
@@ -83,24 +80,15 @@ jobs:
           AHEAD_MAX: "30"
           PYTHONIOENCODING: "utf-8"
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
           end=$(date -u -d "$(date -u +%Y-%m-%d) 05:00" +%s)
           while [ "$(date -u +%s)" -lt "$end" ]; do
             python src/odds_logger.py || true   # 検証用オッズ推移の記録(買い判定には無関係)
             python src/check_and_send.py || true
             python src/race_info_logger.py || true   # 当日情報(出馬表・調教評価・馬体重・直前)の記録(買い判定には無関係)
             python src/g1_auto.py || true   # G1の日は11時を過ぎたら詳細予想をDiscordとサイトへ(1回だけ)
-            if [ -f data/bet_log.csv ]; then git add data/bet_log.csv; fi
-            if [ -f data/sent_log.csv ]; then git add data/sent_log.csv; fi
-            git add data/odds_timeline data/pred_log data/race_info data/g1 2>/dev/null || true
-            if ! git diff --cached --quiet; then
-              git commit -m "log: predictions sent (day runner am)"
-              for t in 1 2 3; do
-                git pull --rebase origin main && git push origin main && break
-                sleep 10
-              done
-            fi
+            python src/site_data.py || true
+            bash tools/push_logs.sh "log: predictions sent (day runner am)" \
+              data/bet_log.csv data/sent_log.csv data/odds_timeline data/pred_log data/race_info data/g1 data/site
             sleep 780
           done
           echo "morning loop done"
@@ -120,7 +108,7 @@ jobs:
       - name: Install dependencies
         run: pip install -r src/requirements.txt
       # 予測は18:40 JST(09:40 UTC)まで＝夏の薄暮開催(最終18:30発走)に対応。
-      # 精算は keiba.yml の 19:00 JST cron に一本化したので、ここでは行わない。
+      # 精算は keiba.yml の毎晩の便に一本化したので、ここでは行わない。
       - name: Predict until 09:40 UTC (JST 18:40)
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
@@ -128,25 +116,18 @@ jobs:
           AHEAD_MAX: "30"
           PYTHONIOENCODING: "utf-8"
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
           end=$(date -u -d "$(date -u +%Y-%m-%d) 09:40" +%s)
-          python src/jra_info_logger.py baba || true   # 昼の馬場の測り直し分を記録
+          if [ "$(date -u +%s)" -lt "$end" ]; then
+            python src/jra_info_logger.py baba || true   # 昼の馬場の測り直し分を記録
+          fi
           while [ "$(date -u +%s)" -lt "$end" ]; do
             python src/odds_logger.py || true   # 検証用オッズ推移の記録(買い判定には無関係)
             python src/check_and_send.py || true
             python src/race_info_logger.py || true   # 当日情報(出馬表・調教評価・馬体重・直前)の記録(買い判定には無関係)
             python src/g1_auto.py || true   # G1の日は11時を過ぎたら詳細予想をDiscordとサイトへ(1回だけ)
-            if [ -f data/bet_log.csv ]; then git add data/bet_log.csv; fi
-            if [ -f data/sent_log.csv ]; then git add data/sent_log.csv; fi
-            git add data/odds_timeline data/pred_log data/race_info data/jra_info data/g1 2>/dev/null || true
-            if ! git diff --cached --quiet; then
-              git commit -m "log: predictions sent (day runner pm)"
-              for t in 1 2 3; do
-                git pull --rebase origin main && git push origin main && break
-                sleep 10
-              done
-            fi
+            python src/site_data.py || true
+            bash tools/push_logs.sh "log: predictions sent (day runner pm)" \
+              data/bet_log.csv data/sent_log.csv data/odds_timeline data/pred_log data/race_info data/jra_info data/g1 data/site
             sleep 780
           done
           echo "day runner finished"
@@ -156,12 +137,7 @@ jobs:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
           PYTHONIOENCODING: "utf-8"
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git pull --rebase origin main || true
+          git pull -q --rebase origin main || git rebase --abort 2>/dev/null || true
           python src/daily_report.py || true
-          git add data/daily_report_log.csv data/race_info 2>/dev/null || true
-          if ! git diff --cached --quiet; then
-            git commit -m "log: daily monitoring report"
-            for t in 1 2 3; do git pull --rebase origin main && git push origin main && break; sleep 10; done
-          fi
+          python src/site_data.py || true
+          bash tools/push_logs.sh "log: daily monitoring report" data/daily_report_log.csv data/race_info data/site
