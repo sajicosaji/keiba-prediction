@@ -90,9 +90,10 @@ jobs:
             python src/odds_logger.py || true   # 検証用オッズ推移の記録(買い判定には無関係)
             python src/check_and_send.py || true
             python src/race_info_logger.py || true   # 当日情報(出馬表・調教評価・馬体重・直前)の記録(買い判定には無関係)
+            python src/g1_auto.py || true   # G1の日は11時を過ぎたら詳細予想をDiscordとサイトへ(1回だけ)
             if [ -f data/bet_log.csv ]; then git add data/bet_log.csv; fi
             if [ -f data/sent_log.csv ]; then git add data/sent_log.csv; fi
-            git add data/odds_timeline data/pred_log data/race_info 2>/dev/null || true
+            git add data/odds_timeline data/pred_log data/race_info data/g1 2>/dev/null || true
             if ! git diff --cached --quiet; then
               git commit -m "log: predictions sent (day runner am)"
               for t in 1 2 3; do
@@ -135,9 +136,10 @@ jobs:
             python src/odds_logger.py || true   # 検証用オッズ推移の記録(買い判定には無関係)
             python src/check_and_send.py || true
             python src/race_info_logger.py || true   # 当日情報(出馬表・調教評価・馬体重・直前)の記録(買い判定には無関係)
+            python src/g1_auto.py || true   # G1の日は11時を過ぎたら詳細予想をDiscordとサイトへ(1回だけ)
             if [ -f data/bet_log.csv ]; then git add data/bet_log.csv; fi
             if [ -f data/sent_log.csv ]; then git add data/sent_log.csv; fi
-            git add data/odds_timeline data/pred_log data/race_info data/jra_info 2>/dev/null || true
+            git add data/odds_timeline data/pred_log data/race_info data/jra_info data/g1 2>/dev/null || true
             if ! git diff --cached --quiet; then
               git commit -m "log: predictions sent (day runner pm)"
               for t in 1 2 3; do

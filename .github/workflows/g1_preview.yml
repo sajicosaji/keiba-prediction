@@ -1,6 +1,7 @@
 name: Keiba G1 Preview
 
 # G1レースの詳細予想を当日昼までにDiscordへ配信する。
+# 普段は day_runner の監視ループが自動で出す(src/g1_auto.py)。これは予備の手動起動。
 # race_id を指定して手動/外部から起動(workflow_dispatch)。
 # 血統ONでpredict.pyを回し、印・期待値・展開の要点を投稿する。
 
@@ -16,7 +17,7 @@ concurrency:
   cancel-in-progress: false
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   preview:
@@ -32,8 +33,17 @@ jobs:
           cache-dependency-path: src/requirements.txt
       - name: Install dependencies
         run: pip install -r src/requirements.txt
-      - name: Predict G1 and post to Discord
+      - name: Predict G1, post to Discord and the site
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
           PYTHONIOENCODING: "utf-8"
-        run: python src/g1_post.py --race-id "${{ github.event.inputs.race_id }}"
+        run: python src/g1_auto.py --race-id "${{ github.event.inputs.race_id }}" --force
+      - name: Commit site data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/g1 2>/dev/null || true
+          if ! git diff --cached --quiet; then
+            git commit -m "log: G1 preview"
+            for t in 1 2 3; do git pull --rebase origin main && git push origin main && break; sleep 10; done
+          fi
