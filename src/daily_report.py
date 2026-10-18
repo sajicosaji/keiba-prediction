@@ -117,6 +117,18 @@ def message(day, s):
         lines.append('⚖ 馬体重の大きな増減: ' + '、'.join(f"{label(r)} {n}番{nm} {w}kg({d:+d})" for _, r, n, nm, w, d in s['big']))
     if s['grade_a']:
         lines.append(f"💪 調教A評価 {len(s['grade_a'])}頭: " + '、'.join(f"{label(r)} {n}番{nm}" for r, n, nm, _ in s['grade_a'][:6]))
+    try:
+        from jra_info_logger import baba_today, cushion_label, STATE
+        bb = baba_today(day)
+        if bb:
+            lines.append('🧪 JRA馬場(公式): ' + ' / '.join(
+                f"{v} クッション値{x['cushion']}({cushion_label(float(x['cushion']))})" * ('cushion' in x)
+                + (f" 芝含水率{x['moist']}%" if 'moist' in x else '') for v, x in bb.items()))
+        w5 = json.loads(STATE.read_text(encoding='utf-8')).get('win5_pending') if STATE.exists() else None
+        if w5:
+            lines.append(f"💰 WIN5キャリーオーバー発生中: {w5['amount']}(次回のWIN5に上乗せ)")
+    except Exception as e:
+        print(f'JRA情報の読み込み失敗: {e}')
     if ledger:
         lines.append(ledger)
     lines.append(f"📮 記録用の買い目 {s['bets']}点(検証中・購入非推奨)")

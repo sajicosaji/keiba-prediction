@@ -68,9 +68,10 @@ jobs:
         run: |
           python src/update_data.py || true
           python src/data_guard.py || true   # 帳簿が最新か確認。古ければDiscordに警告
+          python src/jra_info_logger.py baba win5 || true   # JRA公式の馬場(クッション値・含水率)とWIN5の記録(買い判定には無関係)
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/races.csv data/horse_stats.csv data/update_log.txt data/ledger_status.json 2>/dev/null || true
+          git add data/races.csv data/horse_stats.csv data/update_log.txt data/ledger_status.json data/jra_info 2>/dev/null || true
           if ! git diff --cached --quiet; then
             git commit -m "data: race results update (day runner morning)"
             for t in 1 2 3; do git pull --rebase origin main && git push origin main && break; sleep 10; done
@@ -129,13 +130,14 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           end=$(date -u -d "$(date -u +%Y-%m-%d) 09:40" +%s)
+          python src/jra_info_logger.py baba || true   # 昼の馬場の測り直し分を記録
           while [ "$(date -u +%s)" -lt "$end" ]; do
             python src/odds_logger.py || true   # 検証用オッズ推移の記録(買い判定には無関係)
             python src/check_and_send.py || true
             python src/race_info_logger.py || true   # 当日情報(出馬表・調教評価・馬体重・直前)の記録(買い判定には無関係)
             if [ -f data/bet_log.csv ]; then git add data/bet_log.csv; fi
             if [ -f data/sent_log.csv ]; then git add data/sent_log.csv; fi
-            git add data/odds_timeline data/pred_log data/race_info 2>/dev/null || true
+            git add data/odds_timeline data/pred_log data/race_info data/jra_info 2>/dev/null || true
             if ! git diff --cached --quiet; then
               git commit -m "log: predictions sent (day runner pm)"
               for t in 1 2 3; do

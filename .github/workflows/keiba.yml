@@ -93,6 +93,12 @@ jobs:
       - name: Install dependencies
         run: pip install -r src/requirements.txt
 
+      - name: JRA overseas sales and WIN5 watch (record only)
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          PYTHONIOENCODING: "utf-8"
+        run: python src/jra_info_logger.py overseas win5 || true
+
       - name: Settle today's bets
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
@@ -101,13 +107,9 @@ jobs:
 
       - name: Commit settle log
         run: |
-          if [ ! -f data/settle_log.csv ]; then
-            echo "No settle log."
-            exit 0
-          fi
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/settle_log.csv
+          git add data/settle_log.csv data/jra_info 2>/dev/null || true
           if git diff --cached --quiet; then
             echo "No settle changes."
             exit 0
