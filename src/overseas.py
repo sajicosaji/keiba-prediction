@@ -31,7 +31,6 @@ import math
 import os
 import re
 import subprocess
-import sys
 import time
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -138,9 +137,19 @@ def decided(now):
     return out
 
 
+def get_opt(path):
+    """無いページ(404など)は空文字で返す"""
+    try:
+        return get(path)
+    except requests.RequestException as e:
+        print(f'  {path} 読めず: {e}')
+        return ''
+
+
 def race_page(link, now):
-    """レースのページ(トップ・出馬表・海外参考オッズ)を読む"""
-    top = get(link)
+    """レースのページ(トップ・出馬表・海外参考オッズ)を読む。
+    レース後しばらくするとトップは「回顧」ページへ自動で切り替わるので、出馬表と参考オッズはトップに頼らず直接読む"""
+    top = get_opt(link)
     sale = post = None
     sm = re.search(r'発売開始時刻.*?日本時間\s*<strong>(.*?)</strong>.*?ネット馬券購入：\s*<strong>(.*?)</strong>', top, re.S)
     if sm:
@@ -149,16 +158,24 @@ def race_page(link, now):
     if pm:
         post = jst_time(text(pm.group(1)), now)
     r = {'link': link, 'sale_start': sale.strftime('%Y-%m-%d %H:%M') if sale else '',
-         'post': post.strftime('%Y-%m-%d %H:%M') if post else '', 'entries': [], 'ref': {}, 'ref_time': '', 'ref_source': '',
-         'jra_time': ''}
-    has = lambda name: re.search(rf'href="{name}"', top) is not None  # noqa: E731
-    if has('syutsuba.html'):
-        h = get(link + 'syutsuba.html')
+         'post': post.strftime('%Y-%m-%d %H:%M') if post else '', 'entries': [], 'scratched': [], 'ref': {}, 'ref_time': '',
+         'ref_source': '', 'jra_time': ''}
+    h = get_opt(link + 'syutsuba.html')
+    if h:
+        if not post:  # トップが回顧ページになった後は、出馬表の見出しから(日本時間の発走時刻)
+            dm = re.search(r'(\d{4})年(\d{1,2})月(\d{1,2})日', h)
+            tm = re.search(r'発走時刻：\s*(?:<[^>]+>\s*)*(\d{1,2})時(\d{2})分', h)
+            if dm and tm:
+                r['post'] = f'{dm.group(1)}-{int(dm.group(2)):02d}-{int(dm.group(3)):02d} {int(tm.group(1)):02d}:{tm.group(2)}'
         body = h[h.find('<tbody'):]
-        for tr in re.findall(r'<tr>(.*?)</tr>', body, re.S):
-            nm = re.search(r'<td class="num">\s*(\d+)\s*</td>', tr)
+        for tr in re.findall(r'<tr[^>]*>(.*?)</tr>', body, re.S):
+            nm = re.search(r'<td class="num[^"]*">\s*(\d+)', tr)   # 馬番の後ろにブリンカー等のマークが付くことがある
             nmn = re.search(r'<div class="txt">(.*?)</div>', tr, re.S)
-            if not nm or not nmn:
+            if not nmn:
+                continue
+            if not nm:  # 馬番の代わりに「取消」「除外」
+                if re.search(r'<td class="num[^"]*">', tr):
+                    r['scratched'].append(text(nmn.group(1)))
                 continue
             om = re.search(r'<span class="num">(.*?)</span>', tr, re.S)
             dv = re.search(r'<p class="trainer">.*?<span class="division">\((.*?)\)</span>', tr, re.S)
@@ -168,8 +185,8 @@ def race_page(link, now):
                                  'jpn': bool(dv and dv.group(1) == 'JPN')})
         um = re.search(r'(\d{1,2})時(\d{2})分\s*現在', text(h))
         r['jra_time'] = (now.strftime('%Y-%m-%d ') + f'{int(um.group(1)):02d}:{um.group(2)}') if um else now.strftime('%Y-%m-%d %H:%M')
-    if has('morning.html'):
-        h = get(link + 'morning.html')
+    h = get_opt(link + 'morning.html')
+    if h:
         blocks = re.split(r'<div class="update_area">', h)[1:]
         best = None
         for b in blocks:
@@ -178,13 +195,13 @@ def race_page(link, now):
             cm = re.search(r'<div class="caution[^"]*">(.*?)</div>', b, re.S)
             odds = {}
             body = b[b.find('<tbody'):b.find('</tbody>')]
-            for tr in re.findall(r'<tr>(.*?)</tr>', body, re.S):
+            for tr in re.findall(r'<tr[^>]*>(.*?)</tr>', body, re.S):
                 n = re.search(r'<th[^>]*>\s*(\d+)\s*</th>', tr)
                 hm = re.search(r'<td class="horse">(.*?)<span>(.*?)</span>', tr, re.S)
                 om = re.findall(r'<td>(.*?)</td>', tr, re.S)
                 if n and om:
                     o = num(text(om[-1]))
-                    if o and o > 1:
+                    if o and o >= 1:  # 香港の断然人気は1.0倍もある
                         odds[int(n.group(1))] = {'odds': o, 'en': text(hm.group(2)) if hm else ''}
             if odds and (best is None or (t and (best[0] is None or t > best[0]))):
                 best = (t, odds, text(cm.group(1)) if cm else '')
@@ -220,17 +237,103 @@ def tote(odds, a=TOTE_A):
     return {k: v / s for k, v in w.items()}
 
 
-def evaluate(r):
-    """各馬の現地勝率・期待値と買い目。日本馬は買わない"""
-    ref = {k: v['odds'] for k, v in r['ref'].items()}
+# ---------------------------------------------------------------- 現地の実オッズ(PMU)
+# JRAの「海外参考オッズ」は国によってはモーニングライン(現地の予想担当が事前に付けた想定オッズ)で、
+# 市場の値ではない。また香港・フランスでも発走の数時間前の値。検証は「現地の締切に近い実オッズ」で行ったので、
+# 締切前の実オッズを PMU(フランス公営)の公開データから取る。PMUは凱旋門賞などの仏レースのほか、
+# ブリーダーズカップ・香港国際競走など海外の大レースも売っている(香港は香港ジョッキークラブと同じ集計)。
+# 馬番は現地の番号=JRAの馬番。英語名でも照合して確かめる。
+PMU = 'https://online.turfinfo.api.pmu.fr/rest/client/1/programme'
+UTC, PARIS = ZoneInfo('UTC'), ZoneInfo('Europe/Paris')
+_pmu_prog = {}
+
+
+def get_json(url):
+    gap = time.time() - _last[0]
+    if gap < WAIT:
+        time.sleep(WAIT - gap)
+    r = requests.get(url, headers=UA, timeout=25)
+    _last[0] = time.time()
+    if r.status_code != 200:
+        return None
+    return r.json()
+
+
+def norm_en(s):
+    # JRAは「NYSOS（USA）」のように全角かっこで国名を付けることがある
+    return re.sub(r'[^A-Z0-9]', '', re.sub(r'[\(（].*?[\)）]', '', str(s).upper()))
+
+
+def pmu_lookup(r):
+    """JRAの発走時刻(±15分)と馬名で PMU のレースを探し、{馬番: {odds, en, out, pos}} を返す。見つからなければ {}"""
+    if not r.get('post'):
+        return {}
+    post = datetime.strptime(r['post'], '%Y-%m-%d %H:%M').replace(tzinfo=JST)
+    jra_en = {e['num']: norm_en(e.get('en') or r['ref'].get(e['num'], {}).get('en', '')) for e in r['entries']}
+    best = None
+    for d in sorted({post.astimezone(PARIS).date(), (post.astimezone(PARIS) - timedelta(days=1)).date()}):
+        key = d.strftime('%d%m%Y')
+        if key not in _pmu_prog:
+            try:
+                _pmu_prog[key] = get_json(f'{PMU}/{key}') or {}
+            except Exception as e:
+                print(f'PMU {key} 読めず: {e}')
+                _pmu_prog[key] = {}
+        for reu in (_pmu_prog[key].get('programme') or {}).get('reunions', []):
+            for c in reu.get('courses', []):
+                hd = c.get('heureDepart')
+                if not hd:
+                    continue
+                gap = abs(datetime.fromtimestamp(hd / 1000, UTC) - post).total_seconds() / 60
+                if gap > 15:
+                    continue
+                try:
+                    ps = (get_json(f"{PMU}/{key}/R{reu['numOfficiel']}/C{c['numOrdre']}/participants") or {}).get('participants', [])
+                except Exception as e:
+                    print(f'PMU 出走馬 読めず: {e}')
+                    continue
+                by_num = {p.get('numPmu'): p for p in ps}
+                same = sum(1 for n, en in jra_en.items() if en and n in by_num and norm_en(by_num[n].get('nom')) == en)
+                named = sum(1 for en in jra_en.values() if en)
+                # 英語名が分かる馬の7割以上が同じ番号で一致したら同じレース(英語名が無ければ頭数と時刻で判断)
+                ok = (same >= 0.7 * named) if named else (abs(len(ps) - len(r['entries']) - len(r.get('scratched', []))) <= 1)
+                if ok and (best is None or gap < best[0]):
+                    best = (gap, ps, f"R{reu['numOfficiel']}C{c['numOrdre']} {c.get('libelle', '')[:40]}")
+    if not best:
+        return {}
+    out = {}
+    for p in best[1]:
+        o = (p.get('dernierRapportDirect') or {}).get('rapport')
+        out[p.get('numPmu')] = {'odds': o, 'en': p.get('nom', ''), 'out': p.get('statut') == 'NON_PARTANT',
+                                'pos': p.get('ordreArrivee')}
+    r['pmu_race'] = best[2]
+    return out
+
+
+def evaluate(r, pmu=None):
+    """各馬の現地勝率・期待値と買い目。日本馬は買わない。
+    現地の勝率は ① PMUの締切前の実オッズ ② JRAの参考オッズ(市場の値の時だけ) の順。どちらも無ければ買い目なし"""
     live = {e['num'] for e in r['entries'] if e['jra_odds']}
-    ref = {k: v for k, v in ref.items() if not live or k in live}  # 取消は除く
-    is_tote = bool(re.search(r'PMU|HKJC|香港ジョッキークラブ|トート|パリミュチュエル|Tote|TAB', r.get('ref_source', '')))
+    pmu_odds = {k: v['odds'] for k, v in (pmu or {}).items() if v['odds'] and not v['out'] and (not live or k in live)}
+    ml = bool(re.search(r'モーニングライン|Morning ?Line', r.get('ref_source', ''), re.I))
+    if len(pmu_odds) >= 2:
+        ref, is_tote = pmu_odds, True
+        r['local'] = {'source': 'PMU(仏公営)の実オッズ ' + r.get('pmu_race', ''), 'time': datetime.now(JST).strftime('%Y-%m-%d %H:%M'), 'ok': True}
+    elif r['ref'] and not ml:
+        ref = {k: v['odds'] for k, v in r['ref'].items() if not live or k in live}
+        is_tote = bool(re.search(r'PMU|HKJC|香港ジョッキークラブ|トート|パリミュチュエル|Tote', r.get('ref_source', '')))
+        r['local'] = {'source': 'JRAの海外参考オッズ(' + re.sub(r'^下記は|から提供.*$', '', r.get('ref_source', ''))[:20] + ')',
+                      'time': r.get('ref_time', ''), 'ok': True}
+    else:
+        ref, is_tote = {}, False
+        r['local'] = {'source': 'モーニングライン(予想担当の想定オッズ)しか無い' if ml else '現地のオッズなし',
+                      'time': r.get('ref_time', ''), 'ok': False}
     p = (tote(ref) if is_tote else shin(ref)) if len(ref) >= 2 else {}
-    r['method'] = '公営(トート)a=1.03' if is_tote else 'Shin法'
+    r['method'] = ('公営(トート)a=1.03' if is_tote else 'Shin法') if p else '判定できず'
     for e in r['entries']:
-        e['en'] = r['ref'].get(e['num'], {}).get('en', '')
-        e['ref_odds'] = r['ref'].get(e['num'], {}).get('odds')
+        e['en'] = r['ref'].get(e['num'], {}).get('en', '') or (pmu or {}).get(e['num'], {}).get('en', '')
+        e['ref_odds'] = ref.get(e['num'])
+        e['jra_ref_odds'] = r['ref'].get(e['num'], {}).get('odds')
         e['p'] = round(p[e['num']], 4) if e['num'] in p else None
         e['ev'] = round(e['p'] * e['jra_odds'], 3) if (e['p'] and e['jra_odds']) else None
         e['pick'] = bool(e['ev'] and not e['jpn'] and e['jra_odds'] <= ODDS_MAX and e['ev'] >= EV_MIN)
@@ -296,13 +399,37 @@ def snapshot(d, now, state):
     """発売レース1つを読んで記録し、状態を返す"""
     r = race_page(d['link'], now)
     r.update({k: d[k] for k in ('date', 'race', 'country', 'track', 'distance', 'winner', 'slug')})
-    evaluate(r)
+    pmu = {}
+    if r['post']:
+        post = datetime.strptime(r['post'], '%Y-%m-%d %H:%M').replace(tzinfo=JST)
+        if post - timedelta(hours=36) <= now <= post + timedelta(days=3):  # PMUの出走表は前日ごろに出る
+            try:
+                pmu = pmu_lookup(r)
+            except Exception as e:
+                print(f"{d['slug']} PMU失敗: {e}")
+    evaluate(r, pmu)
     r['checked_at'] = now.strftime('%Y-%m-%d %H:%M')
     save(OUT / 'races' / f"{d['slug']}.json", r)
-    append(OUT / 'odds.csv', ['logged_at', 'slug', 'num', 'name', 'jpn', 'jra_odds', 'ref_odds', 'ref_time', 'p', 'ev', 'pick'],
+    append(OUT / 'odds.csv', ['logged_at', 'slug', 'num', 'name', 'jpn', 'jra_odds', 'local_odds', 'local_source',
+                              'jra_ref_odds', 'jra_ref_time', 'p', 'ev', 'pick'],
            [[r['checked_at'], d['slug'], e['num'], e['name'], int(e['jpn']), e['jra_odds'] or '', e['ref_odds'] or '',
-             r['ref_time'], e['p'] or '', e['ev'] or '', int(e['pick'])] for e in r['entries']])
+             r['local']['source'][:30], e['jra_ref_odds'] or '', r['ref_time'], e['p'] or '', e['ev'] or '', int(e['pick'])]
+            for e in r['entries']])
     return r
+
+
+def thresholds(r, limit=6):
+    """日本馬以外で、現地の勝率から「JRAの単勝がこの倍率以上なら買い」の目安(20倍以下で届く馬だけ)。
+    締切直前のJRAオッズの動きに、買う本人がその場で合わせられるようにする"""
+    out = []
+    for e in sorted(r['entries'], key=lambda e: -(e['p'] or 0)):
+        if e['jpn'] or not e['p']:
+            continue
+        need = EV_MIN / e['p']
+        if need <= ODDS_MAX:
+            now = f"今{e['jra_odds']:.1f}倍" if e['jra_odds'] else 'JRAオッズ未取得'
+            out.append(f"{e['num']:>2}番 {e['name'][:10]}: JRAが {need:.1f}〜{ODDS_MAX:.0f}倍なら買い({now})")
+    return out[:limit]
 
 
 def stake_plan(r):
@@ -313,15 +440,22 @@ def stake_plan(r):
 def final_notice(r, now, dry):
     plan = stake_plan(r)
     lines = [f"🌏🎯 **海外発売 投票用 最終版**【{r['race']}】発走 {hm(r['post'])}(日本時間)",
-             f"JRAオッズ {hm(r['jra_time'])} / 現地参考オッズ {hm(r['ref_time'])}({r['ref_source'][:30]})"]
-    if plan:
+             f"JRAオッズ {hm(r['jra_time'])} / 現地のオッズ: {r['local']['source']} {hm(r['local']['time'])}"]
+    if not r['local']['ok']:
+        lines.append(f"**判定できません → 見送り**({r['local']['source']}。現地の実際のオッズと比べられないため)")
+    elif plan:
         lines.append('```')
         for e, s in plan:
             lines.append(f"単勝 {e['num']:>2}番 {e['name']}  {s:,}円  (JRA{e['jra_odds']:.1f}倍・現地{e['ref_odds']:.1f}倍・期待値{e['ev']:.2f})")
         lines.append(f"合計 {sum(s for _, s in plan):,}円")
         lines.append('```')
+    elif not any(e['jra_odds'] for e in r['entries']):
+        lines.append('**JRAのオッズが読めませんでした** → 下の目安を見て、JRAの画面の倍率で判断してください')
     else:
         lines.append('**買い目なし**(日本馬以外で、現地より2割以上割安・20倍以下の単勝がありません)→ 見送り')
+    th = thresholds(r) if r['local']['ok'] else []
+    if th:
+        lines.append('買いの目安(締切直前にJRAの倍率がこの範囲に入った馬だけ買う):\n```\n' + '\n'.join(th) + '\n```')
     lines.append('```\n' + table(r) + '\n```')
     lines.append('ルール: 日本馬は買わない / 期待値(現地の勝率×JRA単勝)1.2以上 / JRA20倍以下。'
                  '過去の検証で有望(香港178%・他188%)だけど未確定なので少額で。締切直前にオッズが動くので、買う前にJRAの倍率が20倍以下かだけ確認を。')
@@ -426,14 +560,18 @@ def daily(now, state, dry):
             print(f"{d['slug']} 取得失敗: {e}")
             continue
         races.append(r)
-    if races and now.hour >= 18 and state.get('digest_on') != today:
+    ahead = [r for r in races if (r.get('post') or r['date'] + ' 23:59') > now.strftime('%Y-%m-%d %H:%M')]  # まだ走っていないレースだけ
+    if ahead and now.hour >= 18 and state.get('digest_on') != today:
         lines = ['🌏 **海外発売 毎日のまとめ**(日本馬🇯🇵は買わない / ✅=いま買い条件)']
-        for r in races:
+        for r in ahead:
             jp = [e['name'] for e in r['entries'] if e['jpn']]
             lines.append(f"\n**{r['race']}** 発走 {hm(r['post'])} / JRA発売開始 {hm(r['sale_start'])}")
             lines.append(f"出走{len(r['entries'])}頭・日本馬{len(jp)}頭({'、'.join(jp)[:60]})" if r['entries'] else '出馬表はまだ(枠順確定後に出ます)')
-            if r['ref']:
-                lines.append(f"現地参考オッズ {hm(r['ref_time'])}時点・JRAオッズ{'あり' if any(e['jra_odds'] for e in r['entries']) else 'まだ(発売前)'}")
+            lines.append(f"現地のオッズ: {r['local']['source']} {hm(r['local']['time'])} / JRAオッズ"
+                         f"{'あり' if any(e['jra_odds'] for e in r['entries']) else 'まだ(発売前)'}")
+            if not r['local']['ok']:
+                lines.append('→ 当日、締切前の現地の実オッズ(PMU)が取れたら判定します')
+            if r['entries']:
                 lines.append('```\n' + table(r) + '\n```')
             if r['picks']:
                 lines.append(f"いまの買い条件: {'、'.join(str(n) + '番' for n in r['picks'])}(最終判断は当日の締切15分前)")
@@ -488,8 +626,13 @@ def watch(now, state, dry, budget_min=340):
                 sent['final'] = now.strftime('%H:%M')
                 sent['final_picks'] = r['picks']
             elif sent.get('final') and r['picks'] != sent.get('final_picks') and mins > 3 and not sent.get('changed'):
-                discord(f"⚠ **{r['race']} 最終版のあとで買い目が変わりました**(締切直前のオッズ変動)\n"
-                        f"今の条件に合う馬: {'、'.join(str(n) + '番' for n in r['picks']) or 'なし'}\n```\n{table(r)}\n```", dry)
+                was = set(sent.get('final_picks') or [])
+                drop = [n for n in was if n not in r['picks']]
+                add = [n for n in r['picks'] if n not in was]
+                discord(f"⚠ **{r['race']} 最終版のあとで買い目が変わりました**(締切直前のオッズ変動・あと{mins:.0f}分)\n"
+                        + (f"条件から外れた馬: {'、'.join(str(n) + '番' for n in drop)}(まだ買っていなければ買わなくてOK)\n" if drop else '')
+                        + (f"新しく条件に入った馬: {'、'.join(str(n) + '番' for n in add)}\n" if add else '')
+                        + f"```\n{table(r)}\n```", dry)
                 sent['changed'] = now.strftime('%H:%M')
             elif not sent.get('final') and r['picks'] != sent.get('picks') and any(e['jra_odds'] for e in r['entries']):
                 discord(f"🌏 **{r['race']}** 途中経過 {now.strftime('%H:%M')}(発走 {hm(r['post'])}・あと{mins:.0f}分)\n"
@@ -523,8 +666,9 @@ def main():
     OUT.mkdir(parents=True, exist_ok=True)
     state = load(OUT / 'state.json', {})
     if a.mode == 'show':
-        r = evaluate(race_page(a.link, now))
+        r = race_page(a.link, now)
         r.update({'race': a.link, 'slug': 'test', 'date': ''})
+        evaluate(r, pmu_lookup(r))
         print(json.dumps({k: v for k, v in r.items() if k not in ('entries', 'ref')}, ensure_ascii=False))
         print(table(r, limit=30))
         return

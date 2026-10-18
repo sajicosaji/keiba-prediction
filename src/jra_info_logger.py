@@ -6,7 +6,7 @@ JRA公式の情報を記録する係(3つ)。どれも記録・お知らせの�
                       (海外発売は「日本馬が買われすぎ・それ以外の20倍以下の単勝が割安」の仮説を検証中。唯一の優位性の候補)
 JRAの robots.txt は全ページ許可。同じサイトへは3秒以上あけて、1回の実行で数ページだけ読む。
 初回(state.json が無い時)は今ある分を「既に知っている」として記録だけし、通知しない。
-使い方: python src/jra_info_logger.py [baba] [win5] [overseas] [--dry]   (省略時は3つとも)
+使い方: python src/jra_info_logger.py [baba] [win5] [overseas] [--dry]   (省略時は baba と win5。海外発売は src/overseas.py が担当)
 """
 import argparse
 import csv
@@ -241,7 +241,7 @@ def overseas(now, state, dry):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('parts', nargs='*', default=['baba', 'win5', 'overseas'])
+    ap.add_argument('parts', nargs='*', default=['baba', 'win5'])
     ap.add_argument('--dry', action='store_true')
     a = ap.parse_args()
     OUT.mkdir(parents=True, exist_ok=True)

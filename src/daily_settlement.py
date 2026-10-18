@@ -339,7 +339,7 @@ def main():
             roi = ret / inv * 100
             emoji = '🎉' if roi >= 100 else '📉'
             summary = f'{emoji} 投資 {inv:,}円 / 回収 {ret:,}円 / **回収率 {roi:.0f}%**'
-        msg_lines = [f'🏁 **{label} の買い目結果**（推奨金額ベース）'] + lines
+        msg_lines = [f'🏁 **{label} の記録用の買い目の答え合わせ**（記録上の金額・購入非推奨）'] + lines
         if summary:
             msg_lines.append('―――――――――――')
             msg_lines.append(summary)
