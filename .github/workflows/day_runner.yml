@@ -60,6 +60,21 @@ jobs:
           cache-dependency-path: src/requirements.txt
       - name: Install dependencies
         run: pip install -r src/requirements.txt
+      # 予想の前に、前日までのレース結果を必ず帳簿(races.csv)に取り込む(毎回最新で予想するため)
+      - name: Update race results before predicting
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          PYTHONIOENCODING: "utf-8"
+        run: |
+          python src/update_data.py || true
+          python src/data_guard.py || true   # 帳簿が最新か確認。古ければDiscordに警告
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/races.csv data/horse_stats.csv data/update_log.txt data/ledger_status.json 2>/dev/null || true
+          if ! git diff --cached --quiet; then
+            git commit -m "data: race results update (day runner morning)"
+            for t in 1 2 3; do git pull --rebase origin main && git push origin main && break; sleep 10; done
+          fi
       - name: Predict loop until 05:00 UTC (JST 14:00)
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}

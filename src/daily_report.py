@@ -97,6 +97,13 @@ def build(day, info_dir):
 def message(day, s):
     d = datetime.strptime(day, '%Y-%m-%d')
     head = f"📋 **競馬BOT 本日の監視レポート({d.month}/{d.day})** {'・'.join(s['venues'])} {s['races']}レース"
+    try:
+        st = json.loads((DATA / 'ledger_status.json').read_text(encoding='utf-8'))
+        ld = st.get('ledger_latest', '')
+        ledger = (f"{'⚠' if st.get('stale') else '✅'} 結果の帳簿: {int(ld[4:6])}/{int(ld[6:8])}まで"
+                  + (' (古いまま! 取り込みを確認)' if st.get('stale') else ' (最新)')) if len(ld) == 8 else ''
+    except Exception:
+        ledger = '⚠ 結果の帳簿の状態が分かりません'
     lines = [head,
              f"🔭 予想を記録 {s['preds']}頭 / オッズの記録 {s['snaps']}回 / 確定オッズ {s['finals']}レース",
              f"📝 出馬表(朝) {s['morning']}R / 調教評価 {s['oikiri']}R・{s['oikiri_horses']}頭 / 馬体重 {s['weights']}R / 直前チェック {s['final']}R"]
@@ -110,6 +117,8 @@ def message(day, s):
         lines.append('⚖ 馬体重の大きな増減: ' + '、'.join(f"{label(r)} {n}番{nm} {w}kg({d:+d})" for _, r, n, nm, w, d in s['big']))
     if s['grade_a']:
         lines.append(f"💪 調教A評価 {len(s['grade_a'])}頭: " + '、'.join(f"{label(r)} {n}番{nm}" for r, n, nm, _ in s['grade_a'][:6]))
+    if ledger:
+        lines.append(ledger)
     lines.append(f"📮 記録用の買い目 {s['bets']}点(検証中・購入非推奨)")
     lines.append('※集めた情報は記録のみ。買い目の判定には使っていません(あとで効くかを検証する材料)。')
     return '\n'.join(lines)

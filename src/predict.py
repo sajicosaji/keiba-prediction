@@ -395,7 +395,8 @@ def attach_horse_history(df, races_df, race_id, surface, distance, cur_race_name
     for i, row in df.iterrows():
         horse = str(row['horse_name'])
         h = hist[(hist['horse_name'] == horse) & hist['finishing_pos_num'].notna()]
-        h = h.sort_values('race_id', ascending=False)   # 直近→古い
+        # 直近→古い。race_id は日付順ではない(年の中は場コード順)ため、実際の開催日で並べる(2026-10-18修正)
+        h = h.sort_values(['race_date_dt', 'race_id'], ascending=False, na_position='last')
 
         if h.empty:
             continue
@@ -571,7 +572,8 @@ def _get_horse_running_style(horse_name, races_df):
     h = h[h['running_style'].notna() & (h['running_style'] != '')]
     if h.empty:
         return ''
-    h = h.sort_values('race_id', ascending=False)
+    h['_d'] = pd.to_datetime(h['race_date'].astype(str).str[:8], format='%Y%m%d', errors='coerce')
+    h = h.sort_values(['_d', 'race_id'], ascending=False, na_position='last')  # 実際の開催日で直近順
     styles = h['running_style'].head(5).tolist()
     if not styles:
         return ''
@@ -680,6 +682,14 @@ def _build_discord_message(df, race_name, surface, distance, track, venue_name,
         f'📍 {cond} | {len(df)}頭',
         '```',
     ]
+    # 結果の帳簿が古い時は、そのことを必ず書く(data_guard.py が朝に判定)
+    try:
+        _st = json.loads((DATA_DIR / 'ledger_status.json').read_text(encoding='utf-8'))
+        if _st.get('stale'):
+            _d = _st.get('ledger_latest', '')
+            lines.insert(2, f'⚠ 結果データが古いまま(最新 {int(_d[4:6])}/{int(_d[6:8])})。近走・前走は古い情報です' if len(_d) == 8 else '⚠ 結果データが古いままです')
+    except Exception:
+        pass
 
     for i, (_, row) in enumerate(df.iterrows()):
         if i >= len(MARKS):

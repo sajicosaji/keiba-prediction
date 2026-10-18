@@ -436,8 +436,11 @@ def build_history_df(horse_name, races_df):
     h['race_date_s'] = h['race_date'].astype(str).str.strip().str[:8]
     h['has_real_date'] = h['race_date_s'] != h['race_id_s'].str[:8]
 
-    # 年は race_id[:4] が確実なので、ソートキーとして race_id を使う
-    h = h.sort_values('race_id_s', ascending=False).reset_index(drop=True)
+    # 並べ替えは実際の開催日で(race_id は年の中が場コード順で、日付順ではない)。
+    # 実日付が無い古い行だけは、その年の初めとして扱う
+    ok = h['has_real_date'] & h['race_date_s'].str.fullmatch(r'\d{8}').fillna(False)
+    h['date_key'] = h['race_date_s'].where(ok, h['race_id_s'].str[:4] + '0000')
+    h = h.sort_values(['date_key', 'race_id_s'], ascending=False).reset_index(drop=True)
 
     h['pos']    = pd.to_numeric(h['finishing_pos'], errors='coerce')
     h['dist']   = pd.to_numeric(h['distance'], errors='coerce')
@@ -448,7 +451,7 @@ def build_history_df(horse_name, races_df):
 
     # 同一race_idの重複を除去
     h = h.drop_duplicates(subset=['race_id', 'horse_name'])
-    h = h.sort_values('race_id_s', ascending=False).reset_index(drop=True)
+    h = h.sort_values(['date_key', 'race_id_s'], ascending=False).reset_index(drop=True)
 
     # タイム指数: 勝ち馬中央値との比較で補正速度指数を計算
     par_times = _build_par_times(races_df)
