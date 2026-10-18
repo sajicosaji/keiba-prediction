@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-18 21:39",
+ "generated_at": "2026-10-18 22:51",
  "bot": {
   "monitor_days": 31,
   "last_heartbeat": "2026-10-18 09:06",
@@ -18,8 +18,8 @@
   "label": "10/18(日) 新潟・東京・京都"
  },
  "totals": {
-  "bets": 149,
-  "stake": 84000,
+  "bets": 151,
+  "stake": 85800,
   "payout": 83970,
   "hits": 6
  },
@@ -275,6 +275,15 @@
    "hits": 0,
    "cum_profit": -30,
    "cum_roi": 1.0
+  },
+  {
+   "date": "2026-10-18",
+   "stake": 1800,
+   "payout": 0,
+   "bets": 2,
+   "hits": 0,
+   "cum_profit": -1830,
+   "cum_roi": 0.979
   }
  ],
  "kinds": [
@@ -287,8 +296,8 @@
   },
   {
    "kind": "◎単勝",
-   "bets": 81,
-   "stake": 68700,
+   "bets": 83,
+   "stake": 70500,
    "payout": 71040,
    "hits": 4
   },
@@ -301,32 +310,6 @@
   }
  ],
  "recent": [
-  {
-   "date": "2026-09-26",
-   "race_id": "202609040804",
-   "race": "阪神4R",
-   "kind": "◎単勝",
-   "num": "11",
-   "name": "ロックウイズミー",
-   "pos": "11",
-   "odds": 94.1,
-   "stake": 800,
-   "payout": 0,
-   "source": "BOT精算"
-  },
-  {
-   "date": "2026-09-26",
-   "race_id": "202609040807",
-   "race": "阪神7R",
-   "kind": "◎単勝",
-   "num": "1",
-   "name": "ランスオブヒーロー",
-   "pos": "1",
-   "odds": 10.3,
-   "stake": 800,
-   "payout": 8240,
-   "source": "BOT精算"
-  },
   {
    "date": "2026-09-27",
    "race_id": "202606040906",
@@ -688,6 +671,32 @@
    "pos": "12",
    "odds": 74.1,
    "stake": 800,
+   "payout": 0,
+   "source": "BOT精算"
+  },
+  {
+   "date": "2026-10-18",
+   "race_id": "202604040203",
+   "race": "新潟3R",
+   "kind": "◎単勝",
+   "num": "13",
+   "name": "トーセンシントラ",
+   "pos": "10",
+   "odds": 50.5,
+   "stake": 800,
+   "payout": 0,
+   "source": "BOT精算"
+  },
+  {
+   "date": "2026-10-18",
+   "race_id": "202608040712",
+   "race": "京都12R",
+   "kind": "◎単勝",
+   "num": "9",
+   "name": "キタノソワレ",
+   "pos": "9",
+   "odds": 49.4,
+   "stake": 1000,
    "payout": 0,
    "source": "BOT精算"
   }
@@ -3019,6 +3028,81 @@
     {
      "m": -12,
      "odds": 32.3,
+     "phase": "final"
+    }
+   ]
+  },
+  {
+   "race_id": "202604040203",
+   "race": "新潟3R",
+   "num": "13",
+   "name": "トーセンシントラ",
+   "date": "2026-10-18",
+   "pos": "10",
+   "points": [
+    {
+     "m": 88,
+     "odds": 26.3,
+     "phase": "pre"
+    },
+    {
+     "m": 59,
+     "odds": 27.8,
+     "phase": "pre"
+    },
+    {
+     "m": 30,
+     "odds": 25.8,
+     "phase": "pre"
+    },
+    {
+     "m": -11,
+     "odds": 50.5,
+     "phase": "final"
+    }
+   ]
+  },
+  {
+   "race_id": "202608040712",
+   "race": "京都12R",
+   "num": "9",
+   "name": "キタノソワレ",
+   "date": "2026-10-18",
+   "pos": "9",
+   "points": [
+    {
+     "m": 141,
+     "odds": 24.8,
+     "phase": "pre"
+    },
+    {
+     "m": 114,
+     "odds": 24.3,
+     "phase": "pre"
+    },
+    {
+     "m": 87,
+     "odds": 24.2,
+     "phase": "pre"
+    },
+    {
+     "m": 60,
+     "odds": 23.2,
+     "phase": "pre"
+    },
+    {
+     "m": 34,
+     "odds": 24.4,
+     "phase": "pre"
+    },
+    {
+     "m": 7,
+     "odds": 36.8,
+     "phase": "pre"
+    },
+    {
+     "m": -19,
+     "odds": 49.4,
      "phase": "final"
     }
    ]
