@@ -1,8 +1,8 @@
 {
- "generated_at": "2026-10-18 22:51",
+ "generated_at": "2026-10-19 12:30",
  "bot": {
-  "monitor_days": 31,
-  "last_heartbeat": "2026-10-18 09:06",
+  "monitor_days": 32,
+  "last_heartbeat": "2026-10-19 12:26",
   "races_sent": 802,
   "last_sent": "2026-10-18 16:09",
   "schedule": [
@@ -14,8 +14,8 @@
   ]
  },
  "next_meeting": {
-  "date": "2026-10-18",
-  "label": "10/18(日) 新潟・東京・京都"
+  "date": "2026-10-24",
+  "label": "10/24(土) 新潟・東京・京都"
  },
  "totals": {
   "bets": 151,
