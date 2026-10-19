@@ -1,7 +1,7 @@
 {
- "generated_at": "2026-10-19 06:35",
+ "generated_at": "2026-10-19 15:19",
  "schedule": {
-  "checked_at": "2026-10-19 06:35",
+  "checked_at": "2026-10-19 15:19",
   "designated": [
    {
     "date": "2026-10-24",
@@ -28,7 +28,7 @@
     "course": "ダート・左 1,600 メートル",
     "country": "アメリカ合衆国",
     "track": "キーンランド",
-    "sale": false
+    "sale": true
    },
    {
     "date": "2026-10-31",
@@ -37,7 +37,7 @@
     "course": "芝・左 1,100 メートル",
     "country": "アメリカ合衆国",
     "track": "キーンランド",
-    "sale": false
+    "sale": true
    },
    {
     "date": "2026-10-31",
@@ -46,7 +46,7 @@
     "course": "ダート・左 1,200 メートル",
     "country": "アメリカ合衆国",
     "track": "キーンランド",
-    "sale": false
+    "sale": true
    },
    {
     "date": "2026-10-31",
@@ -55,7 +55,7 @@
     "course": "芝・左 1,900 メートル",
     "country": "アメリカ合衆国",
     "track": "キーンランド",
-    "sale": false
+    "sale": true
    },
    {
     "date": "2026-10-31",
@@ -64,7 +64,7 @@
     "course": "ダート・左 1,400 メートル",
     "country": "アメリカ合衆国",
     "track": "キーンランド",
-    "sale": false
+    "sale": true
    },
    {
     "date": "2026-10-31",
@@ -73,7 +73,7 @@
     "course": "芝・左 1,600 メートル",
     "country": "アメリカ合衆国",
     "track": "キーンランド",
-    "sale": false
+    "sale": true
    },
    {
     "date": "2026-10-31",
@@ -82,7 +82,7 @@
     "course": "ダート・左 1,800 メートル",
     "country": "アメリカ合衆国",
     "track": "キーンランド",
-    "sale": false
+    "sale": true
    },
    {
     "date": "2026-10-31",
@@ -91,7 +91,7 @@
     "course": "芝・左 2,400 メートル",
     "country": "アメリカ合衆国",
     "track": "キーンランド",
-    "sale": false
+    "sale": true
    },
    {
     "date": "2026-10-31",
@@ -100,7 +100,7 @@
     "course": "ダート・左 2,000 メートル",
     "country": "アメリカ合衆国",
     "track": "キーンランド",
-    "sale": false
+    "sale": true
    },
    {
     "date": "2026-11-03",
@@ -109,7 +109,7 @@
     "course": "芝・左 3,200 メートル",
     "country": "オーストラリア",
     "track": "フレミントン",
-    "sale": false
+    "sale": true
    },
    {
     "date": "2026-11-07",
@@ -175,7 +175,78 @@
     "sale": false
    }
   ],
-  "decided": []
+  "decided": [
+   {
+    "date": "2026-10-31",
+    "race": "ブリーダーズカップダートマイル（G1）",
+    "country": "アメリカ",
+    "track": "キーンランド",
+    "distance": "ダート1,600 メートル",
+    "winner": "",
+    "link": "/news/202610/101901.html/",
+    "slug": "news_202610_101901.html"
+   },
+   {
+    "date": "2026-10-31",
+    "race": "ブリーダーズカップターフスプリント（G1）",
+    "country": "アメリカ",
+    "track": "キーンランド",
+    "distance": "芝1,100 メートル",
+    "winner": "",
+    "link": "/news/202610/101901.html/",
+    "slug": "news_202610_101901.html"
+   },
+   {
+    "date": "2026-10-31",
+    "race": "ブリーダーズカップスプリント（G1）",
+    "country": "アメリカ",
+    "track": "キーンランド",
+    "distance": "ダート1,200 メートル",
+    "winner": "",
+    "link": "/news/202610/101901.html/",
+    "slug": "news_202610_101901.html"
+   },
+   {
+    "date": "2026-10-31",
+    "race": "ブリーダーズカップマイル（G1）",
+    "country": "アメリカ",
+    "track": "キーンランド",
+    "distance": "芝1,600 メートル",
+    "winner": "",
+    "link": "/news/202610/101901.html/",
+    "slug": "news_202610_101901.html"
+   },
+   {
+    "date": "2026-10-31",
+    "race": "ブリーダーズカップターフ（G1）",
+    "country": "アメリカ",
+    "track": "キーンランド",
+    "distance": "芝2,400 メートル",
+    "winner": "",
+    "link": "/news/202610/101901.html/",
+    "slug": "news_202610_101901.html"
+   },
+   {
+    "date": "2026-10-31",
+    "race": "ブリーダーズカップクラシック（G1）",
+    "country": "アメリカ",
+    "track": "キーンランド",
+    "distance": "ダート2,000 メートル",
+    "winner": "",
+    "link": "/news/202610/101901.html/",
+    "slug": "news_202610_101901.html"
+   },
+   {
+    "date": "2026-11-03",
+    "race": "メルボルンカップ（G1）",
+    "country": "オーストラリア",
+    "track": "フレミントン",
+    "distance": "芝3,200 メートル",
+    "winner": "",
+    "link": "/news/202610/101902.html/",
+    "slug": "news_202610_101902.html"
+   }
+  ]
  },
  "races": [],
  "record": {
