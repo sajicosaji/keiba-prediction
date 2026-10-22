@@ -1,7 +1,7 @@
 {
- "generated_at": "2026-10-22 22:02",
+ "generated_at": "2026-10-23 03:03",
  "schedule": {
-  "checked_at": "2026-10-22 22:02",
+  "checked_at": "2026-10-23 03:03",
   "designated": [
    {
     "date": "2026-10-24",
@@ -248,7 +248,34 @@
    }
   ]
  },
- "races": [],
+ "races": [
+  {
+   "link": "/news/202610/101901.html/",
+   "sale_start": "",
+   "post": "",
+   "entries": [],
+   "scratched": [],
+   "ref": {},
+   "ref_time": "",
+   "ref_source": "",
+   "jra_time": "",
+   "date": "2026-10-31",
+   "race": "ブリーダーズカップクラシック（G1）",
+   "country": "アメリカ",
+   "track": "キーンランド",
+   "distance": "ダート2,000 メートル",
+   "winner": "",
+   "slug": "news_202610_101901.html",
+   "local": {
+    "source": "現地のオッズなし",
+    "time": "",
+    "ok": false
+   },
+   "method": "判定できず",
+   "picks": [],
+   "checked_at": "2026-10-23 03:03"
+  }
+ ],
  "record": {
   "bets": 0,
   "stake": 0,
