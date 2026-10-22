@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-21 23:58",
+ "generated_at": "2026-10-22 23:58",
  "bot": {
   "monitor_days": 32,
   "last_heartbeat": "2026-10-19 12:26",
@@ -13,7 +13,10 @@
    "夜に答え合わせ・毎月再学習"
   ]
  },
- "next_meeting": null,
+ "next_meeting": {
+  "date": "2026-10-24",
+  "label": "10/24(土) 新潟・東京・京都"
+ },
  "totals": {
   "bets": 151,
   "stake": 85800,
