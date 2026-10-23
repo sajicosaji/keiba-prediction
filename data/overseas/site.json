@@ -1,7 +1,7 @@
 {
- "generated_at": "2026-10-23 15:05",
+ "generated_at": "2026-10-23 21:41",
  "schedule": {
-  "checked_at": "2026-10-23 15:05",
+  "checked_at": "2026-10-23 21:41",
   "designated": [
    {
     "date": "2026-10-24",
@@ -273,7 +273,7 @@
    },
    "method": "判定できず",
    "picks": [],
-   "checked_at": "2026-10-23 15:05"
+   "checked_at": "2026-10-23 21:41"
   }
  ],
  "record": {
