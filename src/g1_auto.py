@@ -74,7 +74,7 @@ def make(rid, now):
     entry = {'race_id': rid, 'made_at': now.strftime('%Y-%m-%d %H:%M'), 'header': header,
              'marks': a, 'caution': caution, 'ten': ten, 'rows': rows,
              'blocks': [{'title': '印と勝つ見込み(オッズが土台)', 'lines': a},
-                        {'title': '調べた材料(○よい / ×気になる / ・メモ)', 'lines': b},
+                        {'title': '調べた材料(✓よい / ✗気になる / ・メモ)', 'lines': b},
                         {'title': 'BOTの見方(参考・印には使っていない)', 'lines': c, 'cls': 'ev'},
                         {'title': '展開', 'lines': ten}]}
     return entry, g1_research.discord_text(header, rows, caution, ten, PAGE)

@@ -5,7 +5,7 @@ G1予想の「調べた材料」をまとめる(g1_auto.py から呼ぶ)。2026-
   - 土台は市場(オッズ)。国内の点検(2023・2025年 3,930R)で、BOTを混ぜても市場だけより当たらなかった
     (条件付きロジットで BOT の重み b≈0.01〜0.06、対数尤度の差 −0.0004/R)。
     なので「勝つ見込み」は、オッズ(大穴を少し割り引く α=1.04)に BOT をほんの少し(0.05)だけ混ぜたもの。
-  - 調教・距離実績・血統・前走・騎手・間隔・馬体重は、点数にせず「材料(○よい / ×気になる)」として並べる。
+  - 調教・距離実績・血統・前走・騎手・間隔・馬体重は、点数にせず「材料(✓よい / ✗気になる)」として並べる。
     重みを検証していないので、印は動かさない(勝手な重みで◎を穴馬にしない = 秋華賞の反省)。
   - 「穴の注目」は、6番手以下・10倍以上で、よい材料が気になる材料より2つ以上多く、BOTも市場より高く見ている馬(最大1頭)。
 """
@@ -134,7 +134,7 @@ def lines_for_site(rows):
     b = []
     for r in marked:
         b.append(f"{r['mark']} {r['name']}")
-        b += [f'   ○ {x}' for x in r['good']] + [f'   × {x}' for x in r['bad']] + [f'   ・{x}' for x in r['memo']]
+        b += [f'   ✓ {x}' for x in r['good']] + [f'   ✗ {x}' for x in r['bad']] + [f'   ・{x}' for x in r['memo']]
     c = [f"{r['num']:>2} {r['name']}  BOT{(r['p_model'] or 0) * 100:.0f}% / 市場{(r['p_mkt'] or 0) * 100:.0f}%"
          + ('  ← BOTの方が高い' if (r['p_model'] or 0) > 1.5 * (r['p_mkt'] or 1) else '')
          for r in sorted(rows, key=lambda r: -(r['p_model'] or 0))[:6]]
@@ -148,15 +148,15 @@ def discord_text(header, rows, caution, ten, page):
     for r in [r for r in rows if r['mark']]:
         L.append(f"{r['mark']} **{r['num']} {r['name']}** {fmt_odds(r)} 見込み{r['p'] * 100:.0f}%")
         if r['good']:
-            L.append('　○ ' + ' / '.join(r['good'][:3]))
+            L.append('　✓ ' + ' / '.join(r['good'][:3]))
         if r['bad']:
-            L.append('　× ' + ' / '.join(r['bad'][:2]))
+            L.append('　✗ ' + ' / '.join(r['bad'][:2]))
     pace = [t for t in ten if 'ペース' in t]
     if pace:
         L.append('🏇 ' + pace[0].strip())
     L += [f'⚠ {c}' for c in caution]
     L.append('印はオッズ(みんなの評価)が土台です。過去の点検で、BOTはオッズより当たる証拠がないため。'
-             '○×は調べた材料で、印は動かしていません。')
+             '✓✗は調べた材料で、印は動かしていません。')
     L.append(f'🌐 くわしくはサイトで: {page}')
     s = '\n'.join(L)
     return s if len(s) <= 1950 else s[:1940] + '…'
