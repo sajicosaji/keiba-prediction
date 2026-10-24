@@ -156,8 +156,12 @@ def main():
                 'races_sent': len(sent), 'last_sent': list(sent[-1].values())[1] if sent else None,
                 'schedule': ['土日月 9:05 と 14:05 に監視を自動起動', '開催日の朝に最新の結果を取り込んでから予想',
                              '発走前に全馬の予想を記録し、条件を満たす買い目(記録用)だけDiscordへ',
-                             'G1の日は昼までにG1予想をDiscordとこのサイトへ', '夜に答え合わせ・毎月再学習']},
+                             '重賞の日は昼までに調べた材料つきの予想をサイトへ(G1はDiscordにも)', '夜に答え合わせ・毎月再学習']},
         'next_meeting': nm,
+        # WIN5のキャリーオーバー(未消化のもの)。jra_info_logger の WIN5係が書く
+        'win5_carry': (lambda st: st.get('win5_pending'))(
+            json.loads((DATA / 'jra_info' / 'state.json').read_text(encoding='utf-8'))
+            if (DATA / 'jra_info' / 'state.json').exists() else {}),
         'totals': {'bets': len(settled), 'stake': cs, 'payout': cp, 'hits': sum(1 for s in settled if s['payout'] > 0)},
         'curve': curve, 'kinds': kinds,
         'recent': [s for s in settled if s['date'] >= '2026-09-01'][-30:],
@@ -177,6 +181,7 @@ def main():
             {'t': '海外の日本馬', 'text': 'JRAが売る海外レースでは日本馬が買われすぎ。全部買うと回収45%、外国馬を全部買うと99%(122R)'},
             {'t': '海外ルール', 'text': '日本馬以外で、現地相場より2割以上割安・20倍以下の単勝: 香港178%、別データ72Rで188%。大きい当たり2本を除くと80%。有望だけど未確定→少額で実戦検証'},
             {'t': 'BOTの今', 'text': '国内の買い目は記録用(購入非推奨)、馬連は停止。結果データは毎朝最新を取り込み、古ければ警告'},
+            {'t': '名前の照合', 'text': '10/24発見: 本番で騎手・調教師の名前が過去データと合わず(騎手は922頭中50頭しか一致せず)、成績が「不明」扱いだった。10/25から全一致に修正。重賞の格(G1等)の読み取りも修正'},
             {'t': '監視の強化', 'text': '馬体重・調教評価・取消/乗り替わり・JRA公式の馬場(クッション値)・WIN5・海外発売を記録。効くかは先に決めたやり方で検証'},
         ],
     }

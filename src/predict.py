@@ -960,10 +960,12 @@ def main():
         horse_ids = [str(h).strip() for h in df['horse_id'].dropna().unique() if str(h).strip()]
         if horse_ids:
             print(f'{len(horse_ids)}頭の血統を取得中...')
+            import time as _time
             for hid in horse_ids:
                 ped = scrape_horse_pedigree(hid)
                 if ped:
                     pedigree_map[hid] = ped
+                _time.sleep(2)  # 同じサイトへ続けて読みに行かない(1回/2秒)
 
     # 血統特徴量をモデル入力用に設定
     for col in ['sire_ryoyo', 'sire_stay', 'sire_speed', 'dam_sire_ryoyo']:

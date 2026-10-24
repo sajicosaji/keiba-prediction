@@ -33,27 +33,29 @@ JRA = {'01', '02', '03', '04', '05', '06', '07', '08', '09', '10'}
 
 
 def todays_g1(now):
-    """今日のJRAのG1 → [{race_id, post}]。1日1回だけnetkeibaを読む"""
+    """今日のJRAの重賞(G1・G2・G3) → [{race_id, post, grade}]。G1が先。1日1回だけnetkeibaを読む
+    (2026-10-24 から G2・G3 もサイトに出す。Discordへ送るのは G1 だけ)"""
     day = now.strftime('%Y%m%d')
     if TODAY.exists():
         t = json.loads(TODAY.read_text(encoding='utf-8'))
-        if t.get('date') == day:
+        if t.get('date') == day and t.get('v') == 2:
             return t['races']
     r = requests.get('https://race.netkeiba.com/top/race_list_sub.html', params={'kaisai_date': day},
                      headers={'User-Agent': 'Mozilla/5.0'}, timeout=20)
     r.encoding = 'UTF-8'
     races = []
     for li in re.findall(r'<li class="RaceList_DataItem[^"]*">(.*?)</li>', r.text, re.S):
-        if not re.search(r'Icon_GradeType1(?!\d)', li):
+        g = re.search(r'Icon_GradeType([123])(?!\d)', li)
+        if not g:
             continue
         m = re.search(r'race_id=(\d{12})', li)
         if not m or m.group(1)[4:6] not in JRA:
             continue
         pm = re.search(r'RaceList_Itemtime">\s*(\d{1,2}:\d{2})', li)
-        races.append({'race_id': m.group(1), 'post': pm.group(1) if pm else ''})
-    races = [dict(t) for t in {tuple(x.items()) for x in races}]
+        races.append({'race_id': m.group(1), 'post': pm.group(1).zfill(5) if pm else '', 'grade': 'G' + g.group(1)})
+    races = sorted([dict(t) for t in {tuple(x.items()) for x in races}], key=lambda x: (x['grade'], x['post']))
     OUT.mkdir(parents=True, exist_ok=True)
-    TODAY.write_text(json.dumps({'date': day, 'races': races}, ensure_ascii=False), encoding='utf-8')
+    TODAY.write_text(json.dumps({'date': day, 'v': 2, 'races': races}, ensure_ascii=False), encoding='utf-8')
     return races
 
 
@@ -85,13 +87,14 @@ def main():
     ap.add_argument('--race-id')
     ap.add_argument('--force', action='store_true', help='時刻・出し済みに関係なく作る(手動用)')
     ap.add_argument('--dry', action='store_true')
+    ap.add_argument('--grade', default='G1', help='--race-id の時の格(G1ならDiscordへも送る)')
     ap.add_argument('--prelim', action='store_true', help='前日版: サイトにだけ載せる(Discordへは送らない。当日の本番で差し替わる)')
     a = ap.parse_args()
     now = datetime.now(JST)
     site = json.loads(SITE.read_text(encoding='utf-8')) if SITE.exists() else []
     done = {x['race_id'] for x in site if not x.get('prelim')}
     if a.race_id:
-        todo = [{'race_id': a.race_id, 'post': ''}]
+        todo = [{'race_id': a.race_id, 'post': '', 'grade': a.grade}]
     else:
         if now.hour < START_HOUR and not a.force:
             return
@@ -114,6 +117,7 @@ def main():
         print(msg)
         if a.dry:
             continue
+        entry['grade'] = r.get('grade', 'G1')
         if a.prelim:
             entry['prelim'] = True
         site = [x for x in site if x['race_id'] != rid]
@@ -122,9 +126,11 @@ def main():
         OUT.mkdir(parents=True, exist_ok=True)
         SITE.write_text(json.dumps(site[:20], ensure_ascii=False, indent=1), encoding='utf-8')
         wh = g1_post.get_webhook()
-        if wh and not a.prelim:
+        if wh and not a.prelim and entry['grade'] == 'G1':
             g1_post.post(wh, msg)
         done.add(rid)
+        if not a.race_id:
+            break  # 監視ループを長く止めないよう、1回の呼び出しで作るのは1レースだけ(残りは次の回)
         time.sleep(3)
 
 
