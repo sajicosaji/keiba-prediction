@@ -500,6 +500,16 @@ def _parse_info_race(soup, race_id):
         el = soup.find(class_=cls)
         if el:
             info['race_name'] = el.get_text(strip=True)
+            # 格は文字でなくアイコンで出る。帳簿(結果ページ)の書き方「菊花賞(GI)」にそろえる
+            # (無いとG1もG3も「条件戦」扱いになり、クラス変動が「降級+4」のように逆になる。2026-10-24発見)
+            for ic in el.find_all(class_='Icon_GradeType'):
+                g = {'Icon_GradeType1': '(GI)', 'Icon_GradeType2': '(GII)', 'Icon_GradeType3': '(GIII)',
+                     'Icon_GradeType10': '(JGI)', 'Icon_GradeType11': '(JGII)', 'Icon_GradeType12': '(JGIII)',
+                     'Icon_GradeType15': '(L)'}  # 13 は WIN5 の印、16〜18 は 3勝〜1勝
+                hit = next((g[c] for c in ic.get('class', []) if c in g), None)
+                if hit and hit not in info['race_name']:
+                    info['race_name'] += hit
+                    break
             break
     for cls in ['RaceData01', 'RaceData02']:
         el = soup.find(class_=cls)

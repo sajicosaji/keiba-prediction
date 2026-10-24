@@ -21,6 +21,7 @@ import requests
 SRC = Path(__file__).parent
 sys.path.insert(0, str(SRC))
 import g1_post  # noqa: E402
+import g1_research  # noqa: E402
 
 OUT = SRC.parent / 'data' / 'g1'
 SITE = OUT / 'site.json'
@@ -56,27 +57,27 @@ def todays_g1(now):
     return races
 
 
-def cautions(ev):
-    """BOTの勝率が市場(オッズ)の4倍以上で、市場の評価が3%未満の馬 = BOTだけが高く見ている大穴。
-    点検ではBOTは市場より当たらず、こういう馬はBOTの過大評価のことが多いので、必ず書き添える"""
-    out = []
-    for l in ev:
-        m = re.search(r'([◎○▲△★☆])\s*(\S+)\s+勝率\s*([\d.]+)%\(市場\s*([\d.]+)%\)\s+([\d.]+)倍', l)
-        if not m:
-            continue
-        mark, name, p, q, odds = m.group(1), m.group(2), float(m.group(3)), float(m.group(4)), m.group(5)
-        if q < 3 and p >= 4 * max(q, 0.1):
-            out.append(f'{mark}{name}は、市場の評価がわずか{q:g}%({odds}倍)。BOTだけが高く見ている大穴です。'
-                       'BOTは市場より当たるという証拠がなく、こういう馬はBOTの見込み違いのことが多いので注意。')
-    return out
-
-
 def make(rid, now):
-    out = g1_post.run_predict(rid)
+    """predict(血統ON)を回し、各馬の材料を g1_research でまとめる。
+    (2026-10-24 から印はオッズが土台。BOTだけが推す大穴は印に入れず、注意書きに回す = 秋華賞の反省)"""
+    jpath = OUT / f'_research_{rid}.json'
+    OUT.mkdir(parents=True, exist_ok=True)
+    out = g1_post.run_predict(rid, json_out=jpath)
     header, marks, ev, ten = g1_post.extract(out)
-    return {'race_id': rid, 'made_at': now.strftime('%Y-%m-%d %H:%M'), 'header': header,
-            'marks': [m for m in marks if '★★★' not in m], 'ev': ev, 'caution': cautions(ev),
-            'ten': [t for t in ten if '脚質分布' in t or 'ペース' in t or '→' in t]}, (header, marks, ev, ten)
+    if not jpath.exists():
+        return {'race_id': rid, 'marks': []}, ''
+    data = json.loads(jpath.read_text(encoding='utf-8'))
+    jpath.unlink()
+    rows, caution = g1_research.build(data)
+    a, b, c = g1_research.lines_for_site(rows)
+    ten = [t for t in ten if '脚質分布' in t or 'ペース' in t or '→' in t]
+    entry = {'race_id': rid, 'made_at': now.strftime('%Y-%m-%d %H:%M'), 'header': header,
+             'marks': a, 'caution': caution, 'ten': ten, 'rows': rows,
+             'blocks': [{'title': '印と勝つ見込み(オッズが土台)', 'lines': a},
+                        {'title': '調べた材料(○よい / ×気になる / ・メモ)', 'lines': b},
+                        {'title': 'BOTの見方(参考・印には使っていない)', 'lines': c, 'cls': 'ev'},
+                        {'title': '展開', 'lines': ten}]}
+    return entry, g1_research.discord_text(header, rows, caution, ten, PAGE)
 
 
 def main():
@@ -106,13 +107,10 @@ def main():
         if r['post'] and not a.force and now.strftime('%H:%M') >= r['post'].zfill(5):
             print(f'{rid} は発走済み({r["post"]})なので出さない')
             continue
-        entry, parts = make(rid, now)
+        entry, msg = make(rid, now)
         if not entry['marks']:
             print(f'{rid}: 予想が作れませんでした(印なし)。あとでやり直します')
             continue
-        msg = g1_post.build_message(rid, *parts)
-        msg += ''.join(f'\n⚠ {c}' for c in entry['caution'])
-        msg += f'\n⚠ BOTの予想は検証中(記録用)です。購入の判断はご自身で。\n🌐 サイトでも見られます: {PAGE}'
         print(msg)
         if a.dry:
             continue

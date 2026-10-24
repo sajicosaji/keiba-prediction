@@ -7,6 +7,7 @@
   python predict.py 202506010801 --no-pedigree  # 血統取得をスキップ（高速）
 """
 import os
+import re
 import sys
 import json
 import joblib
@@ -336,6 +337,74 @@ def load_races_df():
     df['_d'] = df['race_id'].astype(str).str[6:8]
     df = df[df['_m'].between('01','12') & df['_d'].between('01','31')]
     return df.drop(columns=['_vc','_m','_d'])
+
+
+_REGION = {'美浦': '[東]', '栗東': '[西]', '地方': '[地]', '海外': '[外]'}
+
+
+def _subseq(short, full):
+    """short の文字が full の中に同じ順で全部ある(1文字目は一致)"""
+    if not short or not full or short[0] != full[0]:
+        return False
+    it = iter(full)
+    return all(c in it for c in short)
+
+
+def _match_name(short, counts, hint=()):
+    """出馬表の短い名前 → 帳簿の書き方。候補が無ければ元のまま"""
+    if short in counts.index:
+        return short
+    reg, body = '', short
+    for k, v in _REGION.items():
+        if short.startswith(k):
+            reg, body = v, short[len(k):]
+            break
+    cands = [n for n in counts.index if n.startswith(reg) and _subseq(body, n[len(reg):])]
+    if not cands:
+        # 外国人騎手は帳簿が途中で切れている(Ｍデムーロ → Ｍ．デム)
+        nb = re.sub(r'[．.・]', '', body)
+        cands = [n for n in counts.index if n.startswith(reg) and len(n) - len(reg) >= 3
+                 and nb.startswith(re.sub(r'[．.・]', '', n[len(reg):]))]
+    if not cands and len(body) >= 3:
+        # 帳簿の調教師名は4文字で切れている(和田郎 = 和田正一郎 → [東]和田正一)
+        cands = [n for n in counts.index if n.startswith(reg) and len(n) - len(reg) == 4
+                 and _subseq(body[:-1], n[len(reg):])]
+    if not cands:
+        return short
+    in_hint = [n for n in cands if n in hint]
+    if in_hint:
+        cands = in_hint
+    pref = [n for n in cands if n[len(reg):].startswith(body)]
+    if pref:
+        cands = pref
+    # 同じ名字が何人もいれば、JRAは「堀内」「原田和」のように区別して書く → 短い名前の方が本人(堀 → 堀宣行)。
+    # ただし、たまにしか乗らない地方・海外の人(石川 → 石川倭 ではなく 石川裕紀)は先に外す
+    top = max(counts[n] for n in cands)
+    cands = [n for n in cands if counts[n] >= 0.2 * top]
+    return min(cands, key=lambda n: (len(n), -counts[n]))
+
+
+def align_names(df, races_df):
+    """出馬表の騎手・調教師の短い名前(例: 津村 / 美浦手塚久 / ◇永島)を、帳簿(races.csv)と学習統計の書き方
+    (津村明秀 / [東]手塚貴久 / 永島まなみ)にそろえる。
+    そろえないと騎手・調教師の成績・相性・乗り替わりが「不明」や「全員乗り替わり」になる
+    (2026-10-24 菊花賞の前日予想で発見。学習側は帳簿の名前なので、本番だけずれていた)。
+    同じ名字が何人もいる時は、その馬が過去に乗せた騎手・所属した厩舎を優先し、次に騎乗数の多い方。"""
+    if races_df.empty:
+        return df
+    recent = races_df[races_df['race_date'].astype(str) >= str(int(races_df['race_date'].astype(str).max()[:4]) - 2)]
+    jc = recent['jockey'].dropna().astype(str).value_counts()
+    tc = recent['trainer'].dropna().astype(str).value_counts()
+    past = races_df.groupby('horse_name')
+    for i, row in df.iterrows():
+        h = past.get_group(row['horse_name']) if row.get('horse_name') in past.groups else None
+        if 'jockey' in df.columns and pd.notna(row.get('jockey')):
+            s = re.sub(r'[◇▲△☆★\s]', '', str(row['jockey']))
+            df.at[i, 'jockey'] = _match_name(s, jc, set(h['jockey'].astype(str)) if h is not None else ())
+        if 'trainer' in df.columns and pd.notna(row.get('trainer')):
+            s = re.sub(r'\s', '', str(row['trainer']))
+            df.at[i, 'trainer'] = _match_name(s, tc, set(h['trainer'].astype(str)) if h is not None else ())
+    return df
 
 
 def attach_horse_history(df, races_df, race_id, surface, distance, cur_race_name='', track_condition=''):
@@ -790,6 +859,7 @@ def main():
     parser.add_argument('--result',      action='store_true', help='レース後の結果検証モード')
     parser.add_argument('--no-pedigree', action='store_true', help='血統取得をスキップ（高速）')
     parser.add_argument('--discord',     action='store_true', help='予測結果をDiscordに送信')
+    parser.add_argument('--json-out',    help='各馬のデータ(オッズ・BOT勝率・近走・調教・血統)をJSONで保存(G1の調査用)')
     args = parser.parse_args()
 
     WEBHOOK_FILE = DATA_DIR / 'discord_webhook.txt'
@@ -840,6 +910,7 @@ def main():
         sys.exit(1)
 
     df = pd.DataFrame(rows)
+    df = align_names(df, races_df)
     race_name  = df['race_name'].iloc[0]
     surface    = df['surface'].iloc[0]
     distance   = df['distance'].iloc[0]
@@ -947,6 +1018,43 @@ def main():
 
     def get_ped(row):
         return pedigree_map.get(str(row.get('horse_id', '')).strip(), {})
+
+    if args.json_out:  # G1の調査(g1_auto.py)用に、各馬の材料を機械で読める形でも残す
+        from analysis import STAY_SIRES, SPEED_SIRES
+
+        def num(v):
+            try:
+                v = float(v)
+                return None if np.isnan(v) else v
+            except (TypeError, ValueError):
+                return None
+        horses = []
+        for _, row in df.iterrows():
+            hn = str(row['horse_name'])
+            ped = get_ped(row)
+            h = history_map.get(hn)
+            runs = []
+            if h is not None and not h.empty:
+                for _, r in h.head(8).iterrows():
+                    runs.append({k: str(r.get(c, '')) for k, c in
+                                 [('date', 'race_date'), ('race', 'race_name'), ('surface', 'surface'), ('distance', 'distance'),
+                                  ('pos', 'finishing_pos'), ('pop', 'popularity'), ('margin', 'margin'), ('jockey', 'jockey'),
+                                  ('track', 'track_condition')]})
+            sire = ped.get('sire', '') if ped else ''
+            horses.append({'num': str(row.get('horse_num', '')), 'frame': str(row.get('frame', '')), 'name': hn,
+                           'sex_age': str(row.get('sex_age', '')), 'jockey': str(row.get('jockey', '')),
+                           'trainer': str(row.get('trainer', '')), 'weight_carried': str(row.get('weight_carried', '')),
+                           'horse_weight': str(row.get('horse_weight', '')),
+                           'odds': num(row.get('live_odds')), 'p_mkt': num(row.get('p_mkt')), 'p_model': num(row.get('p_win')),
+                           'jockey_top3': num(row.get('jockey_top3_rate')), 'jockey_change': num(row.get('jockey_change_flag')),
+                           'days': num(row.get('prev_days_interval')),
+                           'sire': sire, 'dam_sire': ped.get('dam_sire', '') if ped else '',
+                           'stay': sire in STAY_SIRES, 'speed': sire in SPEED_SIRES,
+                           'training': training_map.get(hn, {}), 'runs': runs})
+        Path(args.json_out).write_text(json.dumps(
+            {'race_id': args.race_id, 'race_name': race_name, 'surface': surface, 'distance': str(distance),
+             'track': track, 'weather': weather, 'venue': venue_name, 'horses': horses},
+            ensure_ascii=False, indent=1), encoding='utf-8')
 
     def get_hist(row):
         return history_map.get(str(row.get('horse_name', '')), pd.DataFrame())

@@ -22,10 +22,11 @@ def get_webhook():
         return f.read_text(encoding='utf-8-sig').strip()
     return ''
 
-def run_predict(race_id):
-    # 血統ON(= --no-pedigree を付けない)で詳細予想
+def run_predict(race_id, json_out=None):
+    # 血統ON(= --no-pedigree を付けない)で詳細予想。json_out があれば各馬の材料もJSONで保存
     env = dict(os.environ, PYTHONIOENCODING='utf-8')
-    p = subprocess.run([sys.executable, str(Path(__file__).parent/'predict.py'), race_id],
+    extra = ['--json-out', str(json_out)] if json_out else []
+    p = subprocess.run([sys.executable, str(Path(__file__).parent/'predict.py'), race_id] + extra,
                        capture_output=True, encoding='utf-8', errors='replace', env=env, timeout=300)
     return (p.stdout or '') + '\n' + (p.stderr or '')
 
