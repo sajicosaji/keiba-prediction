@@ -84,10 +84,11 @@ def main():
     ap.add_argument('--race-id')
     ap.add_argument('--force', action='store_true', help='時刻・出し済みに関係なく作る(手動用)')
     ap.add_argument('--dry', action='store_true')
+    ap.add_argument('--prelim', action='store_true', help='前日版: サイトにだけ載せる(Discordへは送らない。当日の本番で差し替わる)')
     a = ap.parse_args()
     now = datetime.now(JST)
     site = json.loads(SITE.read_text(encoding='utf-8')) if SITE.exists() else []
-    done = {x['race_id'] for x in site}
+    done = {x['race_id'] for x in site if not x.get('prelim')}
     if a.race_id:
         todo = [{'race_id': a.race_id, 'post': ''}]
     else:
@@ -115,13 +116,15 @@ def main():
         print(msg)
         if a.dry:
             continue
+        if a.prelim:
+            entry['prelim'] = True
         site = [x for x in site if x['race_id'] != rid]
         site.insert(0, entry)
         site.sort(key=lambda x: x['made_at'], reverse=True)
         OUT.mkdir(parents=True, exist_ok=True)
         SITE.write_text(json.dumps(site[:20], ensure_ascii=False, indent=1), encoding='utf-8')
         wh = g1_post.get_webhook()
-        if wh:
+        if wh and not a.prelim:
             g1_post.post(wh, msg)
         done.add(rid)
         time.sleep(3)
