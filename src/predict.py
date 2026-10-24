@@ -1156,8 +1156,9 @@ def main():
                 print(f'  {MARKS[i]} {str(row["horse_name"]):<14} 勝率{pw*100:4.1f}%')
     print(f'{"="*W}')
 
-    # 買い推奨を記録（実運用の成績検証用。結果検証モードでは記録しない）
-    if not args.result and (ev_recs or umaren_recs):
+    # 買い推奨を記録（実運用の成績検証用）。本番(--discord = 自動監視)の時だけ。
+    # G1の詳細予想(g1_auto)や手元の試し打ちで記録すると、同じ買い目が二重に精算される(2026-10-24 修正)
+    if args.discord and not args.result and (ev_recs or umaren_recs):
         log_recommendations(ev_recs, args.race_id, race_name, combo_recs=umaren_recs)
 
     # ---- 詳細診断 ----
