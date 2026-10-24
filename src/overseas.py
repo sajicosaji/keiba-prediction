@@ -114,8 +114,16 @@ def designated(now):
     return sorted(out, key=lambda x: x['date'])
 
 
+def race_norm(name):
+    """レース名の比較用: 「（G1）」やかっこ・空白・英語の部分を除く"""
+    return re.sub(r'[（\(].*?[）\)]|\s|[A-Za-z][A-Za-z0-9\.\'&ⅡⅢ\- ]*$', '', html.unescape(name or ''))
+
+
 def decided(now):
-    """発売レース一覧(今年)。行がある = JRAが発売を決めたレース"""
+    """発売レース一覧(今年)。行がある = JRAが発売を決めたレース。
+    決まったばかりの時はリンク先が「発売決定のお知らせ」(1つのお知らせを複数レースで共有)で、
+    レースのページは後から作られる。なので各レースは「日付_レース名」で区別し、リンクは race(レースのページ) と
+    news(お知らせ)に分けて持つ"""
     h = get('/keiba/overseas/racelist/')
     out = []
     for tr in re.findall(r'<tr>(.*?)</tr>', h, re.S):
@@ -125,16 +133,66 @@ def decided(now):
         lm = re.search(r'href="([^"]+)"', tds[2])
         fm = re.search(r'alt="([^"]+)"', tds[1])
         dm = re.search(r'(\d{4})年(\d{1,2})月(\d{1,2})日', text(tds[0]))
-        if not dm or not lm:
+        if not dm:
             continue
-        link = lm.group(1)
-        link = link[:-len('index.html')] if link.endswith('index.html') else link
-        link = link if link.endswith('/') else link + '/'
-        out.append({'date': f'{dm.group(1)}-{int(dm.group(2)):02d}-{int(dm.group(3)):02d}', 'race': text(tds[2]),
+        link = lm.group(1) if lm else ''
+        race_link = news = ''
+        if '/keiba/overseas/race/' in link:
+            race_link = link[:-len('index.html')] if link.endswith('index.html') else link
+            race_link = race_link if race_link.endswith('/') else race_link + '/'
+        elif link:
+            news = link
+        date = f'{dm.group(1)}-{int(dm.group(2)):02d}-{int(dm.group(3)):02d}'
+        out.append({'date': date, 'race': text(tds[2]),
                     'country': fm.group(1).replace('国旗', '') if fm else '', 'track': text(tds[1]),
-                    'distance': text(tds[3]), 'winner': text(tds[4]) if len(tds) > 4 else '', 'link': link,
-                    'slug': link.strip('/').split('/race/')[-1].replace('/', '_')})
+                    'distance': text(tds[3]), 'winner': text(tds[4]) if len(tds) > 4 else '', 'link': race_link,
+                    'news': news, 'slug': date + '_' + race_norm(text(tds[2]))})
     return out
+
+
+_news = {}
+
+
+def news_posts(news):
+    """発売決定のお知らせから {レース名(比較用): 発走(日本時間)} を読む。
+    例:「第12レース ブリーダーズカップクラシック（G1） … 11月1日（日曜）7時16分（現地時間 …）発走予定」"""
+    if news in _news:
+        return _news[news]
+    t = text(get_opt(news))
+    out = {}
+    for m in re.finditer(r'第\d+レース\s*(\S+?（G\d）|\S+?)\s.*?(\d{4}年)?(\d{1,2})月(\d{1,2})日（[^）]*）\s*(\d{1,2})時(\d{2})分', t):
+        y = int(m.group(2)[:4]) if m.group(2) else datetime.now(JST).year
+        out[race_norm(m.group(1))] = f'{y}-{int(m.group(3)):02d}-{int(m.group(4)):02d} {int(m.group(5)):02d}:{m.group(6)}'
+    _news[news] = out
+    return out
+
+
+def find_race_page(d, state):
+    """レースのページの場所。一覧のリンク → 前に見つけた場所 → 海外発売トップから探す(ページの題名で照合)"""
+    if d.get('link'):
+        return d['link']
+    pages = state.setdefault('race_pages', {})
+    if d['slug'] in pages:
+        return pages[d['slug']]
+    want = race_norm(d['race'])
+    seen, queue = set(), sorted(set(re.findall(r'href="(/keiba/overseas/race/[^"#]+?/)(?:index\.html)?"', get_opt('/keiba/overseas/'))))
+    while queue and len(seen) < 25:
+        link = queue.pop(0)
+        if link in seen or 'kaiko' in link:
+            continue
+        seen.add(link)
+        h = get_opt(link)
+        tm = re.search(r'<title>(.*?)</title>', h, re.S)
+        if tm and want and want in race_norm(text(tm.group(1)).replace('海外競馬発売', '').replace('JRA', '')):
+            if re.search(r'href="syutsuba\.html"|href="morning\.html"|出馬表', h):
+                pages[d['slug']] = link
+                return link
+        # 「2026bc/」のような入口ページなら、その下のレースのページも見る
+        for sub in re.findall(r'href="((?:/keiba/overseas/race/[^"#]+?/)|(?:[a-z0-9_]+/))(?:index\.html)?"', h):
+            full = sub if sub.startswith('/') else link + sub
+            if full.startswith(link) and full not in seen:
+                queue.append(full)
+    return ''
 
 
 def get_opt(path):
@@ -397,8 +455,14 @@ def table(r, only=None, limit=8):
 
 def snapshot(d, now, state):
     """発売レース1つを読んで記録し、状態を返す"""
-    r = race_page(d['link'], now)
-    r.update({k: d[k] for k in ('date', 'race', 'country', 'track', 'distance', 'winner', 'slug')})
+    link = find_race_page(d, state)
+    if link:
+        r = race_page(link, now)
+    else:  # レースのページがまだ無い(発売決定直後)。発走時刻はお知らせから
+        r = {'link': '', 'sale_start': '', 'post': news_posts(d['news']).get(race_norm(d['race']), '') if d.get('news') else '',
+             'entries': [], 'scratched': [], 'ref': {}, 'ref_time': '', 'ref_source': '', 'jra_time': ''}
+    r.update({k: d.get(k, '') for k in ('date', 'race', 'country', 'track', 'distance', 'winner', 'slug', 'news')})
+    r['link'] = link
     pmu = {}
     if r['post']:
         post = datetime.strptime(r['post'], '%Y-%m-%d %H:%M').replace(tzinfo=JST)
@@ -481,7 +545,10 @@ def settle(decs, now, state, dry):
         if not d or not d['winner']:
             continue
         try:
-            fin = race_page(d['link'], now)
+            link = find_race_page(d, state)
+            if not link:
+                continue
+            fin = race_page(link, now)
         except Exception as e:
             print(f'{slug} 結果の取得失敗: {e}')
             continue
@@ -533,12 +600,13 @@ def daily(now, state, dry):
     today = now.strftime('%Y-%m-%d')
     upcoming = [d for d in decs if d['date'] >= (now - timedelta(days=2)).strftime('%Y-%m-%d')]
     for x in des:
-        x['sale'] = any(d['date'] == x['date'] and (x['name'][:4] in d['race'] or d['race'][:4] in x['name']) for d in decs)
+        x['sale'] = any(d['date'] == x['date'] and race_norm(d['race']) == race_norm(x['name']) for d in decs)
     save(OUT / 'schedule.json', {'checked_at': now.strftime('%Y-%m-%d %H:%M'), 'designated': des[:40], 'decided': upcoming})
 
     # 発売決定の知らせ(初回は既知として記録だけ)
-    first = 'seen' not in state
-    seen = set(state.get('seen', []))
+    # 2026-10-24 区別の仕方を「日付_レース名」に変えた。初回は今ある分を既知にする(同じ知らせを二度送らない)
+    first = 'seen_v2' not in state
+    seen = set(state.get('seen_v2', []))
     new = [d for d in decs if d['slug'] not in seen and d['date'] >= today]
     if new and not first:
         lines = ['🌏 **JRAが海外レースの馬券発売を決めました**']
@@ -547,7 +615,7 @@ def daily(now, state, dry):
         lines.append('→ 今日から毎日、出走馬・日本馬・現地オッズを集めて送ります。当日は締切15分前に「投票用 最終版」を送ります。'
                      '\nルール: 日本馬は買わない / 現地より2割以上割安・JRA20倍以下の単勝だけ。')
         discord('\n'.join(lines), dry)
-    state['seen'] = sorted(seen | {d['slug'] for d in decs})
+    state['seen_v2'] = sorted(seen | {d['slug'] for d in decs})
 
     # 1週間前からの毎日のまとめ(1日1回・18時以降)
     races = []
