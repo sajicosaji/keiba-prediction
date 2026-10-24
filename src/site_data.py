@@ -163,6 +163,11 @@ def main():
         'recent': [s for s in settled if s['date'] >= '2026-09-01'][-30:],
         'big_hits': sorted([s for s in settled if s['payout'] > 0], key=lambda x: -x['payout'])[:5],
         'latest_day': last_day, 'latest_races': races, 'odds_moves': odds_moves,
+        # トップ「きょうの買い目」用: 最新開催日の記録用の買い目(検証中・買わない)
+        'latest_bets': [{'race_id': b['race_id'], 'race': race_label(b['race_id']), 'kind': b['kind'], 'num': b['horse_num'],
+                         'name': b['horse_name'], 'odds': float(b['odds'] or 0), 'at': b['logged_at'][11:16]}
+                        for b in rows(DATA / 'bet_log.csv') if last_day and b['logged_at'][:10] == last_day],
+        'latest_sent': sum(1 for x in sent if last_day and len(list(x.values())) > 1 and list(x.values())[1][:10] == last_day),
         'arc': {'race': '凱旋門賞2026', 'date': '2026-10-04', 'result': '1着①ダリズ・2着⑦ベイシティローラー・3着⑯ダイヤモンドネックレス',
                 'hit': '馬連1-7', 'payout_per100': 6930, 'stake': 600, 'payout': 41580, 'budget': 20000,
                 'total_stake': 19900},

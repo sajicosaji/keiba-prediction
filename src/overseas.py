@@ -395,6 +395,7 @@ def evaluate(r, pmu=None):
         e['p'] = round(p[e['num']], 4) if e['num'] in p else None
         e['ev'] = round(e['p'] * e['jra_odds'], 3) if (e['p'] and e['jra_odds']) else None
         e['pick'] = bool(e['ev'] and not e['jpn'] and e['jra_odds'] <= ODDS_MAX and e['ev'] >= EV_MIN)
+        e['need'] = round(EV_MIN / e['p'], 1) if (e['p'] and not e['jpn'] and EV_MIN / e['p'] <= ODDS_MAX) else None
     r['picks'] = [e['num'] for e in sorted(r['entries'], key=lambda e: -(e['ev'] or 0)) if e['pick']]
     return r
 
@@ -473,6 +474,10 @@ def snapshot(d, now, state):
                 print(f"{d['slug']} PMU失敗: {e}")
     evaluate(r, pmu)
     r['checked_at'] = now.strftime('%Y-%m-%d %H:%M')
+    old = load(OUT / 'races' / f"{d['slug']}.json", {})
+    if old.get('final'):
+        r['final'] = old['final']
+    r['stake_per_pick'] = int(load(OUT / 'config.json', {}).get('stake_per_pick', CONFIG['stake_per_pick']))
     save(OUT / 'races' / f"{d['slug']}.json", r)
     append(OUT / 'odds.csv', ['logged_at', 'slug', 'num', 'name', 'jpn', 'jra_odds', 'local_odds', 'local_source',
                               'jra_ref_odds', 'jra_ref_time', 'p', 'ev', 'pick'],
@@ -693,6 +698,9 @@ def watch(now, state, dry, budget_min=340):
                 final_notice(r, now, dry)
                 sent['final'] = now.strftime('%H:%M')
                 sent['final_picks'] = r['picks']
+                r['final'] = {'at': now.strftime('%Y-%m-%d %H:%M'), 'picks': r['picks'],
+                              'stake': int(load(OUT / 'config.json', {}).get('stake_per_pick', CONFIG['stake_per_pick']))}
+                save(OUT / 'races' / f"{d['slug']}.json", r)
             elif sent.get('final') and r['picks'] != sent.get('final_picks') and mins > 3 and not sent.get('changed'):
                 was = set(sent.get('final_picks') or [])
                 drop = [n for n in was if n not in r['picks']]
