@@ -1,5 +1,5 @@
 {
- "checked_at": "2026-10-24 15:00",
+ "checked_at": "2026-10-24 21:04",
  "designated": [
   {
    "date": "2026-10-24",
@@ -176,25 +176,25 @@
  "decided": [
   {
    "date": "2026-10-31",
-   "race": "ブリーダーズカップダートマイル（G1）",
-   "country": "アメリカ",
-   "track": "キーンランド",
-   "distance": "ダート1,600 メートル",
-   "winner": "",
-   "link": "",
-   "news": "/news/202610/101901.html",
-   "slug": "2026-10-31_ブリーダーズカップダートマイル"
-  },
-  {
-   "date": "2026-10-31",
    "race": "ブリーダーズカップターフスプリント（G1）",
    "country": "アメリカ",
    "track": "キーンランド",
    "distance": "芝1,100 メートル",
    "winner": "",
-   "link": "",
-   "news": "/news/202610/101901.html",
+   "link": "/keiba/overseas/race/2026bc/turf_sprint/",
+   "news": "",
    "slug": "2026-10-31_ブリーダーズカップターフスプリント"
+  },
+  {
+   "date": "2026-10-31",
+   "race": "ブリーダーズカップダートマイル（G1）",
+   "country": "アメリカ",
+   "track": "キーンランド",
+   "distance": "ダート1,600 メートル",
+   "winner": "",
+   "link": "/keiba/overseas/race/2026bc/dirt_mile/",
+   "news": "",
+   "slug": "2026-10-31_ブリーダーズカップダートマイル"
   },
   {
    "date": "2026-10-31",
@@ -203,8 +203,8 @@
    "track": "キーンランド",
    "distance": "ダート1,200 メートル",
    "winner": "",
-   "link": "",
-   "news": "/news/202610/101901.html",
+   "link": "/keiba/overseas/race/2026bc/sprint/",
+   "news": "",
    "slug": "2026-10-31_ブリーダーズカップスプリント"
   },
   {
@@ -214,8 +214,8 @@
    "track": "キーンランド",
    "distance": "芝1,600 メートル",
    "winner": "",
-   "link": "",
-   "news": "/news/202610/101901.html",
+   "link": "/keiba/overseas/race/2026bc/mile/",
+   "news": "",
    "slug": "2026-10-31_ブリーダーズカップマイル"
   },
   {
@@ -225,8 +225,8 @@
    "track": "キーンランド",
    "distance": "芝2,400 メートル",
    "winner": "",
-   "link": "",
-   "news": "/news/202610/101901.html",
+   "link": "/keiba/overseas/race/2026bc/turf/",
+   "news": "",
    "slug": "2026-10-31_ブリーダーズカップターフ"
   },
   {
@@ -236,8 +236,8 @@
    "track": "キーンランド",
    "distance": "ダート2,000 メートル",
    "winner": "",
-   "link": "",
-   "news": "/news/202610/101901.html",
+   "link": "/keiba/overseas/race/2026bc/classic/",
+   "news": "",
    "slug": "2026-10-31_ブリーダーズカップクラシック"
   },
   {

@@ -1,7 +1,7 @@
 {
- "generated_at": "2026-10-24 15:00",
+ "generated_at": "2026-10-24 21:04",
  "schedule": {
-  "checked_at": "2026-10-24 15:00",
+  "checked_at": "2026-10-24 21:04",
   "designated": [
    {
     "date": "2026-10-24",
@@ -178,25 +178,25 @@
   "decided": [
    {
     "date": "2026-10-31",
-    "race": "ブリーダーズカップダートマイル（G1）",
-    "country": "アメリカ",
-    "track": "キーンランド",
-    "distance": "ダート1,600 メートル",
-    "winner": "",
-    "link": "",
-    "news": "/news/202610/101901.html",
-    "slug": "2026-10-31_ブリーダーズカップダートマイル"
-   },
-   {
-    "date": "2026-10-31",
     "race": "ブリーダーズカップターフスプリント（G1）",
     "country": "アメリカ",
     "track": "キーンランド",
     "distance": "芝1,100 メートル",
     "winner": "",
-    "link": "",
-    "news": "/news/202610/101901.html",
+    "link": "/keiba/overseas/race/2026bc/turf_sprint/",
+    "news": "",
     "slug": "2026-10-31_ブリーダーズカップターフスプリント"
+   },
+   {
+    "date": "2026-10-31",
+    "race": "ブリーダーズカップダートマイル（G1）",
+    "country": "アメリカ",
+    "track": "キーンランド",
+    "distance": "ダート1,600 メートル",
+    "winner": "",
+    "link": "/keiba/overseas/race/2026bc/dirt_mile/",
+    "news": "",
+    "slug": "2026-10-31_ブリーダーズカップダートマイル"
    },
    {
     "date": "2026-10-31",
@@ -205,8 +205,8 @@
     "track": "キーンランド",
     "distance": "ダート1,200 メートル",
     "winner": "",
-    "link": "",
-    "news": "/news/202610/101901.html",
+    "link": "/keiba/overseas/race/2026bc/sprint/",
+    "news": "",
     "slug": "2026-10-31_ブリーダーズカップスプリント"
    },
    {
@@ -216,8 +216,8 @@
     "track": "キーンランド",
     "distance": "芝1,600 メートル",
     "winner": "",
-    "link": "",
-    "news": "/news/202610/101901.html",
+    "link": "/keiba/overseas/race/2026bc/mile/",
+    "news": "",
     "slug": "2026-10-31_ブリーダーズカップマイル"
    },
    {
@@ -227,8 +227,8 @@
     "track": "キーンランド",
     "distance": "芝2,400 メートル",
     "winner": "",
-    "link": "",
-    "news": "/news/202610/101901.html",
+    "link": "/keiba/overseas/race/2026bc/turf/",
+    "news": "",
     "slug": "2026-10-31_ブリーダーズカップターフ"
    },
    {
@@ -238,8 +238,8 @@
     "track": "キーンランド",
     "distance": "ダート2,000 メートル",
     "winner": "",
-    "link": "",
-    "news": "/news/202610/101901.html",
+    "link": "/keiba/overseas/race/2026bc/classic/",
+    "news": "",
     "slug": "2026-10-31_ブリーダーズカップクラシック"
    },
    {
@@ -257,15 +257,15 @@
  },
  "races": [
   {
-   "link": "",
+   "link": "/keiba/overseas/race/2026bc/classic/",
    "sale_start": "",
-   "post": "2026-11-01 07:16",
+   "post": "2026-11-02 07:25",
    "entries": [],
    "scratched": [],
    "ref": {},
    "ref_time": "",
    "ref_source": "",
-   "jra_time": "",
+   "jra_time": "2026-10-24 21:04",
    "date": "2026-10-31",
    "race": "ブリーダーズカップクラシック（G1）",
    "country": "アメリカ",
@@ -273,7 +273,7 @@
    "distance": "ダート2,000 メートル",
    "winner": "",
    "slug": "2026-10-31_ブリーダーズカップクラシック",
-   "news": "/news/202610/101901.html",
+   "news": "",
    "local": {
     "source": "現地のオッズなし",
     "time": "",
@@ -281,19 +281,19 @@
    },
    "method": "判定できず",
    "picks": [],
-   "checked_at": "2026-10-24 15:00",
+   "checked_at": "2026-10-24 21:04",
    "stake_per_pick": 1000
   },
   {
-   "link": "",
+   "link": "/keiba/overseas/race/2026bc/sprint/",
    "sale_start": "",
-   "post": "2026-11-01 04:42",
+   "post": "2026-11-02 07:25",
    "entries": [],
    "scratched": [],
    "ref": {},
    "ref_time": "",
    "ref_source": "",
-   "jra_time": "",
+   "jra_time": "2026-10-24 21:04",
    "date": "2026-10-31",
    "race": "ブリーダーズカップスプリント（G1）",
    "country": "アメリカ",
@@ -301,7 +301,7 @@
    "distance": "ダート1,200 メートル",
    "winner": "",
    "slug": "2026-10-31_ブリーダーズカップスプリント",
-   "news": "/news/202610/101901.html",
+   "news": "",
    "local": {
     "source": "現地のオッズなし",
     "time": "",
@@ -309,19 +309,19 @@
    },
    "method": "判定できず",
    "picks": [],
-   "checked_at": "2026-10-24 15:00",
+   "checked_at": "2026-10-24 21:04",
    "stake_per_pick": 1000
   },
   {
-   "link": "",
+   "link": "/keiba/overseas/race/2026bc/turf/",
    "sale_start": "",
-   "post": "2026-11-01 06:36",
+   "post": "2026-11-02 07:25",
    "entries": [],
    "scratched": [],
    "ref": {},
    "ref_time": "",
    "ref_source": "",
-   "jra_time": "",
+   "jra_time": "2026-10-24 21:04",
    "date": "2026-10-31",
    "race": "ブリーダーズカップターフ（G1）",
    "country": "アメリカ",
@@ -329,7 +329,7 @@
    "distance": "芝2,400 メートル",
    "winner": "",
    "slug": "2026-10-31_ブリーダーズカップターフ",
-   "news": "/news/202610/101901.html",
+   "news": "",
    "local": {
     "source": "現地のオッズなし",
     "time": "",
@@ -337,19 +337,19 @@
    },
    "method": "判定できず",
    "picks": [],
-   "checked_at": "2026-10-24 15:00",
+   "checked_at": "2026-10-24 21:04",
    "stake_per_pick": 1000
   },
   {
-   "link": "",
+   "link": "/keiba/overseas/race/2026bc/turf_sprint/",
    "sale_start": "",
-   "post": "2026-11-01 02:48",
+   "post": "2026-11-02 07:25",
    "entries": [],
    "scratched": [],
    "ref": {},
    "ref_time": "",
    "ref_source": "",
-   "jra_time": "",
+   "jra_time": "2026-10-24 21:04",
    "date": "2026-10-31",
    "race": "ブリーダーズカップターフスプリント（G1）",
    "country": "アメリカ",
@@ -357,7 +357,7 @@
    "distance": "芝1,100 メートル",
    "winner": "",
    "slug": "2026-10-31_ブリーダーズカップターフスプリント",
-   "news": "/news/202610/101901.html",
+   "news": "",
    "local": {
     "source": "現地のオッズなし",
     "time": "",
@@ -365,19 +365,19 @@
    },
    "method": "判定できず",
    "picks": [],
-   "checked_at": "2026-10-24 15:00",
+   "checked_at": "2026-10-24 21:04",
    "stake_per_pick": 1000
   },
   {
-   "link": "",
+   "link": "/keiba/overseas/race/2026bc/dirt_mile/",
    "sale_start": "",
-   "post": "2026-11-01 03:26",
+   "post": "2026-11-02 07:25",
    "entries": [],
    "scratched": [],
    "ref": {},
    "ref_time": "",
    "ref_source": "",
-   "jra_time": "",
+   "jra_time": "2026-10-24 21:04",
    "date": "2026-10-31",
    "race": "ブリーダーズカップダートマイル（G1）",
    "country": "アメリカ",
@@ -385,7 +385,7 @@
    "distance": "ダート1,600 メートル",
    "winner": "",
    "slug": "2026-10-31_ブリーダーズカップダートマイル",
-   "news": "/news/202610/101901.html",
+   "news": "",
    "local": {
     "source": "現地のオッズなし",
     "time": "",
@@ -393,19 +393,19 @@
    },
    "method": "判定できず",
    "picks": [],
-   "checked_at": "2026-10-24 15:00",
+   "checked_at": "2026-10-24 21:04",
    "stake_per_pick": 1000
   },
   {
-   "link": "",
+   "link": "/keiba/overseas/race/2026bc/mile/",
    "sale_start": "",
-   "post": "2026-11-01 05:20",
+   "post": "2026-11-02 07:25",
    "entries": [],
    "scratched": [],
    "ref": {},
    "ref_time": "",
    "ref_source": "",
-   "jra_time": "",
+   "jra_time": "2026-10-24 21:04",
    "date": "2026-10-31",
    "race": "ブリーダーズカップマイル（G1）",
    "country": "アメリカ",
@@ -413,7 +413,7 @@
    "distance": "芝1,600 メートル",
    "winner": "",
    "slug": "2026-10-31_ブリーダーズカップマイル",
-   "news": "/news/202610/101901.html",
+   "news": "",
    "local": {
     "source": "現地のオッズなし",
     "time": "",
@@ -421,7 +421,7 @@
    },
    "method": "判定できず",
    "picks": [],
-   "checked_at": "2026-10-24 15:00",
+   "checked_at": "2026-10-24 21:04",
    "stake_per_pick": 1000
   }
  ],
