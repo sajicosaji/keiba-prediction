@@ -207,12 +207,14 @@ def get_opt(path):
 def race_page(link, now):
     """レースのページ(トップ・出馬表・海外参考オッズ)を読む。
     レース後しばらくするとトップは「回顧」ページへ自動で切り替わるので、出馬表と参考オッズはトップに頼らず直接読む"""
-    top = get_opt(link)
+    # コメントで隠した古いひな形(BCでは「11月2日（日曜）7時25分」)が残っているので、先に取り除く(2026-10-24)
+    top = re.sub(r'<!--.*?-->', '', get_opt(link), flags=re.S)
     sale = post = None
     sm = re.search(r'発売開始時刻.*?日本時間\s*<strong>(.*?)</strong>.*?ネット馬券購入：\s*<strong>(.*?)</strong>', top, re.S)
     if sm:
         sale = jst_time(text(sm.group(1)) + text(sm.group(2)), now)
-    pm = re.search(r'発走予定時刻.*?日本時間\s*<strong>(.*?)</strong>', top, re.S)
+    # 旧: 日本時間<strong>10月4日（日曜）23時05分</strong> / 新(BC): <div class="line">日本時間11月1日（日曜）7時16分</div>
+    pm = re.search(r'発走予定時刻.*?日本時間\s*(?:<strong>)?([^<]*?\d{1,2}時\d{2}分)', top, re.S)
     if pm:
         post = jst_time(text(pm.group(1)), now)
     r = {'link': link, 'sale_start': sale.strftime('%Y-%m-%d %H:%M') if sale else '',
@@ -536,6 +538,33 @@ def final_notice(r, now, dry):
                  e['ref_odds'], e['p'], e['ev'], s] for e, s in plan])
 
 
+def bedtime_notice(rs, now, dry):
+    """前の晩23時台の「寝る前の目安」。払戻は締切時のオッズで決まるので、最終版より確度は下がる(記録はしない)"""
+    rs = sorted(rs, key=lambda r: r.get('post', ''))
+    lines = [f"🌙 **海外発売 寝る前の目安**({now.strftime('%H:%M')}時点・発走が深夜〜朝のレース)",
+             f"最終版は各レースの締切15分前に届きます({hm(rs[0]['post'])}〜)。起きていられない時は、ここで先に買う手もあります。"
+             'ただしJRAの払戻は締切時のオッズで決まるので、いまの倍率から動きます(確度は最終版より下がる)。']
+    for r in rs:
+        lines.append(f"\n**{r['race']}** 発走 {hm(r['post'])}")
+        if not r['local']['ok']:
+            lines.append(f"→ 現地の実際のオッズがまだ取れていません({r['local']['source']})。判定は最終版で")
+            continue
+        plan = stake_plan(r)
+        if plan:
+            lines.append('いまの買い条件: ' + ' / '.join(
+                f"単勝{e['num']}番 {e['name'][:10]} {s:,}円(JRA{e['jra_odds']:.1f}倍・現地{e['ref_odds']:.1f}倍・期待値{e['ev']:.2f})" for e, s in plan))
+        elif any(e['jra_odds'] for e in r['entries']):
+            lines.append('いまの買い条件: なし')
+        else:
+            lines.append('JRAのオッズはまだ(発売前)')
+        th = thresholds(r, limit=4)
+        if th:
+            lines.append('```\n' + '\n'.join(th) + '\n```')
+    lines.append('ルール: 日本馬は買わない / 期待値1.2以上 / JRA20倍以下。未確定のルールなので少額で。')
+    lines.append(f'🌐 {SITE_PAGE}')
+    discord('\n'.join(lines), dry)
+
+
 def settle(decs, now, state, dry):
     """結果(優勝馬)が出たら、最終版の買い目を答え合わせ。払戻 = 金額×確定単勝オッズ"""
     bets = []
@@ -683,6 +712,18 @@ def watch(now, state, dry, budget_min=340):
             print('30時間以内の発売レースなし → 終了')
             return
         soon.sort(key=lambda x: x[0])
+        # 寝る前の目安(2026-10-24): 発走が深夜〜朝(0〜9時)のレースは、最終版が寝ている間に届くので、前の晩23時台に一度だけ送る
+        bed = [d for p, d in soon if p.date() == (now + timedelta(days=1)).date() and p.hour < 9]
+        if bed and now.hour == 23 and state.get('bedtime_on') != now.strftime('%Y-%m-%d'):
+            rs = []
+            for d in bed:
+                try:
+                    rs.append(snapshot(d, now, state))
+                except Exception as e:
+                    print(f"{d['slug']} 取得失敗: {e}")
+            if rs:
+                bedtime_notice(rs, now, dry)
+            state['bedtime_on'] = now.strftime('%Y-%m-%d')
         active = [(p, d) for p, d in soon if p <= now + timedelta(hours=3)]
         for post, d in active:
             try:
