@@ -141,7 +141,7 @@ def lines_for_site(rows):
     return a, b, c
 
 
-def discord_text(header, rows, caution, ten, page):
+def discord_text(header, rows, caution, ten, page, trio=None):
     L = ['🏆 **G1予想**(調べた材料つき・見るだけ)']
     if header:
         L.append('**' + header[0].strip('【】') + '**  ' + (header[1] if len(header) > 1 else ''))
@@ -155,6 +155,12 @@ def discord_text(header, rows, caution, ten, page):
     if pace:
         L.append('🏇 ' + pace[0].strip())
     L += [f'⚠ {c}' for c in caution]
+    if trio:
+        L.append('🎯 **三連複 ◎1頭軸流し**(合成オッズ5倍以上・遊び用)
+```
+' + '
+'.join(trio) + '
+```')
     L.append('印はオッズ(みんなの評価)が土台です。過去の点検で、BOTはオッズより当たる証拠がないため。'
              '✓✗は調べた材料で、印は動かしていません。')
     L.append(f'🌐 くわしくはサイトで: {page}')

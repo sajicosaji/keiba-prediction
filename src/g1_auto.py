@@ -22,6 +22,7 @@ SRC = Path(__file__).parent
 sys.path.insert(0, str(SRC))
 import g1_post  # noqa: E402
 import g1_research  # noqa: E402
+import sanrenpuku  # noqa: E402
 
 OUT = SRC.parent / 'data' / 'g1'
 SITE = OUT / 'site.json'
@@ -73,13 +74,23 @@ def make(rid, now):
     rows, caution = g1_research.build(data)
     a, b, c = g1_research.lines_for_site(rows)
     ten = [t for t in ten if '脚質分布' in t or 'ペース' in t or '→' in t]
+    # 三連複 ◎1頭軸流し(合成オッズ5倍以上)。2026-10-25 ユーザーの指定で追加(遊び用・見るだけ)
+    axis = next((r['num'] for r in rows if r['mark'] == '◎'), None)
+    try:
+        trio, trio_t = sanrenpuku.run(rid, axis)
+    except Exception as e:
+        trio, trio_t = {'reason': f'三連複オッズ取得失敗: {e}'}, ''
+    names = {r['num']: r['name'] for r in rows}
+    t_lines = sanrenpuku.lines(trio, names) + ([f'(三連複オッズ {trio_t[11:16]} 時点)'] if trio_t else [])
     entry = {'race_id': rid, 'made_at': now.strftime('%Y-%m-%d %H:%M'), 'header': header,
              'marks': a, 'caution': caution, 'ten': ten, 'rows': rows,
              'blocks': [{'title': '印と勝つ見込み(オッズが土台)', 'lines': a},
                         {'title': '調べた材料(✓よい / ✗気になる / ・メモ)', 'lines': b},
+                        {'title': '三連複 ◎1頭軸流し(合成オッズ5倍以上・遊び用)', 'lines': t_lines},
                         {'title': 'BOTの見方(参考・印には使っていない)', 'lines': c, 'cls': 'ev'},
                         {'title': '展開', 'lines': ten}]}
-    return entry, g1_research.discord_text(header, rows, caution, ten, PAGE)
+    entry['trio'] = trio
+    return entry, g1_research.discord_text(header, rows, caution, ten, PAGE, trio=t_lines)
 
 
 def main():
