@@ -9,7 +9,6 @@
 使い方: python src/sanrenpuku.py 202608040911 [--axis 8] [--budget 1000]
 """
 import argparse
-import math
 import time
 from itertools import combinations
 

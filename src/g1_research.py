@@ -156,11 +156,7 @@ def discord_text(header, rows, caution, ten, page, trio=None):
         L.append('🏇 ' + pace[0].strip())
     L += [f'⚠ {c}' for c in caution]
     if trio:
-        L.append('🎯 **三連複 ◎1頭軸流し**(合成オッズ5倍以上・遊び用)
-```
-' + '
-'.join(trio) + '
-```')
+        L.append('🎯 **三連複 ◎1頭軸流し**(合成オッズ5倍以上・遊び用)\n```\n' + '\n'.join(trio) + '\n```')
     L.append('印はオッズ(みんなの評価)が土台です。過去の点検で、BOTはオッズより当たる証拠がないため。'
              '✓✗は調べた材料で、印は動かしていません。')
     L.append(f'🌐 くわしくはサイトで: {page}')
