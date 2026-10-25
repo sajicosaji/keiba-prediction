@@ -65,7 +65,7 @@ def pick(win, trio_odds, axis=None, budget=1000):
     probs, p = trio_probs(win)
     if not probs:
         return {'reason': '単勝オッズが無い'}
-    axis = axis or max(p, key=p.get)
+    axis = int(axis) if axis else max(p, key=p.get)  # G1の行の馬番は文字列のことがある
     partners = [h for h in sorted(p, key=lambda h: -p[h]) if h != axis][:TOP_PARTNERS]
     cands = []
     for a, b in combinations(partners, 2):
@@ -97,7 +97,7 @@ def pick(win, trio_odds, axis=None, budget=1000):
 
 
 def lines(res, names=None):
-    names = names or {}
+    names = {int(k): v for k, v in (names or {}).items()}
     nm = lambda h: f"{h}{names.get(h, '')[:6]}"  # noqa: E731
     if res.get('reason'):
         return [f"見送り({res['reason']})"]
