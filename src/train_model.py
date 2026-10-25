@@ -536,7 +536,9 @@ def engineer_features(df, jockey_stats=None, trainer_stats=None,
                 fb_mean = fallback_stats['top3_rate'].mean()
                 fb_map  = fallback_stats['top3_rate'].to_dict()
                 mask = merged[out_col].isna()
-                merged.loc[mask, out_col] = merged.loc[mask, entity_col].map(fb_map).fillna(fb_mean)
+                # 欠けが0行の時は代入しない(pandas 3.1 は0行の代入でエラーになり、2026-10-25 に全レースの予想が止まった)
+                if mask.any():
+                    merged.loc[mask, out_col] = merged.loc[mask, entity_col].map(fb_map).fillna(fb_mean).astype(float)
             return merged
         df[out_col] = np.nan
         return df
