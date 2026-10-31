@@ -10,12 +10,12 @@
    "trainer_country": "",
    "jpn": false,
    "en": "DETERMINISTIC (USA)",
-   "ref_odds": 5.6,
+   "ref_odds": 6.0,
    "jra_ref_odds": 9.0,
-   "p": 0.1464,
+   "p": 0.1373,
    "ev": null,
    "pick": false,
-   "need": 8.2
+   "need": 8.7
   },
   {
    "num": 2,
@@ -24,12 +24,12 @@
    "trainer_country": "",
    "jpn": false,
    "en": "LAKE FOREST (GB)",
-   "ref_odds": 10.0,
+   "ref_odds": 9.5,
    "jra_ref_odds": 7.0,
-   "p": 0.0806,
+   "p": 0.0855,
    "ev": null,
    "pick": false,
-   "need": 14.9
+   "need": 14.0
   },
   {
    "num": 3,
@@ -38,9 +38,9 @@
    "trainer_country": "",
    "jpn": false,
    "en": "FACTEUR CHEVAL (IRE)",
-   "ref_odds": 57.0,
+   "ref_odds": 63.0,
    "jra_ref_odds": 31.0,
-   "p": 0.0134,
+   "p": 0.0122,
    "ev": null,
    "pick": false,
    "need": null
@@ -52,9 +52,9 @@
    "trainer_country": "",
    "jpn": false,
    "en": "CABO SPIRIT (USA)",
-   "ref_odds": 47.0,
+   "ref_odds": 55.0,
    "jra_ref_odds": 31.0,
-   "p": 0.0164,
+   "p": 0.014,
    "ev": null,
    "pick": false,
    "need": null
@@ -66,9 +66,9 @@
    "trainer_country": "",
    "jpn": true,
    "en": "ASK IKIGOMI (JPN)",
-   "ref_odds": 13.0,
+   "ref_odds": 14.0,
    "jra_ref_odds": 21.0,
-   "p": 0.0615,
+   "p": 0.0574,
    "ev": null,
    "pick": false,
    "need": null
@@ -80,9 +80,9 @@
    "trainer_country": "",
    "jpn": false,
    "en": "QIRAT (GB)",
-   "ref_odds": 71.0,
+   "ref_odds": 78.0,
    "jra_ref_odds": 31.0,
-   "p": 0.0107,
+   "p": 0.0098,
    "ev": null,
    "pick": false,
    "need": null
@@ -94,12 +94,12 @@
    "trainer_country": "",
    "jpn": false,
    "en": "NOTABLE SPEECH (GB)",
-   "ref_odds": 1.9,
+   "ref_odds": 2.0,
    "jra_ref_odds": 2.4,
-   "p": 0.4457,
+   "p": 0.4256,
    "ev": null,
    "pick": false,
-   "need": 2.7
+   "need": 2.8
   },
   {
    "num": 9,
@@ -108,12 +108,12 @@
    "trainer_country": "",
    "jpn": false,
    "en": "RHETORICAL (USA)",
-   "ref_odds": 8.8,
+   "ref_odds": 6.1,
    "jra_ref_odds": 9.0,
-   "p": 0.0919,
+   "p": 0.1349,
    "ev": null,
    "pick": false,
-   "need": 13.1
+   "need": 8.9
   },
   {
    "num": 10,
@@ -122,9 +122,9 @@
    "trainer_country": "",
    "jpn": true,
    "en": "LUGAL (JPN)",
-   "ref_odds": 101.0,
+   "ref_odds": 109.0,
    "jra_ref_odds": 31.0,
-   "p": 0.0074,
+   "p": 0.0069,
    "ev": null,
    "pick": false,
    "need": null
@@ -136,9 +136,9 @@
    "trainer_country": "",
    "jpn": false,
    "en": "FORMIDABLE MAN (USA)",
-   "ref_odds": 38.0,
+   "ref_odds": 42.0,
    "jra_ref_odds": 16.0,
-   "p": 0.0204,
+   "p": 0.0185,
    "ev": null,
    "pick": false,
    "need": null
@@ -150,9 +150,9 @@
    "trainer_country": "",
    "jpn": false,
    "en": "TRUE LOVE (IRE)",
-   "ref_odds": 15.0,
+   "ref_odds": 18.0,
    "jra_ref_odds": 9.0,
-   "p": 0.0531,
+   "p": 0.0443,
    "ev": null,
    "pick": false,
    "need": null
@@ -164,9 +164,9 @@
    "trainer_country": "",
    "jpn": false,
    "en": "BRILLIANT BERTI (USA)",
-   "ref_odds": 69.0,
+   "ref_odds": 65.0,
    "jra_ref_odds": 31.0,
-   "p": 0.011,
+   "p": 0.0118,
    "ev": null,
    "pick": false,
    "need": null
@@ -180,7 +180,7 @@
    "en": "PUERTO RICO (IRE)",
    "ref_odds": 19.0,
    "jra_ref_odds": 11.0,
-   "p": 0.0416,
+   "p": 0.0419,
    "ev": null,
    "pick": false,
    "need": null
@@ -256,7 +256,7 @@
  },
  "ref_time": "",
  "ref_source": "海外ではモーニングライン（Morning Line）と呼ばれています。下記はEQUIBASE社から提供された想定オッズで、JRAのオッズとは異なりますので、参考としてご覧ください。",
- "jra_time": "2026-11-01 05:16",
+ "jra_time": "2026-11-01 07:35",
  "entries_from": "参考オッズの表(出馬表ページが無いため)",
  "date": "2026-10-31",
  "race": "ブリーダーズカップマイル（G1）",
@@ -269,12 +269,12 @@
  "pmu_race": "R4C9 FANDUEL BREEDERS' CUP MILE PRESENTED BY ",
  "local": {
   "source": "PMU(仏公営)の実オッズ R4C9 FANDUEL BREEDERS' CUP MILE PRESENTED BY ",
-  "time": "2026-11-01 05:16",
+  "time": "2026-11-01 07:36",
   "ok": true
  },
  "method": "公営(トート)a=1.03",
  "picks": [],
- "checked_at": "2026-11-01 05:16",
+ "checked_at": "2026-11-01 07:35",
  "final": {
   "at": "2026-11-01 04:59",
   "picks": [],

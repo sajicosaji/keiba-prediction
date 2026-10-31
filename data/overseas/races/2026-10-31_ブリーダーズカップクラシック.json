@@ -10,9 +10,9 @@
    "trainer_country": "",
    "jpn": true,
    "en": "T O PASSWORD (JPN)",
-   "ref_odds": 43.0,
+   "ref_odds": 41.0,
    "jra_ref_odds": 31.0,
-   "p": 0.018,
+   "p": 0.0189,
    "ev": null,
    "pick": false,
    "need": null
@@ -26,10 +26,10 @@
    "en": "SOVEREIGNTY (USA)",
    "ref_odds": 2.9,
    "jra_ref_odds": 3.5,
-   "p": 0.2897,
+   "p": 0.289,
    "ev": null,
    "pick": false,
-   "need": 4.1
+   "need": 4.2
   },
   {
    "num": 3,
@@ -38,12 +38,12 @@
    "trainer_country": "",
    "jpn": false,
    "en": "GOLDEN TEMPO (USA)",
-   "ref_odds": 6.3,
+   "ref_odds": 6.7,
    "jra_ref_odds": 6.0,
-   "p": 0.1303,
+   "p": 0.122,
    "ev": null,
    "pick": false,
-   "need": 9.2
+   "need": 9.8
   },
   {
    "num": 4,
@@ -52,9 +52,9 @@
    "trainer_country": "",
    "jpn": false,
    "en": "THE PUMA (USA)",
-   "ref_odds": 16.0,
+   "ref_odds": 18.0,
    "jra_ref_odds": 11.0,
-   "p": 0.0499,
+   "p": 0.0441,
    "ev": null,
    "pick": false,
    "need": null
@@ -66,9 +66,9 @@
    "trainer_country": "",
    "jpn": true,
    "en": "FOREVER YOUNG (JPN)",
-   "ref_odds": 2.8,
+   "ref_odds": 2.7,
    "jra_ref_odds": 3.0,
-   "p": 0.3003,
+   "p": 0.311,
    "ev": null,
    "pick": false,
    "need": null
@@ -80,12 +80,12 @@
    "trainer_country": "",
    "jpn": false,
    "en": "KNIGHTSBRIDGE (USA)",
-   "ref_odds": 5.1,
+   "ref_odds": 4.9,
    "jra_ref_odds": 5.5,
-   "p": 0.1619,
+   "p": 0.1683,
    "ev": null,
    "pick": false,
-   "need": 7.4
+   "need": 7.1
   },
   {
    "num": 8,
@@ -94,9 +94,9 @@
    "trainer_country": "",
    "jpn": false,
    "en": "NAPOLEON SOLO (USA)",
-   "ref_odds": 16.0,
+   "ref_odds": 17.0,
    "jra_ref_odds": 16.0,
-   "p": 0.0499,
+   "p": 0.0467,
    "ev": null,
    "pick": false,
    "need": null
@@ -142,7 +142,7 @@
  },
  "ref_time": "",
  "ref_source": "海外ではモーニングライン（Morning Line）と呼ばれています。下記はEQUIBASE社から提供された想定オッズで、JRAのオッズとは異なりますので、参考としてご覧ください。",
- "jra_time": "2026-11-01 07:14",
+ "jra_time": "2026-11-01 07:35",
  "entries_from": "参考オッズの表(出馬表ページが無いため)",
  "date": "2026-10-31",
  "race": "ブリーダーズカップクラシック（G1）",
@@ -155,12 +155,12 @@
  "pmu_race": "R4C12 LONGINES BREEDERS' CUP CLASSIC (GRADE I)",
  "local": {
   "source": "PMU(仏公営)の実オッズ R4C12 LONGINES BREEDERS' CUP CLASSIC (GRADE I)",
-  "time": "2026-11-01 07:14",
+  "time": "2026-11-01 07:37",
   "ok": true
  },
  "method": "公営(トート)a=1.03",
  "picks": [],
- "checked_at": "2026-11-01 07:14",
+ "checked_at": "2026-11-01 07:35",
  "final": {
   "at": "2026-11-01 06:57",
   "picks": [],
