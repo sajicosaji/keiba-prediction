@@ -2,41 +2,148 @@
  "link": "/keiba/overseas/race/2026bc/classic/",
  "sale_start": "",
  "post": "2026-11-01 07:16",
- "entries": [],
+ "entries": [
+  {
+   "num": 1,
+   "name": "テーオーパスワード",
+   "jra_odds": null,
+   "trainer_country": "",
+   "jpn": true,
+   "en": "T O PASSWORD (JPN)",
+   "ref_odds": 38.0,
+   "jra_ref_odds": 31.0,
+   "p": 0.0203,
+   "ev": null,
+   "pick": false,
+   "need": null
+  },
+  {
+   "num": 2,
+   "name": "ソヴリンティ",
+   "jra_odds": null,
+   "trainer_country": "",
+   "jpn": false,
+   "en": "SOVEREIGNTY (USA)",
+   "ref_odds": 2.7,
+   "jra_ref_odds": 3.5,
+   "p": 0.3097,
+   "ev": null,
+   "pick": false,
+   "need": 3.9
+  },
+  {
+   "num": 3,
+   "name": "ゴールデンテンポ",
+   "jra_odds": null,
+   "trainer_country": "",
+   "jpn": false,
+   "en": "GOLDEN TEMPO (USA)",
+   "ref_odds": 5.3,
+   "jra_ref_odds": 6.0,
+   "p": 0.1546,
+   "ev": null,
+   "pick": false,
+   "need": 7.8
+  },
+  {
+   "num": 4,
+   "name": "ザプーマ",
+   "jra_odds": null,
+   "trainer_country": "",
+   "jpn": false,
+   "en": "THE PUMA (USA)",
+   "ref_odds": 14.0,
+   "jra_ref_odds": 11.0,
+   "p": 0.0568,
+   "ev": null,
+   "pick": false,
+   "need": null
+  },
+  {
+   "num": 5,
+   "name": "フォーエバーヤング",
+   "jra_odds": null,
+   "trainer_country": "",
+   "jpn": true,
+   "en": "FOREVER YOUNG (JPN)",
+   "ref_odds": 3.1,
+   "jra_ref_odds": 3.0,
+   "p": 0.2686,
+   "ev": null,
+   "pick": false,
+   "need": null
+  },
+  {
+   "num": 7,
+   "name": "ナイツブリッジ",
+   "jra_odds": null,
+   "trainer_country": "",
+   "jpn": false,
+   "en": "KNIGHTSBRIDGE (USA)",
+   "ref_odds": 6.6,
+   "jra_ref_odds": 5.5,
+   "p": 0.1233,
+   "ev": null,
+   "pick": false,
+   "need": 9.7
+  },
+  {
+   "num": 8,
+   "name": "ナポレオンソロ",
+   "jra_odds": null,
+   "trainer_country": "",
+   "jpn": false,
+   "en": "NAPOLEON SOLO (USA)",
+   "ref_odds": 12.0,
+   "jra_ref_odds": 16.0,
+   "p": 0.0666,
+   "ev": null,
+   "pick": false,
+   "need": 18.0
+  }
+ ],
  "scratched": [],
  "ref": {
   "5": {
    "odds": 3.0,
-   "en": "FOREVER YOUNG (JPN)"
+   "en": "FOREVER YOUNG (JPN)",
+   "ja": "フォーエバーヤング"
   },
   "2": {
    "odds": 3.5,
-   "en": "SOVEREIGNTY (USA)"
+   "en": "SOVEREIGNTY (USA)",
+   "ja": "ソヴリンティ"
   },
   "7": {
    "odds": 5.5,
-   "en": "KNIGHTSBRIDGE (USA)"
+   "en": "KNIGHTSBRIDGE (USA)",
+   "ja": "ナイツブリッジ"
   },
   "3": {
    "odds": 6.0,
-   "en": "GOLDEN TEMPO (USA)"
+   "en": "GOLDEN TEMPO (USA)",
+   "ja": "ゴールデンテンポ"
   },
   "4": {
    "odds": 11.0,
-   "en": "THE PUMA (USA)"
+   "en": "THE PUMA (USA)",
+   "ja": "ザプーマ"
   },
   "8": {
    "odds": 16.0,
-   "en": "NAPOLEON SOLO (USA)"
+   "en": "NAPOLEON SOLO (USA)",
+   "ja": "ナポレオンソロ"
   },
   "1": {
    "odds": 31.0,
-   "en": "T O PASSWORD (JPN)"
+   "en": "T O PASSWORD (JPN)",
+   "ja": "テーオーパスワード"
   }
  },
  "ref_time": "",
  "ref_source": "海外ではモーニングライン（Morning Line）と呼ばれています。下記はEQUIBASE社から提供された想定オッズで、JRAのオッズとは異なりますので、参考としてご覧ください。",
- "jra_time": "2026-10-31 23:04",
+ "jra_time": "2026-11-01 03:10",
+ "entries_from": "参考オッズの表(出馬表ページが無いため)",
  "date": "2026-10-31",
  "race": "ブリーダーズカップクラシック（G1）",
  "country": "アメリカ",
@@ -45,13 +152,14 @@
  "winner": "",
  "slug": "2026-10-31_ブリーダーズカップクラシック",
  "news": "",
+ "pmu_race": "R4C12 LONGINES BREEDERS' CUP CLASSIC (GRADE I)",
  "local": {
-  "source": "モーニングライン(予想担当の想定オッズ)しか無い",
-  "time": "",
-  "ok": false
+  "source": "PMU(仏公営)の実オッズ R4C12 LONGINES BREEDERS' CUP CLASSIC (GRADE I)",
+  "time": "2026-11-01 03:11",
+  "ok": true
  },
- "method": "判定できず",
+ "method": "公営(トート)a=1.03",
  "picks": [],
- "checked_at": "2026-10-31 23:04",
+ "checked_at": "2026-11-01 03:10",
  "stake_per_pick": 1000
 }

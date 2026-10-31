@@ -2,53 +2,205 @@
  "link": "/keiba/overseas/race/2026bc/dirt_mile/",
  "sale_start": "",
  "post": "2026-11-01 03:26",
- "entries": [],
+ "entries": [
+  {
+   "num": 1,
+   "name": "ファーザーアドゥ",
+   "jra_odds": null,
+   "trainer_country": "",
+   "jpn": false,
+   "en": "FURTHER ADO (USA)",
+   "ref_odds": 2.2,
+   "jra_ref_odds": 3.0,
+   "p": 0.3866,
+   "ev": null,
+   "pick": false,
+   "need": 3.1
+  },
+  {
+   "num": 2,
+   "name": "ティークラフト",
+   "jra_odds": null,
+   "trainer_country": "",
+   "jpn": false,
+   "en": "T KRAFT (USA)",
+   "ref_odds": 22.0,
+   "jra_ref_odds": 16.0,
+   "p": 0.0361,
+   "ev": null,
+   "pick": false,
+   "need": null
+  },
+  {
+   "num": 3,
+   "name": "フルセラーノ",
+   "jra_odds": null,
+   "trainer_country": "",
+   "jpn": false,
+   "en": "FULL SERRANO (ARG)",
+   "ref_odds": 7.9,
+   "jra_ref_odds": 11.0,
+   "p": 0.1036,
+   "ev": null,
+   "pick": false,
+   "need": 11.6
+  },
+  {
+   "num": 4,
+   "name": "チャンクオブゴールド",
+   "jra_odds": null,
+   "trainer_country": "",
+   "jpn": false,
+   "en": "CHUNK OF GOLD (USA)",
+   "ref_odds": 11.0,
+   "jra_ref_odds": 9.0,
+   "p": 0.0737,
+   "ev": null,
+   "pick": false,
+   "need": 16.3
+  },
+  {
+   "num": 5,
+   "name": "コールバトル",
+   "jra_odds": null,
+   "trainer_country": "",
+   "jpn": false,
+   "en": "COAL BATTLE (USA)",
+   "ref_odds": 10.0,
+   "jra_ref_odds": 7.0,
+   "p": 0.0813,
+   "ev": null,
+   "pick": false,
+   "need": 14.8
+  },
+  {
+   "num": 6,
+   "name": "ロードフォンス",
+   "jra_odds": null,
+   "trainer_country": "",
+   "jpn": true,
+   "en": "LORD FONS (JPN)",
+   "ref_odds": 20.0,
+   "jra_ref_odds": 16.0,
+   "p": 0.0398,
+   "ev": null,
+   "pick": false,
+   "need": null
+  },
+  {
+   "num": 7,
+   "name": "ブラケットバスター",
+   "jra_odds": null,
+   "trainer_country": "",
+   "jpn": false,
+   "en": "BRACKET BUSTER (USA)",
+   "ref_odds": 6.0,
+   "jra_ref_odds": 4.5,
+   "p": 0.1376,
+   "ev": null,
+   "pick": false,
+   "need": 8.7
+  },
+  {
+   "num": 8,
+   "name": "ムーンライト",
+   "jra_odds": null,
+   "trainer_country": "",
+   "jpn": false,
+   "en": "MOONLIGHT (USA)",
+   "ref_odds": 44.0,
+   "jra_ref_odds": 16.0,
+   "p": 0.0177,
+   "ev": null,
+   "pick": false,
+   "need": null
+  },
+  {
+   "num": 10,
+   "name": "オーウェンオールマイティ",
+   "jra_odds": null,
+   "trainer_country": "",
+   "jpn": false,
+   "en": "OWEN ALMIGHTY (USA)",
+   "ref_odds": 9.7,
+   "jra_ref_odds": 11.0,
+   "p": 0.0839,
+   "ev": null,
+   "pick": false,
+   "need": 14.3
+  },
+  {
+   "num": 11,
+   "name": "アイアンマンカル",
+   "jra_odds": null,
+   "trainer_country": "",
+   "jpn": false,
+   "en": "IRON MAN CAL (USA)",
+   "ref_odds": 20.0,
+   "jra_ref_odds": 13.0,
+   "p": 0.0398,
+   "ev": null,
+   "pick": false,
+   "need": null
+  }
+ ],
  "scratched": [],
  "ref": {
   "1": {
    "odds": 3.0,
-   "en": "FURTHER ADO (USA)"
+   "en": "FURTHER ADO (USA)",
+   "ja": "ファーザーアドゥ"
   },
   "7": {
    "odds": 4.5,
-   "en": "BRACKET BUSTER (USA)"
+   "en": "BRACKET BUSTER (USA)",
+   "ja": "ブラケットバスター"
   },
   "5": {
    "odds": 7.0,
-   "en": "COAL BATTLE (USA)"
+   "en": "COAL BATTLE (USA)",
+   "ja": "コールバトル"
   },
   "4": {
    "odds": 9.0,
-   "en": "CHUNK OF GOLD (USA)"
+   "en": "CHUNK OF GOLD (USA)",
+   "ja": "チャンクオブゴールド"
   },
   "3": {
    "odds": 11.0,
-   "en": "FULL SERRANO (ARG)"
+   "en": "FULL SERRANO (ARG)",
+   "ja": "フルセラーノ"
   },
   "10": {
    "odds": 11.0,
-   "en": "OWEN ALMIGHTY (USA)"
+   "en": "OWEN ALMIGHTY (USA)",
+   "ja": "オーウェンオールマイティ"
   },
   "11": {
    "odds": 13.0,
-   "en": "IRON MAN CAL (USA)"
+   "en": "IRON MAN CAL (USA)",
+   "ja": "アイアンマンカル"
   },
   "2": {
    "odds": 16.0,
-   "en": "T KRAFT (USA)"
+   "en": "T KRAFT (USA)",
+   "ja": "ティークラフト"
   },
   "6": {
    "odds": 16.0,
-   "en": "LORD FONS (JPN)"
+   "en": "LORD FONS (JPN)",
+   "ja": "ロードフォンス"
   },
   "8": {
    "odds": 16.0,
-   "en": "MOONLIGHT (USA)"
+   "en": "MOONLIGHT (USA)",
+   "ja": "ムーンライト"
   }
  },
  "ref_time": "",
  "ref_source": "海外ではモーニングライン（Morning Line）と呼ばれています。下記はEQUIBASE社から提供された想定オッズで、JRAのオッズとは異なりますので、参考としてご覧ください。",
- "jra_time": "2026-11-01 03:08",
+ "jra_time": "2026-11-01 03:10",
+ "entries_from": "参考オッズの表(出馬表ページが無いため)",
  "date": "2026-10-31",
  "race": "ブリーダーズカップダートマイル（G1）",
  "country": "アメリカ",
@@ -57,18 +209,19 @@
  "winner": "",
  "slug": "2026-10-31_ブリーダーズカップダートマイル",
  "news": "",
+ "pmu_race": "R4C6 BREEDERS' CUP DIRT MILE (GRADE I)",
  "local": {
-  "source": "モーニングライン(予想担当の想定オッズ)しか無い",
-  "time": "",
-  "ok": false
+  "source": "PMU(仏公営)の実オッズ R4C6 BREEDERS' CUP DIRT MILE (GRADE I)",
+  "time": "2026-11-01 03:10",
+  "ok": true
  },
- "method": "判定できず",
+ "method": "公営(トート)a=1.03",
  "picks": [],
- "checked_at": "2026-11-01 03:08",
- "stake_per_pick": 1000,
+ "checked_at": "2026-11-01 03:10",
  "final": {
   "at": "2026-11-01 03:08",
   "picks": [],
   "stake": 1000
- }
+ },
+ "stake_per_pick": 1000
 }

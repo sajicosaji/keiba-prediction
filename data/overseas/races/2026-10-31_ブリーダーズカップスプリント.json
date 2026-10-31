@@ -2,65 +2,262 @@
  "link": "/keiba/overseas/race/2026bc/sprint/",
  "sale_start": "",
  "post": "2026-11-01 04:42",
- "entries": [],
+ "entries": [
+  {
+   "num": 1,
+   "name": "マッドハウス",
+   "jra_odds": null,
+   "trainer_country": "",
+   "jpn": false,
+   "en": "MAD HOUSE (USA)",
+   "ref_odds": null,
+   "jra_ref_odds": 31.0,
+   "p": null,
+   "ev": null,
+   "pick": false,
+   "need": null
+  },
+  {
+   "num": 2,
+   "name": "ダークサフロン",
+   "jra_odds": null,
+   "trainer_country": "",
+   "jpn": false,
+   "en": "DARK SAFFRON (USA)",
+   "ref_odds": null,
+   "jra_ref_odds": 21.0,
+   "p": null,
+   "ev": null,
+   "pick": false,
+   "need": null
+  },
+  {
+   "num": 3,
+   "name": "リアムスミス",
+   "jra_odds": null,
+   "trainer_country": "",
+   "jpn": false,
+   "en": "LIAM SMITH (USA)",
+   "ref_odds": null,
+   "jra_ref_odds": 21.0,
+   "p": null,
+   "ev": null,
+   "pick": false,
+   "need": null
+  },
+  {
+   "num": 4,
+   "name": "ヒム",
+   "jra_odds": null,
+   "trainer_country": "",
+   "jpn": false,
+   "en": "HYMN (USA)",
+   "ref_odds": null,
+   "jra_ref_odds": 16.0,
+   "p": null,
+   "ev": null,
+   "pick": false,
+   "need": null
+  },
+  {
+   "num": 5,
+   "name": "リッスンアップシャンス",
+   "jra_odds": null,
+   "trainer_country": "",
+   "jpn": false,
+   "en": "LISTENUPSHANCE (USA)",
+   "ref_odds": null,
+   "jra_ref_odds": 13.0,
+   "p": null,
+   "ev": null,
+   "pick": false,
+   "need": null
+  },
+  {
+   "num": 6,
+   "name": "アメリカンステージ",
+   "jra_odds": null,
+   "trainer_country": "",
+   "jpn": true,
+   "en": "AMERICAN STAGE (USA)",
+   "ref_odds": null,
+   "jra_ref_odds": 31.0,
+   "p": null,
+   "ev": null,
+   "pick": false,
+   "need": null
+  },
+  {
+   "num": 7,
+   "name": "ビルト",
+   "jra_odds": null,
+   "trainer_country": "",
+   "jpn": false,
+   "en": "BUILT (USA)",
+   "ref_odds": null,
+   "jra_ref_odds": 11.0,
+   "p": null,
+   "ev": null,
+   "pick": false,
+   "need": null
+  },
+  {
+   "num": 8,
+   "name": "リトルサンダー",
+   "jra_odds": null,
+   "trainer_country": "",
+   "jpn": false,
+   "en": "LITTLE THUNDER (USA)",
+   "ref_odds": null,
+   "jra_ref_odds": 31.0,
+   "p": null,
+   "ev": null,
+   "pick": false,
+   "need": null
+  },
+  {
+   "num": 9,
+   "name": "ナカトミ",
+   "jra_odds": null,
+   "trainer_country": "",
+   "jpn": false,
+   "en": "NAKATOMI (USA)",
+   "ref_odds": null,
+   "jra_ref_odds": 13.0,
+   "p": null,
+   "ev": null,
+   "pick": false,
+   "need": null
+  },
+  {
+   "num": 10,
+   "name": "ロールオンビッグジョー",
+   "jra_odds": null,
+   "trainer_country": "",
+   "jpn": false,
+   "en": "ROLL ON BIG JOE (USA)",
+   "ref_odds": null,
+   "jra_ref_odds": 31.0,
+   "p": null,
+   "ev": null,
+   "pick": false,
+   "need": null
+  },
+  {
+   "num": 11,
+   "name": "テーオーエルビス",
+   "jra_odds": null,
+   "trainer_country": "",
+   "jpn": true,
+   "en": "T O ELVIS (USA)",
+   "ref_odds": null,
+   "jra_ref_odds": 4.5,
+   "p": null,
+   "ev": null,
+   "pick": false,
+   "need": null
+  },
+  {
+   "num": 12,
+   "name": "ストラダーレ",
+   "jra_odds": null,
+   "trainer_country": "",
+   "jpn": false,
+   "en": "STRADALE (USA)",
+   "ref_odds": null,
+   "jra_ref_odds": 21.0,
+   "p": null,
+   "ev": null,
+   "pick": false,
+   "need": null
+  },
+  {
+   "num": 13,
+   "name": "イングリッシュマン",
+   "jra_odds": null,
+   "trainer_country": "",
+   "jpn": false,
+   "en": "ENGLISHMAN (USA)",
+   "ref_odds": null,
+   "jra_ref_odds": 1.8,
+   "p": null,
+   "ev": null,
+   "pick": false,
+   "need": null
+  }
+ ],
  "scratched": [],
  "ref": {
   "13": {
    "odds": 1.8,
-   "en": "ENGLISHMAN (USA)"
+   "en": "ENGLISHMAN (USA)",
+   "ja": "イングリッシュマン"
   },
   "11": {
    "odds": 4.5,
-   "en": "T O ELVIS (USA)"
+   "en": "T O ELVIS (USA)",
+   "ja": "テーオーエルビス"
   },
   "7": {
    "odds": 11.0,
-   "en": "BUILT (USA)"
+   "en": "BUILT (USA)",
+   "ja": "ビルト"
   },
   "5": {
    "odds": 13.0,
-   "en": "LISTENUPSHANCE (USA)"
+   "en": "LISTENUPSHANCE (USA)",
+   "ja": "リッスンアップシャンス"
   },
   "9": {
    "odds": 13.0,
-   "en": "NAKATOMI (USA)"
+   "en": "NAKATOMI (USA)",
+   "ja": "ナカトミ"
   },
   "4": {
    "odds": 16.0,
-   "en": "HYMN (USA)"
+   "en": "HYMN (USA)",
+   "ja": "ヒム"
   },
   "2": {
    "odds": 21.0,
-   "en": "DARK SAFFRON (USA)"
+   "en": "DARK SAFFRON (USA)",
+   "ja": "ダークサフロン"
   },
   "3": {
    "odds": 21.0,
-   "en": "LIAM SMITH (USA)"
+   "en": "LIAM SMITH (USA)",
+   "ja": "リアムスミス"
   },
   "12": {
    "odds": 21.0,
-   "en": "STRADALE (USA)"
+   "en": "STRADALE (USA)",
+   "ja": "ストラダーレ"
   },
   "1": {
    "odds": 31.0,
-   "en": "MAD HOUSE (USA)"
+   "en": "MAD HOUSE (USA)",
+   "ja": "マッドハウス"
   },
   "6": {
    "odds": 31.0,
-   "en": "AMERICAN STAGE (USA)"
+   "en": "AMERICAN STAGE (USA)",
+   "ja": "アメリカンステージ"
   },
   "8": {
    "odds": 31.0,
-   "en": "LITTLE THUNDER (USA)"
+   "en": "LITTLE THUNDER (USA)",
+   "ja": "リトルサンダー"
   },
   "10": {
    "odds": 31.0,
-   "en": "ROLL ON BIG JOE (USA)"
+   "en": "ROLL ON BIG JOE (USA)",
+   "ja": "ロールオンビッグジョー"
   }
  },
  "ref_time": "",
  "ref_source": "海外ではモーニングライン（Morning Line）と呼ばれています。下記はEQUIBASE社から提供された想定オッズで、JRAのオッズとは異なりますので、参考としてご覧ください。",
- "jra_time": "2026-11-01 03:08",
+ "jra_time": "2026-11-01 03:10",
+ "entries_from": "参考オッズの表(出馬表ページが無いため)",
  "date": "2026-10-31",
  "race": "ブリーダーズカップスプリント（G1）",
  "country": "アメリカ",
@@ -69,6 +266,7 @@
  "winner": "",
  "slug": "2026-10-31_ブリーダーズカップスプリント",
  "news": "",
+ "pmu_race": "R4C8 CYGAMES BREEDERS' CUP SPRINT (GRADE I)",
  "local": {
   "source": "モーニングライン(予想担当の想定オッズ)しか無い",
   "time": "",
@@ -76,6 +274,6 @@
  },
  "method": "判定できず",
  "picks": [],
- "checked_at": "2026-11-01 03:08",
+ "checked_at": "2026-11-01 03:10",
  "stake_per_pick": 1000
 }

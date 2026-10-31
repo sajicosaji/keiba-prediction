@@ -2,69 +2,281 @@
  "link": "/keiba/overseas/race/2026bc/turf/",
  "sale_start": "",
  "post": "2026-11-01 06:36",
- "entries": [],
+ "entries": [
+  {
+   "num": 1,
+   "name": "エシカルダイヤモンド",
+   "jra_odds": null,
+   "trainer_country": "",
+   "jpn": false,
+   "en": "ETHICAL DIAMOND (IRE)",
+   "ref_odds": null,
+   "jra_ref_odds": 11.0,
+   "p": null,
+   "ev": null,
+   "pick": false,
+   "need": null
+  },
+  {
+   "num": 2,
+   "name": "ベンヴェヌートチェッリーニ",
+   "jra_odds": null,
+   "trainer_country": "",
+   "jpn": false,
+   "en": "BENVENUTO CELLINI (IRE)",
+   "ref_odds": null,
+   "jra_ref_odds": 7.0,
+   "p": null,
+   "ev": null,
+   "pick": false,
+   "need": null
+  },
+  {
+   "num": 3,
+   "name": "ミナレットステーション",
+   "jra_odds": null,
+   "trainer_country": "",
+   "jpn": false,
+   "en": "MINARET STATION (USA)",
+   "ref_odds": null,
+   "jra_ref_odds": 16.0,
+   "p": null,
+   "ev": null,
+   "pick": false,
+   "need": null
+  },
+  {
+   "num": 4,
+   "name": "ファーブリッジ",
+   "jra_odds": null,
+   "trainer_country": "",
+   "jpn": false,
+   "en": "FAR BRIDGE (USA)",
+   "ref_odds": null,
+   "jra_ref_odds": 21.0,
+   "p": null,
+   "ev": null,
+   "pick": false,
+   "need": null
+  },
+  {
+   "num": 5,
+   "name": "エルコルドベス",
+   "jra_odds": null,
+   "trainer_country": "",
+   "jpn": false,
+   "en": "EL CORDOBES (IRE)",
+   "ref_odds": null,
+   "jra_ref_odds": 16.0,
+   "p": null,
+   "ev": null,
+   "pick": false,
+   "need": null
+  },
+  {
+   "num": 6,
+   "name": "バーナムスクエア",
+   "jra_odds": null,
+   "trainer_country": "",
+   "jpn": false,
+   "en": "BURNHAM SQUARE (USA)",
+   "ref_odds": null,
+   "jra_ref_odds": 9.0,
+   "p": null,
+   "ev": null,
+   "pick": false,
+   "need": null
+  },
+  {
+   "num": 7,
+   "name": "ホタツェル",
+   "jra_odds": null,
+   "trainer_country": "",
+   "jpn": false,
+   "en": "HOTAZHELL (GB)",
+   "ref_odds": null,
+   "jra_ref_odds": 16.0,
+   "p": null,
+   "ev": null,
+   "pick": false,
+   "need": null
+  },
+  {
+   "num": 9,
+   "name": "ジョアンナウォルシュ",
+   "jra_odds": null,
+   "trainer_country": "",
+   "jpn": false,
+   "en": "JOHANNA WALSH (IRE)",
+   "ref_odds": null,
+   "jra_ref_odds": 13.0,
+   "p": null,
+   "ev": null,
+   "pick": false,
+   "need": null
+  },
+  {
+   "num": 10,
+   "name": "ティファニー",
+   "jra_odds": null,
+   "trainer_country": "",
+   "jpn": false,
+   "en": "TIFFANY (IRE)",
+   "ref_odds": null,
+   "jra_ref_odds": 11.0,
+   "p": null,
+   "ev": null,
+   "pick": false,
+   "need": null
+  },
+  {
+   "num": 11,
+   "name": "シュルヴィー",
+   "jra_odds": null,
+   "trainer_country": "",
+   "jpn": false,
+   "en": "SURVIE (IRE)",
+   "ref_odds": null,
+   "jra_ref_odds": 16.0,
+   "p": null,
+   "ev": null,
+   "pick": false,
+   "need": null
+  },
+  {
+   "num": 12,
+   "name": "ダイヤモンドネックレス",
+   "jra_odds": null,
+   "trainer_country": "",
+   "jpn": false,
+   "en": "DIAMOND NECKLACE (IRE)",
+   "ref_odds": null,
+   "jra_ref_odds": 4.0,
+   "p": null,
+   "ev": null,
+   "pick": false,
+   "need": null
+  },
+  {
+   "num": 13,
+   "name": "ベイシティローラー",
+   "jra_odds": null,
+   "trainer_country": "",
+   "jpn": false,
+   "en": "BAY CITY ROLLER (IRE)",
+   "ref_odds": null,
+   "jra_ref_odds": 6.0,
+   "p": null,
+   "ev": null,
+   "pick": false,
+   "need": null
+  },
+  {
+   "num": 14,
+   "name": "ディープモンスター",
+   "jra_odds": null,
+   "trainer_country": "",
+   "jpn": true,
+   "en": "DEEP MONSTER (JPN)",
+   "ref_odds": null,
+   "jra_ref_odds": 31.0,
+   "p": null,
+   "ev": null,
+   "pick": false,
+   "need": null
+  },
+  {
+   "num": 15,
+   "name": "マップオブスターズ",
+   "jra_odds": null,
+   "trainer_country": "",
+   "jpn": false,
+   "en": "MAP OF STARS (GB)",
+   "ref_odds": null,
+   "jra_ref_odds": 21.0,
+   "p": null,
+   "ev": null,
+   "pick": false,
+   "need": null
+  }
+ ],
  "scratched": [],
  "ref": {
   "12": {
    "odds": 4.0,
-   "en": "DIAMOND NECKLACE (IRE)"
+   "en": "DIAMOND NECKLACE (IRE)",
+   "ja": "ダイヤモンドネックレス"
   },
   "13": {
    "odds": 6.0,
-   "en": "BAY CITY ROLLER (IRE)"
+   "en": "BAY CITY ROLLER (IRE)",
+   "ja": "ベイシティローラー"
   },
   "2": {
    "odds": 7.0,
-   "en": "BENVENUTO CELLINI (IRE)"
+   "en": "BENVENUTO CELLINI (IRE)",
+   "ja": "ベンヴェヌートチェッリーニ"
   },
   "6": {
    "odds": 9.0,
-   "en": "BURNHAM SQUARE (USA)"
+   "en": "BURNHAM SQUARE (USA)",
+   "ja": "バーナムスクエア"
   },
   "1": {
    "odds": 11.0,
-   "en": "ETHICAL DIAMOND (IRE)"
+   "en": "ETHICAL DIAMOND (IRE)",
+   "ja": "エシカルダイヤモンド"
   },
   "10": {
    "odds": 11.0,
-   "en": "TIFFANY (IRE)"
+   "en": "TIFFANY (IRE)",
+   "ja": "ティファニー"
   },
   "9": {
    "odds": 13.0,
-   "en": "JOHANNA WALSH (IRE)"
+   "en": "JOHANNA WALSH (IRE)",
+   "ja": "ジョアンナウォルシュ"
   },
   "3": {
    "odds": 16.0,
-   "en": "MINARET STATION (USA)"
+   "en": "MINARET STATION (USA)",
+   "ja": "ミナレットステーション"
   },
   "5": {
    "odds": 16.0,
-   "en": "EL CORDOBES (IRE)"
+   "en": "EL CORDOBES (IRE)",
+   "ja": "エルコルドベス"
   },
   "7": {
    "odds": 16.0,
-   "en": "HOTAZHELL (GB)"
+   "en": "HOTAZHELL (GB)",
+   "ja": "ホタツェル"
   },
   "11": {
    "odds": 16.0,
-   "en": "SURVIE (IRE)"
+   "en": "SURVIE (IRE)",
+   "ja": "シュルヴィー"
   },
   "4": {
    "odds": 21.0,
-   "en": "FAR BRIDGE (USA)"
+   "en": "FAR BRIDGE (USA)",
+   "ja": "ファーブリッジ"
   },
   "15": {
    "odds": 21.0,
-   "en": "MAP OF STARS (GB)"
+   "en": "MAP OF STARS (GB)",
+   "ja": "マップオブスターズ"
   },
   "14": {
    "odds": 31.0,
-   "en": "DEEP MONSTER (JPN)"
+   "en": "DEEP MONSTER (JPN)",
+   "ja": "ディープモンスター"
   }
  },
  "ref_time": "",
  "ref_source": "海外ではモーニングライン（Morning Line）と呼ばれています。下記はEQUIBASE社から提供された想定オッズで、JRAのオッズとは異なりますので、参考としてご覧ください。",
- "jra_time": "2026-10-31 23:04",
+ "jra_time": "2026-11-01 03:10",
+ "entries_from": "参考オッズの表(出馬表ページが無いため)",
  "date": "2026-10-31",
  "race": "ブリーダーズカップターフ（G1）",
  "country": "アメリカ",
@@ -73,6 +285,7 @@
  "winner": "",
  "slug": "2026-10-31_ブリーダーズカップターフ",
  "news": "",
+ "pmu_race": "R4C11 LONGINES BREEDERS' CUP TURF (GRADE I)",
  "local": {
   "source": "モーニングライン(予想担当の想定オッズ)しか無い",
   "time": "",
@@ -80,6 +293,6 @@
  },
  "method": "判定できず",
  "picks": [],
- "checked_at": "2026-10-31 23:04",
+ "checked_at": "2026-11-01 03:10",
  "stake_per_pick": 1000
 }

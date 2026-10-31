@@ -2,65 +2,262 @@
  "link": "/keiba/overseas/race/2026bc/mile/",
  "sale_start": "",
  "post": "2026-11-01 05:20",
- "entries": [],
+ "entries": [
+  {
+   "num": 1,
+   "name": "デターミニスティック",
+   "jra_odds": null,
+   "trainer_country": "",
+   "jpn": false,
+   "en": "DETERMINISTIC (USA)",
+   "ref_odds": null,
+   "jra_ref_odds": 9.0,
+   "p": null,
+   "ev": null,
+   "pick": false,
+   "need": null
+  },
+  {
+   "num": 2,
+   "name": "レイクフォレスト",
+   "jra_odds": null,
+   "trainer_country": "",
+   "jpn": false,
+   "en": "LAKE FOREST (GB)",
+   "ref_odds": null,
+   "jra_ref_odds": 7.0,
+   "p": null,
+   "ev": null,
+   "pick": false,
+   "need": null
+  },
+  {
+   "num": 3,
+   "name": "ファクトゥールシュヴァル",
+   "jra_odds": null,
+   "trainer_country": "",
+   "jpn": false,
+   "en": "FACTEUR CHEVAL (IRE)",
+   "ref_odds": null,
+   "jra_ref_odds": 31.0,
+   "p": null,
+   "ev": null,
+   "pick": false,
+   "need": null
+  },
+  {
+   "num": 4,
+   "name": "カボスピリット",
+   "jra_odds": null,
+   "trainer_country": "",
+   "jpn": false,
+   "en": "CABO SPIRIT (USA)",
+   "ref_odds": null,
+   "jra_ref_odds": 31.0,
+   "p": null,
+   "ev": null,
+   "pick": false,
+   "need": null
+  },
+  {
+   "num": 5,
+   "name": "アスクイキゴミ",
+   "jra_odds": null,
+   "trainer_country": "",
+   "jpn": true,
+   "en": "ASK IKIGOMI (JPN)",
+   "ref_odds": null,
+   "jra_ref_odds": 21.0,
+   "p": null,
+   "ev": null,
+   "pick": false,
+   "need": null
+  },
+  {
+   "num": 7,
+   "name": "キラート",
+   "jra_odds": null,
+   "trainer_country": "",
+   "jpn": false,
+   "en": "QIRAT (GB)",
+   "ref_odds": null,
+   "jra_ref_odds": 31.0,
+   "p": null,
+   "ev": null,
+   "pick": false,
+   "need": null
+  },
+  {
+   "num": 8,
+   "name": "ノータブルスピーチ",
+   "jra_odds": null,
+   "trainer_country": "",
+   "jpn": false,
+   "en": "NOTABLE SPEECH (GB)",
+   "ref_odds": null,
+   "jra_ref_odds": 2.4,
+   "p": null,
+   "ev": null,
+   "pick": false,
+   "need": null
+  },
+  {
+   "num": 9,
+   "name": "レトリカル",
+   "jra_odds": null,
+   "trainer_country": "",
+   "jpn": false,
+   "en": "RHETORICAL (USA)",
+   "ref_odds": null,
+   "jra_ref_odds": 9.0,
+   "p": null,
+   "ev": null,
+   "pick": false,
+   "need": null
+  },
+  {
+   "num": 10,
+   "name": "ルガル",
+   "jra_odds": null,
+   "trainer_country": "",
+   "jpn": true,
+   "en": "LUGAL (JPN)",
+   "ref_odds": null,
+   "jra_ref_odds": 31.0,
+   "p": null,
+   "ev": null,
+   "pick": false,
+   "need": null
+  },
+  {
+   "num": 11,
+   "name": "フォーミダブルマン",
+   "jra_odds": null,
+   "trainer_country": "",
+   "jpn": false,
+   "en": "FORMIDABLE MAN (USA)",
+   "ref_odds": null,
+   "jra_ref_odds": 16.0,
+   "p": null,
+   "ev": null,
+   "pick": false,
+   "need": null
+  },
+  {
+   "num": 12,
+   "name": "トゥルーラブ",
+   "jra_odds": null,
+   "trainer_country": "",
+   "jpn": false,
+   "en": "TRUE LOVE (IRE)",
+   "ref_odds": null,
+   "jra_ref_odds": 9.0,
+   "p": null,
+   "ev": null,
+   "pick": false,
+   "need": null
+  },
+  {
+   "num": 13,
+   "name": "ブリリアントバーティ",
+   "jra_odds": null,
+   "trainer_country": "",
+   "jpn": false,
+   "en": "BRILLIANT BERTI (USA)",
+   "ref_odds": null,
+   "jra_ref_odds": 31.0,
+   "p": null,
+   "ev": null,
+   "pick": false,
+   "need": null
+  },
+  {
+   "num": 14,
+   "name": "プエルトリコ",
+   "jra_odds": null,
+   "trainer_country": "",
+   "jpn": false,
+   "en": "PUERTO RICO (IRE)",
+   "ref_odds": null,
+   "jra_ref_odds": 11.0,
+   "p": null,
+   "ev": null,
+   "pick": false,
+   "need": null
+  }
+ ],
  "scratched": [],
  "ref": {
   "8": {
    "odds": 2.4,
-   "en": "NOTABLE SPEECH (GB)"
+   "en": "NOTABLE SPEECH (GB)",
+   "ja": "ノータブルスピーチ"
   },
   "2": {
    "odds": 7.0,
-   "en": "LAKE FOREST (GB)"
+   "en": "LAKE FOREST (GB)",
+   "ja": "レイクフォレスト"
   },
   "1": {
    "odds": 9.0,
-   "en": "DETERMINISTIC (USA)"
+   "en": "DETERMINISTIC (USA)",
+   "ja": "デターミニスティック"
   },
   "9": {
    "odds": 9.0,
-   "en": "RHETORICAL (USA)"
+   "en": "RHETORICAL (USA)",
+   "ja": "レトリカル"
   },
   "12": {
    "odds": 9.0,
-   "en": "TRUE LOVE (IRE)"
+   "en": "TRUE LOVE (IRE)",
+   "ja": "トゥルーラブ"
   },
   "14": {
    "odds": 11.0,
-   "en": "PUERTO RICO (IRE)"
+   "en": "PUERTO RICO (IRE)",
+   "ja": "プエルトリコ"
   },
   "11": {
    "odds": 16.0,
-   "en": "FORMIDABLE MAN (USA)"
+   "en": "FORMIDABLE MAN (USA)",
+   "ja": "フォーミダブルマン"
   },
   "5": {
    "odds": 21.0,
-   "en": "ASK IKIGOMI (JPN)"
+   "en": "ASK IKIGOMI (JPN)",
+   "ja": "アスクイキゴミ"
   },
   "3": {
    "odds": 31.0,
-   "en": "FACTEUR CHEVAL (IRE)"
+   "en": "FACTEUR CHEVAL (IRE)",
+   "ja": "ファクトゥールシュヴァル"
   },
   "4": {
    "odds": 31.0,
-   "en": "CABO SPIRIT (USA)"
+   "en": "CABO SPIRIT (USA)",
+   "ja": "カボスピリット"
   },
   "7": {
    "odds": 31.0,
-   "en": "QIRAT (GB)"
+   "en": "QIRAT (GB)",
+   "ja": "キラート"
   },
   "10": {
    "odds": 31.0,
-   "en": "LUGAL (JPN)"
+   "en": "LUGAL (JPN)",
+   "ja": "ルガル"
   },
   "13": {
    "odds": 31.0,
-   "en": "BRILLIANT BERTI (USA)"
+   "en": "BRILLIANT BERTI (USA)",
+   "ja": "ブリリアントバーティ"
   }
  },
  "ref_time": "",
  "ref_source": "海外ではモーニングライン（Morning Line）と呼ばれています。下記はEQUIBASE社から提供された想定オッズで、JRAのオッズとは異なりますので、参考としてご覧ください。",
- "jra_time": "2026-11-01 03:08",
+ "jra_time": "2026-11-01 03:10",
+ "entries_from": "参考オッズの表(出馬表ページが無いため)",
  "date": "2026-10-31",
  "race": "ブリーダーズカップマイル（G1）",
  "country": "アメリカ",
@@ -69,6 +266,7 @@
  "winner": "",
  "slug": "2026-10-31_ブリーダーズカップマイル",
  "news": "",
+ "pmu_race": "R4C9 FANDUEL BREEDERS' CUP MILE PRESENTED BY ",
  "local": {
   "source": "モーニングライン(予想担当の想定オッズ)しか無い",
   "time": "",
@@ -76,6 +274,6 @@
  },
  "method": "判定できず",
  "picks": [],
- "checked_at": "2026-11-01 03:08",
+ "checked_at": "2026-11-01 03:10",
  "stake_per_pick": 1000
 }
