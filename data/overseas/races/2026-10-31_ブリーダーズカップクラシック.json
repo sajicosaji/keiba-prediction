@@ -10,9 +10,9 @@
    "trainer_country": "",
    "jpn": true,
    "en": "T O PASSWORD (JPN)",
-   "ref_odds": 36.0,
+   "ref_odds": 34.0,
    "jra_ref_odds": 31.0,
-   "p": 0.0215,
+   "p": 0.0228,
    "ev": null,
    "pick": false,
    "need": null
@@ -38,12 +38,12 @@
    "trainer_country": "",
    "jpn": false,
    "en": "GOLDEN TEMPO (USA)",
-   "ref_odds": 5.0,
+   "ref_odds": 5.1,
    "jra_ref_odds": 6.0,
-   "p": 0.1641,
+   "p": 0.1608,
    "ev": null,
    "pick": false,
-   "need": 7.3
+   "need": 7.5
   },
   {
    "num": 4,
@@ -80,12 +80,12 @@
    "trainer_country": "",
    "jpn": false,
    "en": "KNIGHTSBRIDGE (USA)",
-   "ref_odds": 6.7,
+   "ref_odds": 6.6,
    "jra_ref_odds": 5.5,
-   "p": 0.1214,
+   "p": 0.1233,
    "ev": null,
    "pick": false,
-   "need": 9.9
+   "need": 9.7
   },
   {
    "num": 8,
@@ -142,7 +142,7 @@
  },
  "ref_time": "",
  "ref_source": "海外ではモーニングライン（Morning Line）と呼ばれています。下記はEQUIBASE社から提供された想定オッズで、JRAのオッズとは異なりますので、参考としてご覧ください。",
- "jra_time": "2026-11-01 04:50",
+ "jra_time": "2026-11-01 04:59",
  "entries_from": "参考オッズの表(出馬表ページが無いため)",
  "date": "2026-10-31",
  "race": "ブリーダーズカップクラシック（G1）",
@@ -155,11 +155,11 @@
  "pmu_race": "R4C12 LONGINES BREEDERS' CUP CLASSIC (GRADE I)",
  "local": {
   "source": "PMU(仏公営)の実オッズ R4C12 LONGINES BREEDERS' CUP CLASSIC (GRADE I)",
-  "time": "2026-11-01 04:51",
+  "time": "2026-11-01 04:59",
   "ok": true
  },
  "method": "公営(トート)a=1.03",
  "picks": [],
- "checked_at": "2026-11-01 04:50",
+ "checked_at": "2026-11-01 04:59",
  "stake_per_pick": 1000
 }
