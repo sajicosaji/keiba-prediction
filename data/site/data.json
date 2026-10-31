@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-31 19:28",
+ "generated_at": "2026-11-01 00:39",
  "bot": {
   "monitor_days": 36,
   "last_heartbeat": "2026-10-31 09:06",
@@ -19,8 +19,8 @@
  },
  "win5_carry": null,
  "totals": {
-  "bets": 152,
-  "stake": 86600,
+  "bets": 154,
+  "stake": 88200,
   "payout": 83970,
   "hits": 6
  },
@@ -294,6 +294,15 @@
    "hits": 0,
    "cum_profit": -2630,
    "cum_roi": 0.97
+  },
+  {
+   "date": "2026-10-31",
+   "stake": 1600,
+   "payout": 0,
+   "bets": 2,
+   "hits": 0,
+   "cum_profit": -4230,
+   "cum_roi": 0.952
   }
  ],
  "kinds": [
@@ -306,8 +315,8 @@
   },
   {
    "kind": "◎単勝",
-   "bets": 84,
-   "stake": 71300,
+   "bets": 86,
+   "stake": 72900,
    "payout": 71040,
    "hits": 4
   },
@@ -320,32 +329,6 @@
   }
  ],
  "recent": [
-  {
-   "date": "2026-09-27",
-   "race_id": "202609040903",
-   "race": "阪神3R",
-   "kind": "馬連",
-   "num": "1-2",
-   "name": "ブックオブケルズ×ロードメガロポリス",
-   "pos": "0",
-   "odds": 43.3,
-   "stake": 100,
-   "payout": 0,
-   "source": "BOT精算"
-  },
-  {
-   "date": "2026-09-27",
-   "race_id": "202609040903",
-   "race": "阪神3R",
-   "kind": "馬連",
-   "num": "2-8",
-   "name": "ブックオブケルズ×ダンスコマンド",
-   "pos": "0",
-   "odds": 6.8,
-   "stake": 500,
-   "payout": 0,
-   "source": "BOT精算"
-  },
   {
    "date": "2026-09-27",
    "race_id": "202609040907",
@@ -706,6 +689,32 @@
    "name": "ラブカムーン",
    "pos": "7",
    "odds": 33.7,
+   "stake": 800,
+   "payout": 0,
+   "source": "BOT精算"
+  },
+  {
+   "date": "2026-10-31",
+   "race_id": "202605041005",
+   "race": "東京5R",
+   "kind": "◎単勝",
+   "num": "6",
+   "name": "タイセイリメンバー",
+   "pos": "4",
+   "odds": 7.4,
+   "stake": 800,
+   "payout": 0,
+   "source": "BOT精算"
+  },
+  {
+   "date": "2026-10-31",
+   "race_id": "202605041008",
+   "race": "東京8R",
+   "kind": "◎単勝",
+   "num": "2",
+   "name": "プレダトゥール",
+   "pos": "8",
+   "odds": 23.9,
    "stake": 800,
    "payout": 0,
    "source": "BOT精算"
@@ -1887,86 +1896,6 @@
  ],
  "odds_moves": [
   {
-   "race_id": "202605040102",
-   "race": "東京2R",
-   "num": "1",
-   "name": "セイウンオオゾラ",
-   "date": "2026-10-03",
-   "pos": "10",
-   "points": [
-    {
-     "m": 88,
-     "odds": 23.8,
-     "phase": "pre"
-    },
-    {
-     "m": 61,
-     "odds": 26.9,
-     "phase": "pre"
-    },
-    {
-     "m": 35,
-     "odds": 26.1,
-     "phase": "pre"
-    },
-    {
-     "m": 8,
-     "odds": 35.0,
-     "phase": "pre"
-    },
-    {
-     "m": -18,
-     "odds": 54.8,
-     "phase": "final"
-    }
-   ]
-  },
-  {
-   "race_id": "202608040104",
-   "race": "京都4R",
-   "num": "3",
-   "name": "ビヨンドザスカイ",
-   "date": "2026-10-03",
-   "pos": "8",
-   "points": [
-    {
-     "m": 133,
-     "odds": 24.1,
-     "phase": "pre"
-    },
-    {
-     "m": 106,
-     "odds": 21.5,
-     "phase": "pre"
-    },
-    {
-     "m": 80,
-     "odds": 23.0,
-     "phase": "pre"
-    },
-    {
-     "m": 58,
-     "odds": 25.3,
-     "phase": "pre"
-    },
-    {
-     "m": 32,
-     "odds": 26.7,
-     "phase": "pre"
-    },
-    {
-     "m": 5,
-     "odds": 55.7,
-     "phase": "pre"
-    },
-    {
-     "m": -21,
-     "odds": 80.6,
-     "phase": "final"
-    }
-   ]
-  },
-  {
    "race_id": "202608040109",
    "race": "京都9R",
    "num": "1",
@@ -2652,6 +2581,91 @@
     {
      "m": -20,
      "odds": 33.7,
+     "phase": "final"
+    }
+   ]
+  },
+  {
+   "race_id": "202605041005",
+   "race": "東京5R",
+   "num": "6",
+   "name": "タイセイリメンバー",
+   "date": "2026-10-31",
+   "pos": "4",
+   "points": [
+    {
+     "m": 139,
+     "odds": 13.3,
+     "phase": "pre"
+    },
+    {
+     "m": 112,
+     "odds": 13.4,
+     "phase": "pre"
+    },
+    {
+     "m": 85,
+     "odds": 14.4,
+     "phase": "pre"
+    },
+    {
+     "m": 59,
+     "odds": 14.7,
+     "phase": "pre"
+    },
+    {
+     "m": 31,
+     "odds": 13.5,
+     "phase": "pre"
+    },
+    {
+     "m": -23,
+     "odds": 7.4,
+     "phase": "final"
+    },
+    {
+     "m": -118,
+     "odds": 7.4,
+     "phase": "final"
+    }
+   ]
+  },
+  {
+   "race_id": "202605041008",
+   "race": "東京8R",
+   "num": "2",
+   "name": "プレダトゥール",
+   "date": "2026-10-31",
+   "pos": "8",
+   "points": [
+    {
+     "m": 139,
+     "odds": 24.7,
+     "phase": "pre"
+    },
+    {
+     "m": 113,
+     "odds": 25.1,
+     "phase": "pre"
+    },
+    {
+     "m": 86,
+     "odds": 25.4,
+     "phase": "pre"
+    },
+    {
+     "m": 59,
+     "odds": 24.9,
+     "phase": "pre"
+    },
+    {
+     "m": 32,
+     "odds": 25.6,
+     "phase": "pre"
+    },
+    {
+     "m": -23,
+     "odds": 23.9,
      "phase": "final"
     }
    ]
