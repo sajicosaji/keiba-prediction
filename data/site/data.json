@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-31 16:49",
+ "generated_at": "2026-10-31 17:02",
  "bot": {
   "monitor_days": 36,
   "last_heartbeat": "2026-10-31 09:06",
@@ -14,8 +14,8 @@
   ]
  },
  "next_meeting": {
-  "date": "2026-10-31",
-  "label": "10/31(土) 東京・京都"
+  "date": "2026-11-01",
+  "label": "11/1(日) 東京・京都"
  },
  "win5_carry": null,
  "totals": {
