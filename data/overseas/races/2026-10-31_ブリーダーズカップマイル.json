@@ -4,10 +4,63 @@
  "post": "2026-11-01 05:20",
  "entries": [],
  "scratched": [],
- "ref": {},
+ "ref": {
+  "8": {
+   "odds": 2.4,
+   "en": "NOTABLE SPEECH (GB)"
+  },
+  "2": {
+   "odds": 7.0,
+   "en": "LAKE FOREST (GB)"
+  },
+  "1": {
+   "odds": 9.0,
+   "en": "DETERMINISTIC (USA)"
+  },
+  "9": {
+   "odds": 9.0,
+   "en": "RHETORICAL (USA)"
+  },
+  "12": {
+   "odds": 9.0,
+   "en": "TRUE LOVE (IRE)"
+  },
+  "14": {
+   "odds": 11.0,
+   "en": "PUERTO RICO (IRE)"
+  },
+  "11": {
+   "odds": 16.0,
+   "en": "FORMIDABLE MAN (USA)"
+  },
+  "5": {
+   "odds": 21.0,
+   "en": "ASK IKIGOMI (JPN)"
+  },
+  "3": {
+   "odds": 31.0,
+   "en": "FACTEUR CHEVAL (IRE)"
+  },
+  "4": {
+   "odds": 31.0,
+   "en": "CABO SPIRIT (USA)"
+  },
+  "7": {
+   "odds": 31.0,
+   "en": "QIRAT (GB)"
+  },
+  "10": {
+   "odds": 31.0,
+   "en": "LUGAL (JPN)"
+  },
+  "13": {
+   "odds": 31.0,
+   "en": "BRILLIANT BERTI (USA)"
+  }
+ },
  "ref_time": "",
- "ref_source": "",
- "jra_time": "2026-10-31 10:27",
+ "ref_source": "海外ではモーニングライン（Morning Line）と呼ばれています。下記はEQUIBASE社から提供された想定オッズで、JRAのオッズとは異なりますので、参考としてご覧ください。",
+ "jra_time": "2026-10-31 16:00",
  "date": "2026-10-31",
  "race": "ブリーダーズカップマイル（G1）",
  "country": "アメリカ",
@@ -17,12 +70,12 @@
  "slug": "2026-10-31_ブリーダーズカップマイル",
  "news": "",
  "local": {
-  "source": "現地のオッズなし",
+  "source": "モーニングライン(予想担当の想定オッズ)しか無い",
   "time": "",
   "ok": false
  },
  "method": "判定できず",
  "picks": [],
- "checked_at": "2026-10-31 10:27",
+ "checked_at": "2026-10-31 16:00",
  "stake_per_pick": 1000
 }

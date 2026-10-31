@@ -4,10 +4,39 @@
  "post": "2026-11-01 07:16",
  "entries": [],
  "scratched": [],
- "ref": {},
+ "ref": {
+  "5": {
+   "odds": 3.0,
+   "en": "FOREVER YOUNG (JPN)"
+  },
+  "2": {
+   "odds": 3.5,
+   "en": "SOVEREIGNTY (USA)"
+  },
+  "7": {
+   "odds": 5.5,
+   "en": "KNIGHTSBRIDGE (USA)"
+  },
+  "3": {
+   "odds": 6.0,
+   "en": "GOLDEN TEMPO (USA)"
+  },
+  "4": {
+   "odds": 11.0,
+   "en": "THE PUMA (USA)"
+  },
+  "8": {
+   "odds": 16.0,
+   "en": "NAPOLEON SOLO (USA)"
+  },
+  "1": {
+   "odds": 31.0,
+   "en": "T O PASSWORD (JPN)"
+  }
+ },
  "ref_time": "",
- "ref_source": "",
- "jra_time": "2026-10-31 10:27",
+ "ref_source": "海外ではモーニングライン（Morning Line）と呼ばれています。下記はEQUIBASE社から提供された想定オッズで、JRAのオッズとは異なりますので、参考としてご覧ください。",
+ "jra_time": "2026-10-31 16:00",
  "date": "2026-10-31",
  "race": "ブリーダーズカップクラシック（G1）",
  "country": "アメリカ",
@@ -17,12 +46,12 @@
  "slug": "2026-10-31_ブリーダーズカップクラシック",
  "news": "",
  "local": {
-  "source": "現地のオッズなし",
+  "source": "モーニングライン(予想担当の想定オッズ)しか無い",
   "time": "",
   "ok": false
  },
  "method": "判定できず",
  "picks": [],
- "checked_at": "2026-10-31 10:27",
+ "checked_at": "2026-10-31 16:00",
  "stake_per_pick": 1000
 }

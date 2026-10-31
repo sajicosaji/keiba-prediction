@@ -4,10 +4,71 @@
  "post": "2026-11-01 06:36",
  "entries": [],
  "scratched": [],
- "ref": {},
+ "ref": {
+  "12": {
+   "odds": 4.0,
+   "en": "DIAMOND NECKLACE (IRE)"
+  },
+  "13": {
+   "odds": 6.0,
+   "en": "BAY CITY ROLLER (IRE)"
+  },
+  "2": {
+   "odds": 7.0,
+   "en": "BENVENUTO CELLINI (IRE)"
+  },
+  "6": {
+   "odds": 9.0,
+   "en": "BURNHAM SQUARE (USA)"
+  },
+  "1": {
+   "odds": 11.0,
+   "en": "ETHICAL DIAMOND (IRE)"
+  },
+  "10": {
+   "odds": 11.0,
+   "en": "TIFFANY (IRE)"
+  },
+  "9": {
+   "odds": 13.0,
+   "en": "JOHANNA WALSH (IRE)"
+  },
+  "3": {
+   "odds": 16.0,
+   "en": "MINARET STATION (USA)"
+  },
+  "5": {
+   "odds": 16.0,
+   "en": "EL CORDOBES (IRE)"
+  },
+  "7": {
+   "odds": 16.0,
+   "en": "HOTAZHELL (GB)"
+  },
+  "11": {
+   "odds": 16.0,
+   "en": "SURVIE (IRE)"
+  },
+  "4": {
+   "odds": 21.0,
+   "en": "FAR BRIDGE (USA)"
+  },
+  "15": {
+   "odds": 21.0,
+   "en": "MAP OF STARS (GB)"
+  },
+  "14": {
+   "odds": 31.0,
+   "en": "DEEP MONSTER (JPN)"
+  },
+  "16": {
+   "odds": 31.0,
+   "en": "TELESCOPIC (USA)"
+  }
+ },
  "ref_time": "",
- "ref_source": "",
- "jra_time": "2026-10-31 10:27",
+ "ref_source": "海外ではモーニングライン（Morning Line）と呼ばれています。下記はEQUIBASE社から提供された想定オッズで、JRAのオッズとは異なりますので、参考としてご覧ください。",
+ "jra_time": "2026-10-31 16:00",
  "date": "2026-10-31",
  "race": "ブリーダーズカップターフ（G1）",
  "country": "アメリカ",
@@ -17,12 +78,12 @@
  "slug": "2026-10-31_ブリーダーズカップターフ",
  "news": "",
  "local": {
-  "source": "現地のオッズなし",
+  "source": "モーニングライン(予想担当の想定オッズ)しか無い",
   "time": "",
   "ok": false
  },
  "method": "判定できず",
  "picks": [],
- "checked_at": "2026-10-31 10:27",
+ "checked_at": "2026-10-31 16:00",
  "stake_per_pick": 1000
 }
