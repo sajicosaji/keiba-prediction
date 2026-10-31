@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-01 03:21",
+ "generated_at": "2026-11-01 03:30",
  "schedule": {
   "checked_at": "2026-11-01 03:10",
   "designated": [
@@ -650,7 +650,7 @@
    },
    "ref_time": "",
    "ref_source": "海外ではモーニングライン（Morning Line）と呼ばれています。下記はEQUIBASE社から提供された想定オッズで、JRAのオッズとは異なりますので、参考としてご覧ください。",
-   "jra_time": "2026-11-01 03:21",
+   "jra_time": "2026-11-01 03:30",
    "entries_from": "参考オッズの表(出馬表ページが無いため)",
    "date": "2026-10-31",
    "race": "ブリーダーズカップスプリント（G1）",
@@ -668,7 +668,7 @@
    },
    "method": "判定できず",
    "picks": [],
-   "checked_at": "2026-11-01 03:21",
+   "checked_at": "2026-11-01 03:30",
    "stake_per_pick": 1000
   },
   {
@@ -1009,12 +1009,12 @@
      "trainer_country": "",
      "jpn": false,
      "en": "FURTHER ADO (USA)",
-     "ref_odds": 2.1,
+     "ref_odds": 2.0,
      "jra_ref_odds": 3.0,
-     "p": 0.407,
+     "p": 0.4252,
      "ev": null,
      "pick": false,
-     "need": 2.9
+     "need": 2.8
     },
     {
      "num": 2,
@@ -1023,9 +1023,9 @@
      "trainer_country": "",
      "jpn": false,
      "en": "T KRAFT (USA)",
-     "ref_odds": 29.0,
+     "ref_odds": 31.0,
      "jra_ref_odds": 16.0,
-     "p": 0.0272,
+     "p": 0.0253,
      "ev": null,
      "pick": false,
      "need": null
@@ -1037,12 +1037,12 @@
      "trainer_country": "",
      "jpn": false,
      "en": "FULL SERRANO (ARG)",
-     "ref_odds": 7.6,
+     "ref_odds": 8.3,
      "jra_ref_odds": 11.0,
-     "p": 0.1082,
+     "p": 0.0982,
      "ev": null,
      "pick": false,
-     "need": 11.1
+     "need": 12.2
     },
     {
      "num": 4,
@@ -1051,12 +1051,12 @@
      "trainer_country": "",
      "jpn": false,
      "en": "CHUNK OF GOLD (USA)",
-     "ref_odds": 9.9,
+     "ref_odds": 11.0,
      "jra_ref_odds": 9.0,
-     "p": 0.0824,
+     "p": 0.0734,
      "ev": null,
      "pick": false,
-     "need": 14.6
+     "need": 16.3
     },
     {
      "num": 5,
@@ -1065,12 +1065,12 @@
      "trainer_country": "",
      "jpn": false,
      "en": "COAL BATTLE (USA)",
-     "ref_odds": 11.0,
+     "ref_odds": 10.0,
      "jra_ref_odds": 7.0,
-     "p": 0.0739,
+     "p": 0.081,
      "ev": null,
      "pick": false,
-     "need": 16.2
+     "need": 14.8
     },
     {
      "num": 6,
@@ -1079,9 +1079,9 @@
      "trainer_country": "",
      "jpn": true,
      "en": "LORD FONS (JPN)",
-     "ref_odds": 20.0,
+     "ref_odds": 22.0,
      "jra_ref_odds": 16.0,
-     "p": 0.0399,
+     "p": 0.036,
      "ev": null,
      "pick": false,
      "need": null
@@ -1093,12 +1093,12 @@
      "trainer_country": "",
      "jpn": false,
      "en": "BRACKET BUSTER (USA)",
-     "ref_odds": 6.2,
+     "ref_odds": 5.9,
      "jra_ref_odds": 4.5,
-     "p": 0.1334,
+     "p": 0.1395,
      "ev": null,
      "pick": false,
-     "need": 9.0
+     "need": 8.6
     },
     {
      "num": 8,
@@ -1107,9 +1107,9 @@
      "trainer_country": "",
      "jpn": false,
      "en": "MOONLIGHT (USA)",
-     "ref_odds": 49.0,
+     "ref_odds": 54.0,
      "jra_ref_odds": 16.0,
-     "p": 0.0159,
+     "p": 0.0143,
      "ev": null,
      "pick": false,
      "need": null
@@ -1123,10 +1123,10 @@
      "en": "OWEN ALMIGHTY (USA)",
      "ref_odds": 10.0,
      "jra_ref_odds": 11.0,
-     "p": 0.0816,
+     "p": 0.081,
      "ev": null,
      "pick": false,
-     "need": 14.7
+     "need": 14.8
     },
     {
      "num": 11,
@@ -1135,9 +1135,9 @@
      "trainer_country": "",
      "jpn": false,
      "en": "IRON MAN CAL (USA)",
-     "ref_odds": 26.0,
+     "ref_odds": 30.0,
      "jra_ref_odds": 13.0,
-     "p": 0.0305,
+     "p": 0.0261,
      "ev": null,
      "pick": false,
      "need": null
@@ -1198,7 +1198,7 @@
    },
    "ref_time": "",
    "ref_source": "海外ではモーニングライン（Morning Line）と呼ばれています。下記はEQUIBASE社から提供された想定オッズで、JRAのオッズとは異なりますので、参考としてご覧ください。",
-   "jra_time": "2026-11-01 03:21",
+   "jra_time": "2026-11-01 03:30",
    "entries_from": "参考オッズの表(出馬表ページが無いため)",
    "date": "2026-10-31",
    "race": "ブリーダーズカップダートマイル（G1）",
@@ -1211,12 +1211,12 @@
    "pmu_race": "R4C6 BREEDERS' CUP DIRT MILE (GRADE I)",
    "local": {
     "source": "PMU(仏公営)の実オッズ R4C6 BREEDERS' CUP DIRT MILE (GRADE I)",
-    "time": "2026-11-01 03:21",
+    "time": "2026-11-01 03:30",
     "ok": true
    },
    "method": "公営(トート)a=1.03",
    "picks": [],
-   "checked_at": "2026-11-01 03:21",
+   "checked_at": "2026-11-01 03:30",
    "final": {
     "at": "2026-11-01 03:08",
     "picks": [],
@@ -1482,7 +1482,7 @@
    },
    "ref_time": "",
    "ref_source": "海外ではモーニングライン（Morning Line）と呼ばれています。下記はEQUIBASE社から提供された想定オッズで、JRAのオッズとは異なりますので、参考としてご覧ください。",
-   "jra_time": "2026-11-01 03:21",
+   "jra_time": "2026-11-01 03:30",
    "entries_from": "参考オッズの表(出馬表ページが無いため)",
    "date": "2026-10-31",
    "race": "ブリーダーズカップマイル（G1）",
@@ -1500,7 +1500,7 @@
    },
    "method": "判定できず",
    "picks": [],
-   "checked_at": "2026-11-01 03:21",
+   "checked_at": "2026-11-01 03:30",
    "stake_per_pick": 1000
   },
   {
