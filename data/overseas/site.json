@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-01 04:05",
+ "generated_at": "2026-11-01 04:14",
  "schedule": {
   "checked_at": "2026-11-01 03:10",
   "designated": [
@@ -404,9 +404,9 @@
      "trainer_country": "",
      "jpn": false,
      "en": "MAD HOUSE (USA)",
-     "ref_odds": null,
+     "ref_odds": 97.0,
      "jra_ref_odds": 31.0,
-     "p": null,
+     "p": 0.0078,
      "ev": null,
      "pick": false,
      "need": null
@@ -418,9 +418,9 @@
      "trainer_country": "",
      "jpn": false,
      "en": "DARK SAFFRON (USA)",
-     "ref_odds": null,
+     "ref_odds": 36.0,
      "jra_ref_odds": 21.0,
-     "p": null,
+     "p": 0.0217,
      "ev": null,
      "pick": false,
      "need": null
@@ -432,9 +432,9 @@
      "trainer_country": "",
      "jpn": false,
      "en": "LIAM SMITH (USA)",
-     "ref_odds": null,
+     "ref_odds": 28.0,
      "jra_ref_odds": 21.0,
-     "p": null,
+     "p": 0.0281,
      "ev": null,
      "pick": false,
      "need": null
@@ -446,9 +446,9 @@
      "trainer_country": "",
      "jpn": false,
      "en": "HYMN (USA)",
-     "ref_odds": null,
+     "ref_odds": 34.0,
      "jra_ref_odds": 16.0,
-     "p": null,
+     "p": 0.023,
      "ev": null,
      "pick": false,
      "need": null
@@ -460,12 +460,12 @@
      "trainer_country": "",
      "jpn": false,
      "en": "LISTENUPSHANCE (USA)",
-     "ref_odds": null,
+     "ref_odds": 2.9,
      "jra_ref_odds": 13.0,
-     "p": null,
+     "p": 0.2904,
      "ev": null,
      "pick": false,
-     "need": null
+     "need": 4.1
     },
     {
      "num": 6,
@@ -474,9 +474,9 @@
      "trainer_country": "",
      "jpn": true,
      "en": "AMERICAN STAGE (USA)",
-     "ref_odds": null,
+     "ref_odds": 111.0,
      "jra_ref_odds": 31.0,
-     "p": null,
+     "p": 0.0068,
      "ev": null,
      "pick": false,
      "need": null
@@ -488,9 +488,9 @@
      "trainer_country": "",
      "jpn": false,
      "en": "BUILT (USA)",
-     "ref_odds": null,
+     "ref_odds": 16.0,
      "jra_ref_odds": 11.0,
-     "p": null,
+     "p": 0.05,
      "ev": null,
      "pick": false,
      "need": null
@@ -502,9 +502,9 @@
      "trainer_country": "",
      "jpn": false,
      "en": "LITTLE THUNDER (USA)",
-     "ref_odds": null,
+     "ref_odds": 75.0,
      "jra_ref_odds": 31.0,
-     "p": null,
+     "p": 0.0102,
      "ev": null,
      "pick": false,
      "need": null
@@ -516,9 +516,9 @@
      "trainer_country": "",
      "jpn": false,
      "en": "NAKATOMI (USA)",
-     "ref_odds": null,
+     "ref_odds": 31.0,
      "jra_ref_odds": 13.0,
-     "p": null,
+     "p": 0.0253,
      "ev": null,
      "pick": false,
      "need": null
@@ -530,9 +530,9 @@
      "trainer_country": "",
      "jpn": false,
      "en": "ROLL ON BIG JOE (USA)",
-     "ref_odds": null,
+     "ref_odds": 39.0,
      "jra_ref_odds": 31.0,
-     "p": null,
+     "p": 0.02,
      "ev": null,
      "pick": false,
      "need": null
@@ -544,9 +544,9 @@
      "trainer_country": "",
      "jpn": true,
      "en": "T O ELVIS (USA)",
-     "ref_odds": null,
+     "ref_odds": 4.9,
      "jra_ref_odds": 4.5,
-     "p": null,
+     "p": 0.1692,
      "ev": null,
      "pick": false,
      "need": null
@@ -558,9 +558,9 @@
      "trainer_country": "",
      "jpn": false,
      "en": "STRADALE (USA)",
-     "ref_odds": null,
+     "ref_odds": 83.0,
      "jra_ref_odds": 21.0,
-     "p": null,
+     "p": 0.0092,
      "ev": null,
      "pick": false,
      "need": null
@@ -572,12 +572,12 @@
      "trainer_country": "",
      "jpn": false,
      "en": "ENGLISHMAN (USA)",
-     "ref_odds": null,
+     "ref_odds": 2.5,
      "jra_ref_odds": 1.8,
-     "p": null,
+     "p": 0.3384,
      "ev": null,
      "pick": false,
-     "need": null
+     "need": 3.5
     }
    ],
    "scratched": [],
@@ -650,7 +650,7 @@
    },
    "ref_time": "",
    "ref_source": "海外ではモーニングライン（Morning Line）と呼ばれています。下記はEQUIBASE社から提供された想定オッズで、JRAのオッズとは異なりますので、参考としてご覧ください。",
-   "jra_time": "2026-11-01 04:05",
+   "jra_time": "2026-11-01 04:14",
    "entries_from": "参考オッズの表(出馬表ページが無いため)",
    "date": "2026-10-31",
    "race": "ブリーダーズカップスプリント（G1）",
@@ -662,13 +662,13 @@
    "news": "",
    "pmu_race": "R4C8 CYGAMES BREEDERS' CUP SPRINT (GRADE I)",
    "local": {
-    "source": "モーニングライン(予想担当の想定オッズ)しか無い",
-    "time": "",
-    "ok": false
+    "source": "PMU(仏公営)の実オッズ R4C8 CYGAMES BREEDERS' CUP SPRINT (GRADE I)",
+    "time": "2026-11-01 04:14",
+    "ok": true
    },
-   "method": "判定できず",
+   "method": "公営(トート)a=1.03",
    "picks": [],
-   "checked_at": "2026-11-01 04:05",
+   "checked_at": "2026-11-01 04:14",
    "stake_per_pick": 1000
   },
   {
@@ -948,7 +948,7 @@
    },
    "ref_time": "",
    "ref_source": "海外ではモーニングライン（Morning Line）と呼ばれています。下記はEQUIBASE社から提供された想定オッズで、JRAのオッズとは異なりますので、参考としてご覧ください。",
-   "jra_time": "2026-11-01 04:05",
+   "jra_time": "2026-11-01 04:14",
    "entries_from": "参考オッズの表(出馬表ページが無いため)",
    "date": "2026-10-31",
    "race": "ブリーダーズカップターフ（G1）",
@@ -966,7 +966,7 @@
    },
    "method": "判定できず",
    "picks": [],
-   "checked_at": "2026-11-01 04:05",
+   "checked_at": "2026-11-01 04:14",
    "stake_per_pick": 1000
   },
   {
@@ -1482,7 +1482,7 @@
    },
    "ref_time": "",
    "ref_source": "海外ではモーニングライン（Morning Line）と呼ばれています。下記はEQUIBASE社から提供された想定オッズで、JRAのオッズとは異なりますので、参考としてご覧ください。",
-   "jra_time": "2026-11-01 04:05",
+   "jra_time": "2026-11-01 04:14",
    "entries_from": "参考オッズの表(出馬表ページが無いため)",
    "date": "2026-10-31",
    "race": "ブリーダーズカップマイル（G1）",
@@ -1500,7 +1500,7 @@
    },
    "method": "判定できず",
    "picks": [],
-   "checked_at": "2026-11-01 04:05",
+   "checked_at": "2026-11-01 04:14",
    "stake_per_pick": 1000
   },
   {
