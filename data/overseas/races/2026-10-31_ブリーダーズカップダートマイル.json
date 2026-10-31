@@ -12,10 +12,10 @@
    "en": "FURTHER ADO (USA)",
    "ref_odds": 2.1,
    "jra_ref_odds": 3.0,
-   "p": 0.3991,
+   "p": 0.407,
    "ev": null,
    "pick": false,
-   "need": 3.0
+   "need": 2.9
   },
   {
    "num": 2,
@@ -24,9 +24,9 @@
    "trainer_country": "",
    "jpn": false,
    "en": "T KRAFT (USA)",
-   "ref_odds": 23.0,
+   "ref_odds": 29.0,
    "jra_ref_odds": 16.0,
-   "p": 0.0339,
+   "p": 0.0272,
    "ev": null,
    "pick": false,
    "need": null
@@ -38,12 +38,12 @@
    "trainer_country": "",
    "jpn": false,
    "en": "FULL SERRANO (ARG)",
-   "ref_odds": 8.0,
+   "ref_odds": 7.6,
    "jra_ref_odds": 11.0,
-   "p": 0.1006,
+   "p": 0.1082,
    "ev": null,
    "pick": false,
-   "need": 11.9
+   "need": 11.1
   },
   {
    "num": 4,
@@ -52,12 +52,12 @@
    "trainer_country": "",
    "jpn": false,
    "en": "CHUNK OF GOLD (USA)",
-   "ref_odds": 10.0,
+   "ref_odds": 9.9,
    "jra_ref_odds": 9.0,
-   "p": 0.08,
+   "p": 0.0824,
    "ev": null,
    "pick": false,
-   "need": 15.0
+   "need": 14.6
   },
   {
    "num": 5,
@@ -66,12 +66,12 @@
    "trainer_country": "",
    "jpn": false,
    "en": "COAL BATTLE (USA)",
-   "ref_odds": 10.0,
+   "ref_odds": 11.0,
    "jra_ref_odds": 7.0,
-   "p": 0.08,
+   "p": 0.0739,
    "ev": null,
    "pick": false,
-   "need": 15.0
+   "need": 16.2
   },
   {
    "num": 6,
@@ -82,7 +82,7 @@
    "en": "LORD FONS (JPN)",
    "ref_odds": 20.0,
    "jra_ref_odds": 16.0,
-   "p": 0.0392,
+   "p": 0.0399,
    "ev": null,
    "pick": false,
    "need": null
@@ -96,10 +96,10 @@
    "en": "BRACKET BUSTER (USA)",
    "ref_odds": 6.2,
    "jra_ref_odds": 4.5,
-   "p": 0.1309,
+   "p": 0.1334,
    "ev": null,
    "pick": false,
-   "need": 9.2
+   "need": 9.0
   },
   {
    "num": 8,
@@ -108,9 +108,9 @@
    "trainer_country": "",
    "jpn": false,
    "en": "MOONLIGHT (USA)",
-   "ref_odds": 42.0,
+   "ref_odds": 49.0,
    "jra_ref_odds": 16.0,
-   "p": 0.0182,
+   "p": 0.0159,
    "ev": null,
    "pick": false,
    "need": null
@@ -122,12 +122,12 @@
    "trainer_country": "",
    "jpn": false,
    "en": "OWEN ALMIGHTY (USA)",
-   "ref_odds": 9.9,
+   "ref_odds": 10.0,
    "jra_ref_odds": 11.0,
-   "p": 0.0808,
+   "p": 0.0816,
    "ev": null,
    "pick": false,
-   "need": 14.9
+   "need": 14.7
   },
   {
    "num": 11,
@@ -136,9 +136,9 @@
    "trainer_country": "",
    "jpn": false,
    "en": "IRON MAN CAL (USA)",
-   "ref_odds": 21.0,
+   "ref_odds": 26.0,
    "jra_ref_odds": 13.0,
-   "p": 0.0372,
+   "p": 0.0305,
    "ev": null,
    "pick": false,
    "need": null
@@ -199,7 +199,7 @@
  },
  "ref_time": "",
  "ref_source": "海外ではモーニングライン（Morning Line）と呼ばれています。下記はEQUIBASE社から提供された想定オッズで、JRAのオッズとは異なりますので、参考としてご覧ください。",
- "jra_time": "2026-11-01 03:12",
+ "jra_time": "2026-11-01 03:21",
  "entries_from": "参考オッズの表(出馬表ページが無いため)",
  "date": "2026-10-31",
  "race": "ブリーダーズカップダートマイル（G1）",
@@ -212,12 +212,12 @@
  "pmu_race": "R4C6 BREEDERS' CUP DIRT MILE (GRADE I)",
  "local": {
   "source": "PMU(仏公営)の実オッズ R4C6 BREEDERS' CUP DIRT MILE (GRADE I)",
-  "time": "2026-11-01 03:12",
+  "time": "2026-11-01 03:21",
   "ok": true
  },
  "method": "公営(トート)a=1.03",
  "picks": [],
- "checked_at": "2026-11-01 03:12",
+ "checked_at": "2026-11-01 03:21",
  "final": {
   "at": "2026-11-01 03:08",
   "picks": [],
