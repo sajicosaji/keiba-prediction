@@ -12,10 +12,10 @@
    "en": "ETHICAL DIAMOND (IRE)",
    "ref_odds": 13.0,
    "jra_ref_odds": 11.0,
-   "p": 0.0634,
+   "p": 0.063,
    "ev": null,
    "pick": false,
-   "need": 18.9
+   "need": 19.0
   },
   {
    "num": 2,
@@ -24,12 +24,12 @@
    "trainer_country": "",
    "jpn": false,
    "en": "BENVENUTO CELLINI (IRE)",
-   "ref_odds": 6.4,
+   "ref_odds": 6.6,
    "jra_ref_odds": 7.0,
-   "p": 0.1316,
+   "p": 0.1266,
    "ev": null,
    "pick": false,
-   "need": 9.1
+   "need": 9.5
   },
   {
    "num": 3,
@@ -38,9 +38,9 @@
    "trainer_country": "",
    "jpn": false,
    "en": "MINARET STATION (USA)",
-   "ref_odds": 21.0,
+   "ref_odds": 19.0,
    "jra_ref_odds": 16.0,
-   "p": 0.0387,
+   "p": 0.0426,
    "ev": null,
    "pick": false,
    "need": null
@@ -52,9 +52,9 @@
    "trainer_country": "",
    "jpn": false,
    "en": "FAR BRIDGE (USA)",
-   "ref_odds": 24.0,
+   "ref_odds": 22.0,
    "jra_ref_odds": 21.0,
-   "p": 0.0337,
+   "p": 0.0366,
    "ev": null,
    "pick": false,
    "need": null
@@ -68,7 +68,7 @@
    "en": "EL CORDOBES (IRE)",
    "ref_odds": 17.0,
    "jra_ref_odds": 16.0,
-   "p": 0.0481,
+   "p": 0.0478,
    "ev": null,
    "pick": false,
    "need": null
@@ -80,12 +80,12 @@
    "trainer_country": "",
    "jpn": false,
    "en": "BURNHAM SQUARE (USA)",
-   "ref_odds": 9.1,
+   "ref_odds": 9.6,
    "jra_ref_odds": 9.0,
-   "p": 0.0916,
+   "p": 0.086,
    "ev": null,
    "pick": false,
-   "need": 13.1
+   "need": 14.0
   },
   {
    "num": 7,
@@ -96,7 +96,7 @@
    "en": "HOTAZHELL (GB)",
    "ref_odds": 17.0,
    "jra_ref_odds": 16.0,
-   "p": 0.0481,
+   "p": 0.0478,
    "ev": null,
    "pick": false,
    "need": null
@@ -108,9 +108,9 @@
    "trainer_country": "",
    "jpn": false,
    "en": "JOHANNA WALSH (IRE)",
-   "ref_odds": 23.0,
+   "ref_odds": 27.0,
    "jra_ref_odds": 13.0,
-   "p": 0.0352,
+   "p": 0.0297,
    "ev": null,
    "pick": false,
    "need": null
@@ -122,12 +122,12 @@
    "trainer_country": "",
    "jpn": false,
    "en": "TIFFANY (IRE)",
-   "ref_odds": 6.7,
+   "ref_odds": 6.2,
    "jra_ref_odds": 11.0,
-   "p": 0.1256,
+   "p": 0.135,
    "ev": null,
    "pick": false,
-   "need": 9.6
+   "need": 8.9
   },
   {
    "num": 11,
@@ -138,7 +138,7 @@
    "en": "SURVIE (IRE)",
    "ref_odds": 14.0,
    "jra_ref_odds": 16.0,
-   "p": 0.0588,
+   "p": 0.0583,
    "ev": null,
    "pick": false,
    "need": null
@@ -150,12 +150,12 @@
    "trainer_country": "",
    "jpn": false,
    "en": "DIAMOND NECKLACE (IRE)",
-   "ref_odds": 6.1,
+   "ref_odds": 6.0,
    "jra_ref_odds": 4.0,
-   "p": 0.1383,
+   "p": 0.1396,
    "ev": null,
    "pick": false,
-   "need": 8.7
+   "need": 8.6
   },
   {
    "num": 13,
@@ -164,12 +164,12 @@
    "trainer_country": "",
    "jpn": false,
    "en": "BAY CITY ROLLER (IRE)",
-   "ref_odds": 7.4,
+   "ref_odds": 7.1,
    "jra_ref_odds": 6.0,
-   "p": 0.1133,
+   "p": 0.1174,
    "ev": null,
    "pick": false,
-   "need": 10.6
+   "need": 10.2
   },
   {
    "num": 14,
@@ -178,9 +178,9 @@
    "trainer_country": "",
    "jpn": true,
    "en": "DEEP MONSTER (JPN)",
-   "ref_odds": 14.0,
+   "ref_odds": 15.0,
    "jra_ref_odds": 31.0,
-   "p": 0.0588,
+   "p": 0.0543,
    "ev": null,
    "pick": false,
    "need": null
@@ -192,9 +192,9 @@
    "trainer_country": "",
    "jpn": false,
    "en": "MAP OF STARS (GB)",
-   "ref_odds": 54.0,
+   "ref_odds": 51.0,
    "jra_ref_odds": 21.0,
-   "p": 0.0146,
+   "p": 0.0154,
    "ev": null,
    "pick": false,
    "need": null
@@ -275,7 +275,7 @@
  },
  "ref_time": "",
  "ref_source": "海外ではモーニングライン（Morning Line）と呼ばれています。下記はEQUIBASE社から提供された想定オッズで、JRAのオッズとは異なりますので、参考としてご覧ください。",
- "jra_time": "2026-11-01 06:07",
+ "jra_time": "2026-11-01 06:16",
  "entries_from": "参考オッズの表(出馬表ページが無いため)",
  "date": "2026-10-31",
  "race": "ブリーダーズカップターフ（G1）",
@@ -288,11 +288,16 @@
  "pmu_race": "R4C11 LONGINES BREEDERS' CUP TURF (GRADE I)",
  "local": {
   "source": "PMU(仏公営)の実オッズ R4C11 LONGINES BREEDERS' CUP TURF (GRADE I)",
-  "time": "2026-11-01 06:07",
+  "time": "2026-11-01 06:16",
   "ok": true
  },
  "method": "公営(トート)a=1.03",
  "picks": [],
- "checked_at": "2026-11-01 06:07",
- "stake_per_pick": 1000
+ "checked_at": "2026-11-01 06:16",
+ "stake_per_pick": 1000,
+ "final": {
+  "at": "2026-11-01 06:16",
+  "picks": [],
+  "stake": 1000
+ }
 }
