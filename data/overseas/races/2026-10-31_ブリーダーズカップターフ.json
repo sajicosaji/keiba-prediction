@@ -10,12 +10,12 @@
    "trainer_country": "",
    "jpn": false,
    "en": "ETHICAL DIAMOND (IRE)",
-   "ref_odds": null,
+   "ref_odds": 13.0,
    "jra_ref_odds": 11.0,
-   "p": null,
+   "p": 0.0634,
    "ev": null,
    "pick": false,
-   "need": null
+   "need": 18.9
   },
   {
    "num": 2,
@@ -24,12 +24,12 @@
    "trainer_country": "",
    "jpn": false,
    "en": "BENVENUTO CELLINI (IRE)",
-   "ref_odds": null,
+   "ref_odds": 6.4,
    "jra_ref_odds": 7.0,
-   "p": null,
+   "p": 0.1316,
    "ev": null,
    "pick": false,
-   "need": null
+   "need": 9.1
   },
   {
    "num": 3,
@@ -38,9 +38,9 @@
    "trainer_country": "",
    "jpn": false,
    "en": "MINARET STATION (USA)",
-   "ref_odds": null,
+   "ref_odds": 21.0,
    "jra_ref_odds": 16.0,
-   "p": null,
+   "p": 0.0387,
    "ev": null,
    "pick": false,
    "need": null
@@ -52,9 +52,9 @@
    "trainer_country": "",
    "jpn": false,
    "en": "FAR BRIDGE (USA)",
-   "ref_odds": null,
+   "ref_odds": 24.0,
    "jra_ref_odds": 21.0,
-   "p": null,
+   "p": 0.0337,
    "ev": null,
    "pick": false,
    "need": null
@@ -66,9 +66,9 @@
    "trainer_country": "",
    "jpn": false,
    "en": "EL CORDOBES (IRE)",
-   "ref_odds": null,
+   "ref_odds": 17.0,
    "jra_ref_odds": 16.0,
-   "p": null,
+   "p": 0.0481,
    "ev": null,
    "pick": false,
    "need": null
@@ -80,12 +80,12 @@
    "trainer_country": "",
    "jpn": false,
    "en": "BURNHAM SQUARE (USA)",
-   "ref_odds": null,
+   "ref_odds": 9.1,
    "jra_ref_odds": 9.0,
-   "p": null,
+   "p": 0.0916,
    "ev": null,
    "pick": false,
-   "need": null
+   "need": 13.1
   },
   {
    "num": 7,
@@ -94,9 +94,9 @@
    "trainer_country": "",
    "jpn": false,
    "en": "HOTAZHELL (GB)",
-   "ref_odds": null,
+   "ref_odds": 17.0,
    "jra_ref_odds": 16.0,
-   "p": null,
+   "p": 0.0481,
    "ev": null,
    "pick": false,
    "need": null
@@ -108,9 +108,9 @@
    "trainer_country": "",
    "jpn": false,
    "en": "JOHANNA WALSH (IRE)",
-   "ref_odds": null,
+   "ref_odds": 23.0,
    "jra_ref_odds": 13.0,
-   "p": null,
+   "p": 0.0352,
    "ev": null,
    "pick": false,
    "need": null
@@ -122,12 +122,12 @@
    "trainer_country": "",
    "jpn": false,
    "en": "TIFFANY (IRE)",
-   "ref_odds": null,
+   "ref_odds": 6.7,
    "jra_ref_odds": 11.0,
-   "p": null,
+   "p": 0.1256,
    "ev": null,
    "pick": false,
-   "need": null
+   "need": 9.6
   },
   {
    "num": 11,
@@ -136,9 +136,9 @@
    "trainer_country": "",
    "jpn": false,
    "en": "SURVIE (IRE)",
-   "ref_odds": null,
+   "ref_odds": 14.0,
    "jra_ref_odds": 16.0,
-   "p": null,
+   "p": 0.0588,
    "ev": null,
    "pick": false,
    "need": null
@@ -150,12 +150,12 @@
    "trainer_country": "",
    "jpn": false,
    "en": "DIAMOND NECKLACE (IRE)",
-   "ref_odds": null,
+   "ref_odds": 6.1,
    "jra_ref_odds": 4.0,
-   "p": null,
+   "p": 0.1383,
    "ev": null,
    "pick": false,
-   "need": null
+   "need": 8.7
   },
   {
    "num": 13,
@@ -164,12 +164,12 @@
    "trainer_country": "",
    "jpn": false,
    "en": "BAY CITY ROLLER (IRE)",
-   "ref_odds": null,
+   "ref_odds": 7.4,
    "jra_ref_odds": 6.0,
-   "p": null,
+   "p": 0.1133,
    "ev": null,
    "pick": false,
-   "need": null
+   "need": 10.6
   },
   {
    "num": 14,
@@ -178,9 +178,9 @@
    "trainer_country": "",
    "jpn": true,
    "en": "DEEP MONSTER (JPN)",
-   "ref_odds": null,
+   "ref_odds": 14.0,
    "jra_ref_odds": 31.0,
-   "p": null,
+   "p": 0.0588,
    "ev": null,
    "pick": false,
    "need": null
@@ -192,9 +192,9 @@
    "trainer_country": "",
    "jpn": false,
    "en": "MAP OF STARS (GB)",
-   "ref_odds": null,
+   "ref_odds": 54.0,
    "jra_ref_odds": 21.0,
-   "p": null,
+   "p": 0.0146,
    "ev": null,
    "pick": false,
    "need": null
@@ -275,7 +275,7 @@
  },
  "ref_time": "",
  "ref_source": "海外ではモーニングライン（Morning Line）と呼ばれています。下記はEQUIBASE社から提供された想定オッズで、JRAのオッズとは異なりますので、参考としてご覧ください。",
- "jra_time": "2026-11-01 05:59",
+ "jra_time": "2026-11-01 06:07",
  "entries_from": "参考オッズの表(出馬表ページが無いため)",
  "date": "2026-10-31",
  "race": "ブリーダーズカップターフ（G1）",
@@ -287,12 +287,12 @@
  "news": "",
  "pmu_race": "R4C11 LONGINES BREEDERS' CUP TURF (GRADE I)",
  "local": {
-  "source": "モーニングライン(予想担当の想定オッズ)しか無い",
-  "time": "",
-  "ok": false
+  "source": "PMU(仏公営)の実オッズ R4C11 LONGINES BREEDERS' CUP TURF (GRADE I)",
+  "time": "2026-11-01 06:07",
+  "ok": true
  },
- "method": "判定できず",
+ "method": "公営(トート)a=1.03",
  "picks": [],
- "checked_at": "2026-11-01 05:59",
+ "checked_at": "2026-11-01 06:07",
  "stake_per_pick": 1000
 }
