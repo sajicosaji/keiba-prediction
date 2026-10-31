@@ -220,7 +220,7 @@ def race_page(link, now):
     r = {'link': link, 'sale_start': sale.strftime('%Y-%m-%d %H:%M') if sale else '',
          'post': post.strftime('%Y-%m-%d %H:%M') if post else '', 'entries': [], 'scratched': [], 'ref': {}, 'ref_time': '',
          'ref_source': '', 'jra_time': ''}
-    h = get_opt(link + 'syutsuba.html')
+    h = sy = get_opt(link + 'syutsuba.html')
     if h:
         if not post:  # トップが回顧ページになった後は、出馬表の見出しから(日本時間の発走時刻)
             dm = re.search(r'(\d{4})年(\d{1,2})月(\d{1,2})日', h)
@@ -262,14 +262,37 @@ def race_page(link, now):
                 if n and om:
                     o = num(text(om[-1]))
                     if o and o >= 1:  # 香港の断然人気は1.0倍もある
-                        odds[int(n.group(1))] = {'odds': o, 'en': text(hm.group(2)) if hm else ''}
+                        odds[int(n.group(1))] = {'odds': o, 'en': text(hm.group(2)) if hm else '', 'ja': text(hm.group(1)) if hm else ''}
             if odds and (best is None or (t and (best[0] is None or t > best[0]))):
                 best = (t, odds, text(cm.group(1)) if cm else '')
         if best:
             r['ref'] = best[1]
             r['ref_time'] = best[0].strftime('%Y-%m-%d %H:%M') if best[0] else ''
             r['ref_source'] = best[2]
+    # 2026-11-01 BCでは出馬表(syutsuba.html)がお知らせ「出走予定馬」へ転送されて中身が無かった。
+    # その時は参考オッズの表(馬番・日本名・英語名)から出走馬を作り、日本馬はお知らせの「JRA所属馬」の名前で決める。
+    # JRAの単勝オッズは取れないので、最終版は「JRAが何倍なら買い」の目安で出る
+    if not r['entries'] and r['ref']:
+        jp = jra_horses(sy)
+        r['entries'] = [{'num': n, 'name': v.get('ja') or v.get('en', ''), 'jra_odds': None, 'trainer_country': '',
+                         'jpn': (v.get('ja') or '') in jp} for n, v in sorted(r['ref'].items())]
+        r['entries_from'] = '参考オッズの表(出馬表ページが無いため)'
     return r
+
+
+_jra_horses = {}
+
+
+def jra_horses(page):
+    """出馬表の代わりに出ている「出走予定馬」のお知らせから、JRA所属馬の名前を集める"""
+    m = re.search(r'http-equiv="refresh"[^>]*url=([^"\s>]+)', page or '')
+    if not m:
+        return set()
+    url = m.group(1)
+    if url not in _jra_horses:
+        t = text(get_opt(url))
+        _jra_horses[url] = set(re.findall(r'([ァ-ヶー・]{2,})\s*（[牡牝セ]\d+歳\s*(?:栗東|美浦)', t))
+    return _jra_horses[url]
 
 
 # ---------------------------------------------------------------- 計算
