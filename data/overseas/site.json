@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-01 04:59",
+ "generated_at": "2026-11-01 05:07",
  "schedule": {
   "checked_at": "2026-11-01 03:10",
   "designated": [
@@ -255,7 +255,7 @@
      "en": "SOVEREIGNTY (USA)",
      "ref_odds": 2.7,
      "jra_ref_odds": 3.5,
-     "p": 0.3096,
+     "p": 0.3092,
      "ev": null,
      "pick": false,
      "need": 3.9
@@ -267,12 +267,12 @@
      "trainer_country": "",
      "jpn": false,
      "en": "GOLDEN TEMPO (USA)",
-     "ref_odds": 5.1,
+     "ref_odds": 5.0,
      "jra_ref_odds": 6.0,
-     "p": 0.1608,
+     "p": 0.1639,
      "ev": null,
      "pick": false,
-     "need": 7.5
+     "need": 7.3
     },
     {
      "num": 4,
@@ -297,7 +297,7 @@
      "en": "FOREVER YOUNG (JPN)",
      "ref_odds": 3.2,
      "jra_ref_odds": 3.0,
-     "p": 0.2599,
+     "p": 0.2596,
      "ev": null,
      "pick": false,
      "need": null
@@ -309,12 +309,12 @@
      "trainer_country": "",
      "jpn": false,
      "en": "KNIGHTSBRIDGE (USA)",
-     "ref_odds": 6.6,
+     "ref_odds": 6.7,
      "jra_ref_odds": 5.5,
-     "p": 0.1233,
+     "p": 0.1213,
      "ev": null,
      "pick": false,
-     "need": 9.7
+     "need": 9.9
     },
     {
      "num": 8,
@@ -325,7 +325,7 @@
      "en": "NAPOLEON SOLO (USA)",
      "ref_odds": 12.0,
      "jra_ref_odds": 16.0,
-     "p": 0.0666,
+     "p": 0.0665,
      "ev": null,
      "pick": false,
      "need": 18.0
@@ -371,7 +371,7 @@
    },
    "ref_time": "",
    "ref_source": "海外ではモーニングライン（Morning Line）と呼ばれています。下記はEQUIBASE社から提供された想定オッズで、JRAのオッズとは異なりますので、参考としてご覧ください。",
-   "jra_time": "2026-11-01 04:59",
+   "jra_time": "2026-11-01 05:07",
    "entries_from": "参考オッズの表(出馬表ページが無いため)",
    "date": "2026-10-31",
    "race": "ブリーダーズカップクラシック（G1）",
@@ -384,12 +384,12 @@
    "pmu_race": "R4C12 LONGINES BREEDERS' CUP CLASSIC (GRADE I)",
    "local": {
     "source": "PMU(仏公営)の実オッズ R4C12 LONGINES BREEDERS' CUP CLASSIC (GRADE I)",
-    "time": "2026-11-01 04:59",
+    "time": "2026-11-01 05:08",
     "ok": true
    },
    "method": "公営(トート)a=1.03",
    "picks": [],
-   "checked_at": "2026-11-01 04:59",
+   "checked_at": "2026-11-01 05:07",
    "stake_per_pick": 1000
   },
   {
@@ -953,7 +953,7 @@
    },
    "ref_time": "",
    "ref_source": "海外ではモーニングライン（Morning Line）と呼ばれています。下記はEQUIBASE社から提供された想定オッズで、JRAのオッズとは異なりますので、参考としてご覧ください。",
-   "jra_time": "2026-11-01 04:59",
+   "jra_time": "2026-11-01 05:07",
    "entries_from": "参考オッズの表(出馬表ページが無いため)",
    "date": "2026-10-31",
    "race": "ブリーダーズカップターフ（G1）",
@@ -971,7 +971,7 @@
    },
    "method": "判定できず",
    "picks": [],
-   "checked_at": "2026-11-01 04:59",
+   "checked_at": "2026-11-01 05:07",
    "stake_per_pick": 1000
   },
   {
@@ -1241,12 +1241,12 @@
      "trainer_country": "",
      "jpn": false,
      "en": "DETERMINISTIC (USA)",
-     "ref_odds": 4.4,
+     "ref_odds": 5.0,
      "jra_ref_odds": 9.0,
-     "p": 0.1875,
+     "p": 0.1648,
      "ev": null,
      "pick": false,
-     "need": 6.4
+     "need": 7.3
     },
     {
      "num": 2,
@@ -1257,7 +1257,7 @@
      "en": "LAKE FOREST (GB)",
      "ref_odds": 10.0,
      "jra_ref_odds": 7.0,
-     "p": 0.0805,
+     "p": 0.0807,
      "ev": null,
      "pick": false,
      "need": 14.9
@@ -1269,9 +1269,9 @@
      "trainer_country": "",
      "jpn": false,
      "en": "FACTEUR CHEVAL (IRE)",
-     "ref_odds": 60.0,
+     "ref_odds": 49.0,
      "jra_ref_odds": 31.0,
-     "p": 0.0127,
+     "p": 0.0157,
      "ev": null,
      "pick": false,
      "need": null
@@ -1283,9 +1283,9 @@
      "trainer_country": "",
      "jpn": false,
      "en": "CABO SPIRIT (USA)",
-     "ref_odds": 38.0,
+     "ref_odds": 42.0,
      "jra_ref_odds": 31.0,
-     "p": 0.0203,
+     "p": 0.0184,
      "ev": null,
      "pick": false,
      "need": null
@@ -1299,7 +1299,7 @@
      "en": "ASK IKIGOMI (JPN)",
      "ref_odds": 13.0,
      "jra_ref_odds": 21.0,
-     "p": 0.0614,
+     "p": 0.0616,
      "ev": null,
      "pick": false,
      "need": null
@@ -1311,9 +1311,9 @@
      "trainer_country": "",
      "jpn": false,
      "en": "QIRAT (GB)",
-     "ref_odds": 74.0,
+     "ref_odds": 70.0,
      "jra_ref_odds": 31.0,
-     "p": 0.0102,
+     "p": 0.0109,
      "ev": null,
      "pick": false,
      "need": null
@@ -1325,12 +1325,12 @@
      "trainer_country": "",
      "jpn": false,
      "en": "NOTABLE SPEECH (GB)",
-     "ref_odds": 2.1,
+     "ref_odds": 2.0,
      "jra_ref_odds": 2.4,
-     "p": 0.4016,
+     "p": 0.4235,
      "ev": null,
      "pick": false,
-     "need": 3.0
+     "need": 2.8
     },
     {
      "num": 9,
@@ -1339,12 +1339,12 @@
      "trainer_country": "",
      "jpn": false,
      "en": "RHETORICAL (USA)",
-     "ref_odds": 9.2,
+     "ref_odds": 8.9,
      "jra_ref_odds": 9.0,
-     "p": 0.0877,
+     "p": 0.091,
      "ev": null,
      "pick": false,
-     "need": 13.7
+     "need": 13.2
     },
     {
      "num": 10,
@@ -1353,7 +1353,7 @@
      "trainer_country": "",
      "jpn": true,
      "en": "LUGAL (JPN)",
-     "ref_odds": 101.0,
+     "ref_odds": 102.0,
      "jra_ref_odds": 31.0,
      "p": 0.0074,
      "ev": null,
@@ -1367,9 +1367,9 @@
      "trainer_country": "",
      "jpn": false,
      "en": "FORMIDABLE MAN (USA)",
-     "ref_odds": 33.0,
+     "ref_odds": 37.0,
      "jra_ref_odds": 16.0,
-     "p": 0.0235,
+     "p": 0.021,
      "ev": null,
      "pick": false,
      "need": null
@@ -1383,7 +1383,7 @@
      "en": "TRUE LOVE (IRE)",
      "ref_odds": 15.0,
      "jra_ref_odds": 9.0,
-     "p": 0.053,
+     "p": 0.0532,
      "ev": null,
      "pick": false,
      "need": null
@@ -1395,9 +1395,9 @@
      "trainer_country": "",
      "jpn": false,
      "en": "BRILLIANT BERTI (USA)",
-     "ref_odds": 61.0,
+     "ref_odds": 62.0,
      "jra_ref_odds": 31.0,
-     "p": 0.0125,
+     "p": 0.0123,
      "ev": null,
      "pick": false,
      "need": null
@@ -1409,9 +1409,9 @@
      "trainer_country": "",
      "jpn": false,
      "en": "PUERTO RICO (IRE)",
-     "ref_odds": 19.0,
+     "ref_odds": 20.0,
      "jra_ref_odds": 11.0,
-     "p": 0.0416,
+     "p": 0.0395,
      "ev": null,
      "pick": false,
      "need": null
@@ -1487,7 +1487,7 @@
    },
    "ref_time": "",
    "ref_source": "海外ではモーニングライン（Morning Line）と呼ばれています。下記はEQUIBASE社から提供された想定オッズで、JRAのオッズとは異なりますので、参考としてご覧ください。",
-   "jra_time": "2026-11-01 04:59",
+   "jra_time": "2026-11-01 05:07",
    "entries_from": "参考オッズの表(出馬表ページが無いため)",
    "date": "2026-10-31",
    "race": "ブリーダーズカップマイル（G1）",
@@ -1500,18 +1500,18 @@
    "pmu_race": "R4C9 FANDUEL BREEDERS' CUP MILE PRESENTED BY ",
    "local": {
     "source": "PMU(仏公営)の実オッズ R4C9 FANDUEL BREEDERS' CUP MILE PRESENTED BY ",
-    "time": "2026-11-01 04:59",
+    "time": "2026-11-01 05:08",
     "ok": true
    },
    "method": "公営(トート)a=1.03",
    "picks": [],
-   "checked_at": "2026-11-01 04:59",
-   "stake_per_pick": 1000,
+   "checked_at": "2026-11-01 05:07",
    "final": {
     "at": "2026-11-01 04:59",
     "picks": [],
     "stake": 1000
-   }
+   },
+   "stake_per_pick": 1000
   },
   {
    "link": "/keiba/overseas/race/2026melbourne/",
