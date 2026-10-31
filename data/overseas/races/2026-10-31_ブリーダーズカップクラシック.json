@@ -10,9 +10,9 @@
    "trainer_country": "",
    "jpn": true,
    "en": "T O PASSWORD (JPN)",
-   "ref_odds": 34.0,
+   "ref_odds": 33.0,
    "jra_ref_odds": 31.0,
-   "p": 0.023,
+   "p": 0.0237,
    "ev": null,
    "pick": false,
    "need": null
@@ -26,7 +26,7 @@
    "en": "SOVEREIGNTY (USA)",
    "ref_odds": 2.7,
    "jra_ref_odds": 3.5,
-   "p": 0.3123,
+   "p": 0.3121,
    "ev": null,
    "pick": false,
    "need": 3.8
@@ -40,10 +40,10 @@
    "en": "GOLDEN TEMPO (USA)",
    "ref_odds": 5.0,
    "jra_ref_odds": 6.0,
-   "p": 0.1656,
+   "p": 0.1654,
    "ev": null,
    "pick": false,
-   "need": 7.2
+   "need": 7.3
   },
   {
    "num": 4,
@@ -68,7 +68,7 @@
    "en": "FOREVER YOUNG (JPN)",
    "ref_odds": 3.3,
    "jra_ref_odds": 3.0,
-   "p": 0.254,
+   "p": 0.2538,
    "ev": null,
    "pick": false,
    "need": null
@@ -82,7 +82,7 @@
    "en": "KNIGHTSBRIDGE (USA)",
    "ref_odds": 6.8,
    "jra_ref_odds": 5.5,
-   "p": 0.1206,
+   "p": 0.1205,
    "ev": null,
    "pick": false,
    "need": 10.0
@@ -96,7 +96,7 @@
    "en": "NAPOLEON SOLO (USA)",
    "ref_odds": 12.0,
    "jra_ref_odds": 16.0,
-   "p": 0.0672,
+   "p": 0.0671,
    "ev": null,
    "pick": false,
    "need": 17.9
@@ -142,7 +142,7 @@
  },
  "ref_time": "",
  "ref_source": "海外ではモーニングライン（Morning Line）と呼ばれています。下記はEQUIBASE社から提供された想定オッズで、JRAのオッズとは異なりますので、参考としてご覧ください。",
- "jra_time": "2026-11-01 05:50",
+ "jra_time": "2026-11-01 05:59",
  "entries_from": "参考オッズの表(出馬表ページが無いため)",
  "date": "2026-10-31",
  "race": "ブリーダーズカップクラシック（G1）",
@@ -155,11 +155,11 @@
  "pmu_race": "R4C12 LONGINES BREEDERS' CUP CLASSIC (GRADE I)",
  "local": {
   "source": "PMU(仏公営)の実オッズ R4C12 LONGINES BREEDERS' CUP CLASSIC (GRADE I)",
-  "time": "2026-11-01 05:51",
+  "time": "2026-11-01 05:59",
   "ok": true
  },
  "method": "公営(トート)a=1.03",
  "picks": [],
- "checked_at": "2026-11-01 05:50",
+ "checked_at": "2026-11-01 05:59",
  "stake_per_pick": 1000
 }
