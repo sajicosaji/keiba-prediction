@@ -550,6 +550,14 @@ def final_notice(r, now, dry):
     th = thresholds(r) if r['local']['ok'] else []
     if th:
         lines.append('買いの目安(締切直前にJRAの倍率がこの範囲に入った馬だけ買う):\n```\n' + '\n'.join(th) + '\n```')
+    if r['local']['ok']:  # 2026-11-01 ユーザーの要望「どういうロジックで買わないかまで」
+        jp = [e['name'] for e in r['entries'] if e['jpn']]
+        far = [e for e in r['entries'] if not e['jpn'] and e['p'] and EV_MIN / e['p'] > ODDS_MAX]
+        why = [f"日本馬{len(jp)}頭({'、'.join(n[:8] for n in jp)})は対象外(JRAでは買われすぎ)" if jp else '',
+               f"外国馬{len(far)}頭は勝率が低く、期待値1.2に必要なJRAの倍率が20倍を超える" if far else '']
+        if any(why):
+            lines.append('買わない理由: ' + ' / '.join(x for x in why if x))
+        lines.append(f"計算: 「JRAが○倍なら買い」の○ = 1.2 ÷ 現地の勝率(現地のオッズから控除を除いた値。{r.get('method', '')})")
     lines.append('```\n' + table(r) + '\n```')
     lines.append('ルール: 日本馬は買わない / 期待値(現地の勝率×JRA単勝)1.2以上 / JRA20倍以下。'
                  '過去の検証で有望(香港178%・他188%)だけど未確定なので少額で。締切直前にオッズが動くので、買う前にJRAの倍率が20倍以下かだけ確認を。')
