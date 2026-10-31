@@ -10,9 +10,9 @@
    "trainer_country": "",
    "jpn": false,
    "en": "MAD HOUSE (USA)",
-   "ref_odds": 97.0,
+   "ref_odds": 92.0,
    "jra_ref_odds": 31.0,
-   "p": 0.0078,
+   "p": 0.0082,
    "ev": null,
    "pick": false,
    "need": null
@@ -24,9 +24,9 @@
    "trainer_country": "",
    "jpn": false,
    "en": "DARK SAFFRON (USA)",
-   "ref_odds": 36.0,
+   "ref_odds": 34.0,
    "jra_ref_odds": 21.0,
-   "p": 0.0217,
+   "p": 0.0228,
    "ev": null,
    "pick": false,
    "need": null
@@ -38,9 +38,9 @@
    "trainer_country": "",
    "jpn": false,
    "en": "LIAM SMITH (USA)",
-   "ref_odds": 28.0,
+   "ref_odds": 26.0,
    "jra_ref_odds": 21.0,
-   "p": 0.0281,
+   "p": 0.03,
    "ev": null,
    "pick": false,
    "need": null
@@ -54,7 +54,7 @@
    "en": "HYMN (USA)",
    "ref_odds": 34.0,
    "jra_ref_odds": 16.0,
-   "p": 0.023,
+   "p": 0.0228,
    "ev": null,
    "pick": false,
    "need": null
@@ -66,12 +66,12 @@
    "trainer_country": "",
    "jpn": false,
    "en": "LISTENUPSHANCE (USA)",
-   "ref_odds": 2.9,
+   "ref_odds": 4.1,
    "jra_ref_odds": 13.0,
-   "p": 0.2904,
+   "p": 0.2012,
    "ev": null,
    "pick": false,
-   "need": 4.1
+   "need": 6.0
   },
   {
    "num": 6,
@@ -80,9 +80,9 @@
    "trainer_country": "",
    "jpn": true,
    "en": "AMERICAN STAGE (USA)",
-   "ref_odds": 111.0,
+   "ref_odds": 107.0,
    "jra_ref_odds": 31.0,
-   "p": 0.0068,
+   "p": 0.007,
    "ev": null,
    "pick": false,
    "need": null
@@ -94,9 +94,9 @@
    "trainer_country": "",
    "jpn": false,
    "en": "BUILT (USA)",
-   "ref_odds": 16.0,
+   "ref_odds": 15.0,
    "jra_ref_odds": 11.0,
-   "p": 0.05,
+   "p": 0.0529,
    "ev": null,
    "pick": false,
    "need": null
@@ -108,9 +108,9 @@
    "trainer_country": "",
    "jpn": false,
    "en": "LITTLE THUNDER (USA)",
-   "ref_odds": 75.0,
+   "ref_odds": 77.0,
    "jra_ref_odds": 31.0,
-   "p": 0.0102,
+   "p": 0.0098,
    "ev": null,
    "pick": false,
    "need": null
@@ -124,7 +124,7 @@
    "en": "NAKATOMI (USA)",
    "ref_odds": 31.0,
    "jra_ref_odds": 13.0,
-   "p": 0.0253,
+   "p": 0.025,
    "ev": null,
    "pick": false,
    "need": null
@@ -136,9 +136,9 @@
    "trainer_country": "",
    "jpn": false,
    "en": "ROLL ON BIG JOE (USA)",
-   "ref_odds": 39.0,
+   "ref_odds": 36.0,
    "jra_ref_odds": 31.0,
-   "p": 0.02,
+   "p": 0.0215,
    "ev": null,
    "pick": false,
    "need": null
@@ -150,9 +150,9 @@
    "trainer_country": "",
    "jpn": true,
    "en": "T O ELVIS (USA)",
-   "ref_odds": 4.9,
+   "ref_odds": 4.4,
    "jra_ref_odds": 4.5,
-   "p": 0.1692,
+   "p": 0.1871,
    "ev": null,
    "pick": false,
    "need": null
@@ -164,9 +164,9 @@
    "trainer_country": "",
    "jpn": false,
    "en": "STRADALE (USA)",
-   "ref_odds": 83.0,
+   "ref_odds": 69.0,
    "jra_ref_odds": 21.0,
-   "p": 0.0092,
+   "p": 0.011,
    "ev": null,
    "pick": false,
    "need": null
@@ -178,12 +178,12 @@
    "trainer_country": "",
    "jpn": false,
    "en": "ENGLISHMAN (USA)",
-   "ref_odds": 2.5,
+   "ref_odds": 2.1,
    "jra_ref_odds": 1.8,
-   "p": 0.3384,
+   "p": 0.4008,
    "ev": null,
    "pick": false,
-   "need": 3.5
+   "need": 3.0
   }
  ],
  "scratched": [],
@@ -256,7 +256,7 @@
  },
  "ref_time": "",
  "ref_source": "海外ではモーニングライン（Morning Line）と呼ばれています。下記はEQUIBASE社から提供された想定オッズで、JRAのオッズとは異なりますので、参考としてご覧ください。",
- "jra_time": "2026-11-01 04:14",
+ "jra_time": "2026-11-01 04:23",
  "entries_from": "参考オッズの表(出馬表ページが無いため)",
  "date": "2026-10-31",
  "race": "ブリーダーズカップスプリント（G1）",
@@ -269,11 +269,16 @@
  "pmu_race": "R4C8 CYGAMES BREEDERS' CUP SPRINT (GRADE I)",
  "local": {
   "source": "PMU(仏公営)の実オッズ R4C8 CYGAMES BREEDERS' CUP SPRINT (GRADE I)",
-  "time": "2026-11-01 04:14",
+  "time": "2026-11-01 04:23",
   "ok": true
  },
  "method": "公営(トート)a=1.03",
  "picks": [],
- "checked_at": "2026-11-01 04:14",
- "stake_per_pick": 1000
+ "checked_at": "2026-11-01 04:23",
+ "stake_per_pick": 1000,
+ "final": {
+  "at": "2026-11-01 04:23",
+  "picks": [],
+  "stake": 1000
+ }
 }
