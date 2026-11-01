@@ -380,6 +380,9 @@ def pmu_lookup(r):
                 named = sum(1 for en in jra_en.values() if en)
                 # 英語名が分かる馬の7割以上が同じ番号で一致したら同じレース(英語名が無ければ頭数と時刻で判断)
                 ok = (same >= 0.7 * named) if named else (abs(len(ps) - len(r['entries']) - len(r.get('scratched', []))) <= 1)
+                if not r['entries']:  # 2026-11-01 JRAの出馬表も参考オッズも無い時: 発走時刻(10分以内)とレースの英語名で探す
+                    words = re.findall(r'[A-Z]{5,}', (r.get('en_race') or '').upper().replace("'", ''))
+                    ok = gap <= 10 and bool(words) and all(w in c.get('libelle', '').upper().replace("'", '') for w in words)
                 if ok and (best is None or gap < best[0]):
                     best = (gap, ps, f"R{reu['numOfficiel']}C{c['numOrdre']} {c.get('libelle', '')[:40]}")
     if not best:
@@ -388,7 +391,7 @@ def pmu_lookup(r):
     for p in best[1]:
         o = (p.get('dernierRapportDirect') or {}).get('rapport')
         out[p.get('numPmu')] = {'odds': o, 'en': p.get('nom', ''), 'out': p.get('statut') == 'NON_PARTANT',
-                                'pos': p.get('ordreArrivee')}
+                                'pos': p.get('ordreArrivee'), 'pays': p.get('pays', '')}
     r['pmu_race'] = best[2]
     return out
 
@@ -489,6 +492,9 @@ def snapshot(d, now, state):
              'entries': [], 'scratched': [], 'ref': {}, 'ref_time': '', 'ref_source': '', 'jra_time': ''}
     r.update({k: d.get(k, '') for k in ('date', 'race', 'country', 'track', 'distance', 'winner', 'slug', 'news')})
     r['link'] = link
+    en = [x.get('en', '') for x in load(OUT / 'schedule.json', {}).get('designated', [])
+          if x.get('date') == d.get('date') and race_norm(x.get('name', '')) == race_norm(d.get('race', ''))]
+    r['en_race'] = en[0] if en else ''
     pmu = {}
     if r['post']:
         post = datetime.strptime(r['post'], '%Y-%m-%d %H:%M').replace(tzinfo=JST)
@@ -497,6 +503,11 @@ def snapshot(d, now, state):
                 pmu = pmu_lookup(r)
             except Exception as e:
                 print(f"{d['slug']} PMU失敗: {e}")
+    if not r['entries'] and pmu:  # JRAの出馬表も参考オッズも無い時は、PMUの出走表から(日本馬は生産国=日本で判定)
+        jp = jra_horses(get_opt(link + 'syutsuba.html')) if link else set()
+        r['entries'] = [{'num': n, 'name': v['en'], 'jra_odds': None, 'trainer_country': '', 'jpn': v.get('pays') == 'Japon', 'en': v['en']}
+                        for n, v in sorted(pmu.items()) if n and not v['out']]
+        r['entries_from'] = 'PMUの出走表(JRAの出馬表・参考オッズが無いため。日本馬は生産国で判定' + (f'。JRA所属馬: {"、".join(sorted(jp))}' if jp else '') + ')'
     evaluate(r, pmu)
     r['checked_at'] = now.strftime('%Y-%m-%d %H:%M')
     old = load(OUT / 'races' / f"{d['slug']}.json", {})
