@@ -86,9 +86,10 @@ jobs:
             python src/check_and_send.py || true
             python src/race_info_logger.py || true   # 当日情報(出馬表・調教評価・馬体重・直前)の記録(買い判定には無関係)
             python src/g1_auto.py || true   # G1の日は11時を過ぎたら詳細予想をDiscordとサイトへ(1回だけ)
+            python src/domestic_picks.py || true   # 重賞は発走の28〜12分前に「これを買う」をDiscordへ(1回だけ・遊び枠)
             python src/site_data.py || true
             bash tools/push_logs.sh "log: predictions sent (day runner am)" \
-              data/bet_log.csv data/sent_log.csv data/odds_timeline data/pred_log data/race_info data/g1 data/site
+              data/bet_log.csv data/sent_log.csv data/odds_timeline data/pred_log data/race_info data/g1 data/domestic data/site
             sleep 780
           done
           echo "morning loop done"
@@ -125,9 +126,10 @@ jobs:
             python src/check_and_send.py || true
             python src/race_info_logger.py || true   # 当日情報(出馬表・調教評価・馬体重・直前)の記録(買い判定には無関係)
             python src/g1_auto.py || true   # G1の日は11時を過ぎたら詳細予想をDiscordとサイトへ(1回だけ)
+            python src/domestic_picks.py || true   # 重賞は発走の28〜12分前に「これを買う」をDiscordへ(1回だけ・遊び枠)
             python src/site_data.py || true
             bash tools/push_logs.sh "log: predictions sent (day runner pm)" \
-              data/bet_log.csv data/sent_log.csv data/odds_timeline data/pred_log data/race_info data/jra_info data/g1 data/site
+              data/bet_log.csv data/sent_log.csv data/odds_timeline data/pred_log data/race_info data/jra_info data/g1 data/domestic data/site
             sleep 780
           done
           echo "day runner finished"
