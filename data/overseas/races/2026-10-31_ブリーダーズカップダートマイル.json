@@ -201,7 +201,7 @@
  },
  "ref_time": "",
  "ref_source": "海外ではモーニングライン（Morning Line）と呼ばれています。下記はEQUIBASE社から提供された想定オッズで、JRAのオッズとは異なりますので、参考としてご覧ください。",
- "jra_time": "2026-11-02 01:51",
+ "jra_time": "2026-11-02 07:55",
  "date": "2026-10-31",
  "race": "ブリーダーズカップダートマイル（G1）",
  "country": "アメリカ",
@@ -215,14 +215,14 @@
  "pmu_race": "R4C6 BREEDERS' CUP DIRT MILE (GRADE I)",
  "local": {
   "source": "PMU(仏公営)の実オッズ R4C6 BREEDERS' CUP DIRT MILE (GRADE I)",
-  "time": "2026-11-02 01:51",
+  "time": "2026-11-02 07:55",
   "ok": true
  },
  "method": "公営(トート)a=1.03",
  "picks": [
   10
  ],
- "checked_at": "2026-11-02 01:51",
+ "checked_at": "2026-11-02 07:55",
  "final": {
   "at": "2026-11-01 03:08",
   "picks": [],

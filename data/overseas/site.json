@@ -1,7 +1,7 @@
 {
- "generated_at": "2026-11-02 01:51",
+ "generated_at": "2026-11-02 07:55",
  "schedule": {
-  "checked_at": "2026-11-02 01:51",
+  "checked_at": "2026-11-02 07:55",
   "designated": [
    {
     "date": "2026-11-03",
@@ -292,7 +292,7 @@
    },
    "ref_time": "",
    "ref_source": "海外ではモーニングライン（Morning Line）と呼ばれています。下記はEQUIBASE社から提供された想定オッズで、JRAのオッズとは異なりますので、参考としてご覧ください。",
-   "jra_time": "2026-11-02 01:51",
+   "jra_time": "2026-11-02 07:55",
    "date": "2026-10-31",
    "race": "ブリーダーズカップクラシック（G1）",
    "country": "アメリカ",
@@ -306,14 +306,14 @@
    "pmu_race": "R4C12 LONGINES BREEDERS' CUP CLASSIC (GRADE I)",
    "local": {
     "source": "PMU(仏公営)の実オッズ R4C12 LONGINES BREEDERS' CUP CLASSIC (GRADE I)",
-    "time": "2026-11-02 01:53",
+    "time": "2026-11-02 07:57",
     "ok": true
    },
    "method": "公営(トート)a=1.03",
    "picks": [
     7
    ],
-   "checked_at": "2026-11-02 01:51",
+   "checked_at": "2026-11-02 07:55",
    "final": {
     "at": "2026-11-01 06:57",
     "picks": [],
@@ -579,7 +579,7 @@
    },
    "ref_time": "",
    "ref_source": "海外ではモーニングライン（Morning Line）と呼ばれています。下記はEQUIBASE社から提供された想定オッズで、JRAのオッズとは異なりますので、参考としてご覧ください。",
-   "jra_time": "2026-11-02 01:51",
+   "jra_time": "2026-11-02 07:55",
    "date": "2026-10-31",
    "race": "ブリーダーズカップスプリント（G1）",
    "country": "アメリカ",
@@ -593,14 +593,14 @@
    "pmu_race": "R4C8 CYGAMES BREEDERS' CUP SPRINT (GRADE I)",
    "local": {
     "source": "PMU(仏公営)の実オッズ R4C8 CYGAMES BREEDERS' CUP SPRINT (GRADE I)",
-    "time": "2026-11-02 01:52",
+    "time": "2026-11-02 07:56",
     "ok": true
    },
    "method": "公営(トート)a=1.03",
    "picks": [
     5
    ],
-   "checked_at": "2026-11-02 01:51",
+   "checked_at": "2026-11-02 07:55",
    "final": {
     "at": "2026-11-01 04:23",
     "picks": [],
@@ -888,7 +888,7 @@
    },
    "ref_time": "",
    "ref_source": "海外ではモーニングライン（Morning Line）と呼ばれています。下記はEQUIBASE社から提供された想定オッズで、JRAのオッズとは異なりますので、参考としてご覧ください。",
-   "jra_time": "2026-11-02 01:51",
+   "jra_time": "2026-11-02 07:55",
    "date": "2026-10-31",
    "race": "ブリーダーズカップターフ（G1）",
    "country": "アメリカ",
@@ -902,7 +902,7 @@
    "pmu_race": "R4C11 LONGINES BREEDERS' CUP TURF (GRADE I)",
    "local": {
     "source": "PMU(仏公営)の実オッズ R4C11 LONGINES BREEDERS' CUP TURF (GRADE I)",
-    "time": "2026-11-02 01:52",
+    "time": "2026-11-02 07:56",
     "ok": true
    },
    "method": "公営(トート)a=1.03",
@@ -911,7 +911,7 @@
     10,
     1
    ],
-   "checked_at": "2026-11-02 01:51",
+   "checked_at": "2026-11-02 07:55",
    "final": {
     "at": "2026-11-01 06:16",
     "picks": [],
@@ -1150,7 +1150,7 @@
    },
    "ref_time": "",
    "ref_source": "海外ではモーニングライン（Morning Line）と呼ばれています。下記はEQUIBASE社から提供された想定オッズで、JRAのオッズとは異なりますので、参考としてご覧ください。",
-   "jra_time": "2026-11-02 01:51",
+   "jra_time": "2026-11-02 07:55",
    "date": "2026-10-31",
    "race": "ブリーダーズカップダートマイル（G1）",
    "country": "アメリカ",
@@ -1164,14 +1164,14 @@
    "pmu_race": "R4C6 BREEDERS' CUP DIRT MILE (GRADE I)",
    "local": {
     "source": "PMU(仏公営)の実オッズ R4C6 BREEDERS' CUP DIRT MILE (GRADE I)",
-    "time": "2026-11-02 01:51",
+    "time": "2026-11-02 07:55",
     "ok": true
    },
    "method": "公営(トート)a=1.03",
    "picks": [
     10
    ],
-   "checked_at": "2026-11-02 01:51",
+   "checked_at": "2026-11-02 07:55",
    "final": {
     "at": "2026-11-01 03:08",
     "picks": [],
@@ -1440,7 +1440,7 @@
    },
    "ref_time": "",
    "ref_source": "海外ではモーニングライン（Morning Line）と呼ばれています。下記はEQUIBASE社から提供された想定オッズで、JRAのオッズとは異なりますので、参考としてご覧ください。",
-   "jra_time": "2026-11-02 01:51",
+   "jra_time": "2026-11-02 07:55",
    "date": "2026-10-31",
    "race": "ブリーダーズカップマイル（G1）",
    "country": "アメリカ",
@@ -1454,14 +1454,14 @@
    "pmu_race": "R4C9 FANDUEL BREEDERS' CUP MILE PRESENTED BY ",
    "local": {
     "source": "PMU(仏公営)の実オッズ R4C9 FANDUEL BREEDERS' CUP MILE PRESENTED BY ",
-    "time": "2026-11-02 01:52",
+    "time": "2026-11-02 07:56",
     "ok": true
    },
    "method": "公営(トート)a=1.03",
    "picks": [
     9
    ],
-   "checked_at": "2026-11-02 01:51",
+   "checked_at": "2026-11-02 07:55",
    "final": {
     "at": "2026-11-01 04:59",
     "picks": [],
@@ -1815,7 +1815,7 @@
    "ref": {},
    "ref_time": "",
    "ref_source": "",
-   "jra_time": "2026-11-02 01:51",
+   "jra_time": "2026-11-02 07:55",
    "date": "2026-11-03",
    "race": "メルボルンカップ（G1）",
    "country": "オーストラリア",
@@ -1834,7 +1834,7 @@
    },
    "method": "判定できず",
    "picks": [],
-   "checked_at": "2026-11-02 01:51",
+   "checked_at": "2026-11-02 07:55",
    "stake_per_pick": 1000
   }
  ],

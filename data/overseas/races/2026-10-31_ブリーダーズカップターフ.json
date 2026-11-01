@@ -278,7 +278,7 @@
  },
  "ref_time": "",
  "ref_source": "海外ではモーニングライン（Morning Line）と呼ばれています。下記はEQUIBASE社から提供された想定オッズで、JRAのオッズとは異なりますので、参考としてご覧ください。",
- "jra_time": "2026-11-02 01:51",
+ "jra_time": "2026-11-02 07:55",
  "date": "2026-10-31",
  "race": "ブリーダーズカップターフ（G1）",
  "country": "アメリカ",
@@ -292,7 +292,7 @@
  "pmu_race": "R4C11 LONGINES BREEDERS' CUP TURF (GRADE I)",
  "local": {
   "source": "PMU(仏公営)の実オッズ R4C11 LONGINES BREEDERS' CUP TURF (GRADE I)",
-  "time": "2026-11-02 01:52",
+  "time": "2026-11-02 07:56",
   "ok": true
  },
  "method": "公営(トート)a=1.03",
@@ -301,7 +301,7 @@
   10,
   1
  ],
- "checked_at": "2026-11-02 01:51",
+ "checked_at": "2026-11-02 07:55",
  "final": {
   "at": "2026-11-01 06:16",
   "picks": [],
