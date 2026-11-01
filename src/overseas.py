@@ -61,6 +61,17 @@ def get(path):
     return r.content.decode('cp932', errors='replace')
 
 
+def post(url, cname):
+    """JRA公式データベース(JRADB)は cname を POST して読む。間隔は get と同じ"""
+    gap = time.time() - _last[0]
+    if gap < WAIT:
+        time.sleep(WAIT - gap)
+    r = requests.post(url, data={'cname': cname}, headers=UA, timeout=25)
+    _last[0] = time.time()
+    r.raise_for_status()
+    return r.content.decode('cp932', errors='replace')
+
+
 def text(s):
     return re.sub(r'\s+', ' ', html.unescape(re.sub(r'<[^>]+>', ' ', s or ''))).strip()
 
@@ -280,6 +291,57 @@ def race_page(link, now):
     return r
 
 
+_jradb = {'at': 0.0, 'menu': [], 'names': {}}
+SP_MENU = 'pk01pde01/5F'  # 海外情報メニュー(各レースのページの「出馬表｜オッズ｜開催情報」と同じ)
+
+
+def jradb_odds(r, now):
+    """JRA公式データベースの海外オッズ(単勝・複勝・調教国)。2026-11-01 から。
+    BC・メルボルンカップでは出馬表ページ(syutsuba.html)が使えなかったので、こちらでJRAの単勝と日本馬(調教国JPN)を読む。
+    戻り値 {馬番: {'name', 'odds', 'code'}}, 'HH:MM' か '最終' / 見つからなければ {}, ''"""
+    if not r.get('post'):
+        return {}, ''
+    if time.time() - _jradb['at'] > 1800:  # メニューは30分ごとに読み直す(発売が始まるとレースが増える)
+        try:
+            h = post('https://jra.jp/JRADB/accessSP.html', SP_MENU)
+            _jradb['menu'] = sorted(set(re.findall(r"doAction\('/JRADB/accessSO\.html'\s*,\s*'([^']+)'\)", h)))
+            _jradb['at'] = time.time()
+        except requests.RequestException as e:
+            print(f'JRA公式の海外メニュー 読めず: {e}')
+    want = (r['post'][:10], race_norm(r['race']))
+    for cname in _jradb['menu']:
+        known = _jradb['names'].get(cname)
+        if known and known != want:
+            continue
+        try:
+            h = post('https://jra.jp/JRADB/accessSO.html', cname)
+        except requests.RequestException as e:
+            print(f'JRA公式オッズ {cname} 読めず: {e}')
+            continue
+        t = text(re.sub(r'<script.*?</script>', '', h, flags=re.S))
+        m = re.search(r'(\d{4})年(\d{1,2})月(\d{1,2})日（[^）]*）\s*(\S+?)\s*海外情報メニューへ戻る', t)
+        if not m:
+            continue
+        got = (f'{m.group(1)}-{int(m.group(2)):02d}-{int(m.group(3)):02d}', race_norm(m.group(4)))
+        _jradb['names'][cname] = got
+        if got != want:
+            continue
+        out = {}
+        body = h[h.find('<tbody'):h.find('</tbody>')]
+        for tr in re.findall(r'<tr[^>]*>(.*?)</tr>', body, re.S):
+            n = re.search(r'<td class="num">\s*(\d+)', tr)
+            nm = re.search(r'<td class="horse">(.*?)</td>', tr, re.S)
+            o = re.search(r'<td class="odds_tan">(.*?)</td>', tr, re.S)
+            c = re.search(r'<td class="code">(.*?)</td>', tr, re.S)
+            if n and nm:
+                out[int(n.group(1))] = {'name': text(nm.group(1)), 'odds': num(text(o.group(1))) if o else None,
+                                        'code': text(c.group(1)) if c else ''}
+        um = re.search(r'(\d{1,2})時(\d{2})分\s*現在', t)
+        when = f'{int(um.group(1)):02d}:{um.group(2)}' if um else ('最終' if '最終オッズ' in t else '')
+        return out, when
+    return {}, ''
+
+
 _jra_horses = {}
 
 
@@ -495,6 +557,28 @@ def snapshot(d, now, state):
     en = [x.get('en', '') for x in load(OUT / 'schedule.json', {}).get('designated', [])
           if x.get('date') == d.get('date') and race_norm(x.get('name', '')) == race_norm(d.get('race', ''))]
     r['en_race'] = en[0] if en else ''
+    try:
+        jra, jra_when = jradb_odds(r, now)
+    except Exception as e:
+        print(f"{d['slug']} JRA公式オッズ失敗: {e}")
+        jra, jra_when = {}, ''
+    if jra:
+        if not r['entries']:
+            r['entries'] = [{'num': n, 'name': v['name'], 'jra_odds': None, 'trainer_country': '', 'jpn': False}
+                            for n, v in sorted(jra.items())]
+            r['entries_from'] = 'JRA公式のオッズ表'
+        for e in r['entries']:
+            v = jra.get(e['num'])
+            if v:
+                e['jra_odds'] = v['odds']
+                if v['code']:
+                    e['trainer_country'] = v['code']
+                    e['jpn'] = v['code'] == 'JPN'  # 調教国で判定(いちばん確か)
+        # 単勝が「取消」等で数字でない馬は出走しない
+        r['scratched'] = sorted(set(r.get('scratched', [])) | {v['name'] for v in jra.values() if v['odds'] is None})
+        r['entries'] = [e for e in r['entries'] if not (e['num'] in jra and jra[e['num']]['odds'] is None)]
+        r['jra_time'] = now.strftime('%Y-%m-%d ') + (jra_when if ':' in jra_when else now.strftime('%H:%M'))
+        r['jra_source'] = 'JRA公式オッズ' + (f'({jra_when}現在)' if ':' in jra_when else '')
     pmu = {}
     if r['post']:
         post = datetime.strptime(r['post'], '%Y-%m-%d %H:%M').replace(tzinfo=JST)
@@ -544,7 +628,17 @@ def stake_plan(r):
 
 def final_notice(r, now, dry):
     plan = stake_plan(r)
-    lines = [f"🌏🎯 **海外発売 投票用 最終版**【{r['race']}】発走 {hm(r['post'])}(日本時間)",
+    has_jra = any(e['jra_odds'] for e in r['entries'])
+    # 2026-11-01 ユーザー「いちいち判断するの疲れる。断定して」→ 2行目で「買う/買わない」を言い切る
+    if plan:
+        head = '👉 **これを買う: ' + ' / '.join(f"単勝 {e['num']}番 {e['name']} {s:,}円" for e, s in plan) + '**'
+    elif r['local']['ok'] and has_jra:
+        head = '👉 **今回は買わない**(割安な馬がいない)'
+    elif not r['local']['ok']:
+        head = '👉 **今回は買わない**(現地の実際のオッズが取れず、判定できない)'
+    else:
+        head = '👉 **JRAのオッズが読めなかった**ので、下の目安で判断が必要です'
+    lines = [f"🌏🎯 **海外発売 投票用 最終版**【{r['race']}】発走 {hm(r['post'])}(日本時間)", head,
              f"JRAオッズ {hm(r['jra_time'])} / 現地のオッズ: {r['local']['source']} {hm(r['local']['time'])}"]
     if not r['local']['ok']:
         lines.append(f"**判定できません → 見送り**({r['local']['source']}。現地の実際のオッズと比べられないため)")
@@ -558,7 +652,7 @@ def final_notice(r, now, dry):
         lines.append('**JRAのオッズが読めませんでした** → 下の目安を見て、JRAの画面の倍率で判断してください')
     else:
         lines.append('**買い目なし**(日本馬以外で、現地より2割以上割安・20倍以下の単勝がありません)→ 見送り')
-    th = thresholds(r) if r['local']['ok'] else []
+    th = thresholds(r) if r['local']['ok'] and not has_jra else []  # JRAのオッズがある時は目安を出さない(判断を求めない)
     if th:
         lines.append('買いの目安(締切直前にJRAの倍率がこの範囲に入った馬だけ買う):\n```\n' + '\n'.join(th) + '\n```')
     if r['local']['ok']:  # 2026-11-01 ユーザーの要望「どういうロジックで買わないかまで」
@@ -571,7 +665,7 @@ def final_notice(r, now, dry):
         lines.append(f"計算: 「JRAが○倍なら買い」の○ = 1.2 ÷ 現地の勝率(現地のオッズから控除を除いた値。{r.get('method', '')})")
     lines.append('```\n' + table(r) + '\n```')
     lines.append('ルール: 日本馬は買わない / 期待値(現地の勝率×JRA単勝)1.2以上 / JRA20倍以下。'
-                 '過去の検証で有望(香港178%・他188%)だけど未確定なので少額で。締切直前にオッズが動くので、買う前にJRAの倍率が20倍以下かだけ確認を。')
+                 '過去の検証で有望(香港178%・他188%)だけど未確定なので少額で。この後オッズが動いて買い目が変わったら、すぐ別に知らせます。')
     lines.append(f'🌐 {SITE_PAGE}')
     discord('\n'.join(lines), dry)
     if not dry:
