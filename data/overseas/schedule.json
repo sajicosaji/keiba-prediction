@@ -1,5 +1,5 @@
 {
- "checked_at": "2026-11-02 19:01",
+ "checked_at": "2026-11-03 00:34",
  "designated": [
   {
    "date": "2026-11-03",
@@ -75,61 +75,6 @@
   }
  ],
  "decided": [
-  {
-   "date": "2026-10-31",
-   "race": "ブリーダーズカップダートマイル（G1）",
-   "country": "アメリカ",
-   "track": "キーンランド",
-   "distance": "ダート1,600 メートル",
-   "winner": "ファーザーアドゥ",
-   "link": "/keiba/overseas/race/2026bc/dirt_mile/",
-   "news": "",
-   "slug": "2026-10-31_ブリーダーズカップダートマイル"
-  },
-  {
-   "date": "2026-10-31",
-   "race": "ブリーダーズカップスプリント（G1）",
-   "country": "アメリカ",
-   "track": "キーンランド",
-   "distance": "ダート1,200 メートル",
-   "winner": "テーオーエルビス",
-   "link": "/keiba/overseas/race/2026bc/sprint/",
-   "news": "",
-   "slug": "2026-10-31_ブリーダーズカップスプリント"
-  },
-  {
-   "date": "2026-10-31",
-   "race": "ブリーダーズカップマイル（G1）",
-   "country": "アメリカ",
-   "track": "キーンランド",
-   "distance": "芝1,600 メートル",
-   "winner": "デターミニスティック",
-   "link": "/keiba/overseas/race/2026bc/mile/",
-   "news": "",
-   "slug": "2026-10-31_ブリーダーズカップマイル"
-  },
-  {
-   "date": "2026-10-31",
-   "race": "ブリーダーズカップターフ（G1）",
-   "country": "アメリカ",
-   "track": "キーンランド",
-   "distance": "芝2,400 メートル",
-   "winner": "ベンヴェヌートチェッリーニ",
-   "link": "/keiba/overseas/race/2026bc/turf/",
-   "news": "",
-   "slug": "2026-10-31_ブリーダーズカップターフ"
-  },
-  {
-   "date": "2026-10-31",
-   "race": "ブリーダーズカップクラシック（G1）",
-   "country": "アメリカ",
-   "track": "キーンランド",
-   "distance": "ダート2,000 メートル",
-   "winner": "ソヴリンティ",
-   "link": "/keiba/overseas/race/2026bc/classic/",
-   "news": "",
-   "slug": "2026-10-31_ブリーダーズカップクラシック"
-  },
   {
    "date": "2026-11-03",
    "race": "メルボルンカップ（G1）",
