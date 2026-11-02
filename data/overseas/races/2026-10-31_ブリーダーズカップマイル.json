@@ -259,7 +259,7 @@
  },
  "ref_time": "",
  "ref_source": "海外ではモーニングライン（Morning Line）と呼ばれています。下記はEQUIBASE社から提供された想定オッズで、JRAのオッズとは異なりますので、参考としてご覧ください。",
- "jra_time": "2026-11-02 13:28",
+ "jra_time": "2026-11-02 19:01",
  "date": "2026-10-31",
  "race": "ブリーダーズカップマイル（G1）",
  "country": "アメリカ",
@@ -272,14 +272,14 @@
  "pmu_race": "R4C9 FANDUEL BREEDERS' CUP MILE PRESENTED BY ",
  "local": {
   "source": "PMU(仏公営)の実オッズ R4C9 FANDUEL BREEDERS' CUP MILE PRESENTED BY ",
-  "time": "2026-11-02 13:29",
+  "time": "2026-11-02 19:02",
   "ok": true
  },
  "method": "公営(トート)a=1.03",
  "picks": [
   9
  ],
- "checked_at": "2026-11-02 13:28",
+ "checked_at": "2026-11-02 19:01",
  "final": {
   "at": "2026-11-01 04:59",
   "picks": [],
