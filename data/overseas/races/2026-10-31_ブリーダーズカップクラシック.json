@@ -144,7 +144,7 @@
  },
  "ref_time": "",
  "ref_source": "海外ではモーニングライン（Morning Line）と呼ばれています。下記はEQUIBASE社から提供された想定オッズで、JRAのオッズとは異なりますので、参考としてご覧ください。",
- "jra_time": "2026-11-02 07:55",
+ "jra_time": "2026-11-02 13:28",
  "date": "2026-10-31",
  "race": "ブリーダーズカップクラシック（G1）",
  "country": "アメリカ",
@@ -154,18 +154,17 @@
  "slug": "2026-10-31_ブリーダーズカップクラシック",
  "news": "",
  "en_race": "",
- "jra_source": "JRA公式オッズ",
  "pmu_race": "R4C12 LONGINES BREEDERS' CUP CLASSIC (GRADE I)",
  "local": {
   "source": "PMU(仏公営)の実オッズ R4C12 LONGINES BREEDERS' CUP CLASSIC (GRADE I)",
-  "time": "2026-11-02 07:57",
+  "time": "2026-11-02 13:30",
   "ok": true
  },
  "method": "公営(トート)a=1.03",
  "picks": [
   7
  ],
- "checked_at": "2026-11-02 07:55",
+ "checked_at": "2026-11-02 13:28",
  "final": {
   "at": "2026-11-01 06:57",
   "picks": [],
