@@ -2,7 +2,7 @@
 国内の「投票用」買い目を、言い切りの形でDiscordへ送る係。2026-11-01 ユーザーの要望で追加:
   「いちいちサイト見て判断するの疲れる」「国内競馬もそう。断定して買い目の指定して。穴でもいいから」
   - 対象: その日のJRAの重賞(G1・G2・G3。g1_auto.todays_g1 の一覧)
-  - 発走の28〜12分前に1回だけ、その時のオッズで作る(day_runner のループは約13分おきなので、この幅で必ず1回入る)
+  - 発走の30〜9分前に1回だけ、その時のオッズで作る(day_runner のループは13〜15分おき。幅21分で必ず1回入る)
   - 買い目:
       三連複 ◎1頭軸流し(合成オッズ5倍以上) … sanrenpuku.py。合計 trio_yen 円
       ☆穴の単勝 … g1_auto が昼に作った予想の ☆(人気薄で材料がそろい、BOTも市場より高く見ている馬)。今も10倍以上なら ana_yen 円
@@ -30,7 +30,7 @@ OUT = SRC.parent / 'data' / 'domestic'
 SENT = OUT / 'sent.json'
 BETS = OUT / 'bets.csv'
 CONFIG = {'trio_yen': 1000, 'ana_yen': 500}
-WINDOW = (12, 28)  # 発走の何分前から何分前まで
+WINDOW = (9, 30)  # 発走の何分前から何分前まで。ループは13〜15分おき(重い日は17分)なので、21分の幅で必ず1回入る
 
 
 def config():
@@ -86,8 +86,12 @@ def main():
     ap.add_argument('--race-id')
     ap.add_argument('--force', action='store_true')
     ap.add_argument('--dry', action='store_true')
+    ap.add_argument('--now', help='試験用: この時刻(YYYY-MM-DD HH:MM)として動かす。--dry と一緒に使う')
     a = ap.parse_args()
-    now = datetime.now(JST)
+    now = datetime.strptime(a.now, '%Y-%m-%d %H:%M').replace(tzinfo=JST) if a.now else datetime.now(JST)
+    if a.now and not a.dry:
+        print('--now は --dry と一緒にだけ使えます')
+        return
     cfg = config()
     sent = json.loads(SENT.read_text(encoding='utf-8')) if SENT.exists() else {}
     if a.race_id:
