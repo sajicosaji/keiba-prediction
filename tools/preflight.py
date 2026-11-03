@@ -68,11 +68,17 @@ def calc():
     horses = [{'num': n, 'name': f'馬{n}', 'jockey': 'x', 'odds': o, 'p_mkt': 1 / o, 'p_model': 1 / o, 'runs': []} for n, o in win.items()]
     rows, _ = g1_research.build({'horses': horses, 'distance': '2000', 'surface': '芝'})
     assert rows[0]['mark'] == '◎'
+    # 海外の発走時刻: JRAは深夜を「24時15分」と書く(2026-11-03 過去の愛チャンピオンSで判明。読めないと最終版が届かない)
+    import overseas
+    from datetime import datetime
+    now = datetime(2026, 9, 10, tzinfo=overseas.JST)
+    assert overseas.jst_time('9月13日（土曜）24時15分', now).strftime('%m-%d %H:%M') == '09-14 00:15'
+    assert overseas.jst_time('10月4日（日曜）23時05分', now).strftime('%m-%d %H:%M') == '10-04 23:05'
     return ''
 
 
 check('文法', syntax)
-check('計算(三連複・G1の印)', calc)
+check('計算(三連複・G1の印・海外の発走時刻)', calc)
 check('予想(predict.py)', lambda: run(['src/predict.py', PAST_RACE, '--no-pedigree'], ['◎']))
 check('国内の言い切り配信', lambda: run(['src/domestic_picks.py', '--race-id', PAST_RACE, '--dry'], ['これを買う', '今回は買わない']))
 check('海外の見張り', lambda: run(['src/overseas.py', 'daily', '--dry'], [''], bad=('取得失敗', 'PMU失敗', 'JRA公式オッズ失敗', '読めず')))

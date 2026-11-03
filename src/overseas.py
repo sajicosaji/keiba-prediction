@@ -45,6 +45,7 @@ BASE = 'https://www.jra.go.jp'
 UA = {'User-Agent': 'Mozilla/5.0 (keiba-bot; record only)'}
 SITE_PAGE = 'https://kamirobo-keiba.keiba-bot-site.workers.dev/overseas/'
 EV_MIN, ODDS_MAX, TOTE_A = 1.2, 20.0, 1.03
+FINE_MIN = 40  # 発走の何分前から約1分おきに記録するか(2026-11-03)
 CONFIG = {'stake_per_pick': 1000, 'final_notice_min': 15}  # data/overseas/config.json で上書きできる
 WAIT = 3.0
 _last = [0.0]
@@ -100,7 +101,8 @@ def jst_time(s, now):
     m = re.search(r'(\d{1,2})時(\d{2})分', s or '')
     if not d or not m:
         return None
-    return d.replace(hour=int(m.group(1)), minute=int(m.group(2)))
+    # JRAは深夜を前の日の「24時15分」のように書くことがある(2025年 愛チャンピオンS)。24時以上は翌日にする
+    return d.replace(hour=0, minute=int(m.group(2))) + timedelta(hours=int(m.group(1)))
 
 
 def designated(now):
@@ -173,7 +175,9 @@ def news_posts(news):
     out = {}
     for m in re.finditer(r'第\d+レース\s*(\S+?（G\d）|\S+?)\s.*?(\d{4}年)?(\d{1,2})月(\d{1,2})日（[^）]*）\s*(\d{1,2})時(\d{2})分', t):
         y = int(m.group(2)[:4]) if m.group(2) else datetime.now(JST).year
-        out[race_norm(m.group(1))] = f'{y}-{int(m.group(3)):02d}-{int(m.group(4)):02d} {int(m.group(5)):02d}:{m.group(6)}'
+        # 「24時15分」は翌日の0時15分
+        t0 = datetime(y, int(m.group(3)), int(m.group(4)), 0, int(m.group(6))) + timedelta(hours=int(m.group(5)))
+        out[race_norm(m.group(1))] = t0.strftime('%Y-%m-%d %H:%M')
     _news[news] = out
     return out
 
@@ -834,8 +838,11 @@ def watch(now, state, dry, budget_min=340):
     save(OUT / 'state.json', state)
     write_site(now)
     push()
+    last_push = time.time()
     while (time.time() - t0) / 60 < budget_min:
+        loop_t = time.time()
         now = datetime.now(JST)
+        noticed = False
         soon = []
         for d in decs:
             r = load(OUT / 'races' / f"{d['slug']}.json", {})
@@ -873,6 +880,7 @@ def watch(now, state, dry, budget_min=340):
             fn = int(load(OUT / 'config.json', {}).get('final_notice_min', CONFIG['final_notice_min']))
             if 3 < mins <= fn + 6 and not sent.get('final'):
                 final_notice(r, now, dry)
+                noticed = True
                 sent['final'] = now.strftime('%H:%M')
                 sent['final_picks'] = r['picks']
                 r['final'] = {'at': now.strftime('%Y-%m-%d %H:%M'), 'picks': r['picks'],
@@ -886,17 +894,39 @@ def watch(now, state, dry, budget_min=340):
                         + (f"条件から外れた馬: {'、'.join(str(n) + '番' for n in drop)}(まだ買っていなければ買わなくてOK)\n" if drop else '')
                         + (f"新しく条件に入った馬: {'、'.join(str(n) + '番' for n in add)}\n" if add else '')
                         + f"```\n{table(r)}\n```", dry)
+                noticed = True
                 sent['changed'] = now.strftime('%H:%M')
             elif not sent.get('final') and r['picks'] != sent.get('picks') and any(e['jra_odds'] for e in r['entries']):
                 discord(f"🌏 **{r['race']}** 途中経過 {now.strftime('%H:%M')}(発走 {hm(r['post'])}・あと{mins:.0f}分)\n"
                         f"いまの買い条件: {'、'.join(str(n) + '番' for n in r['picks']) or 'なし'}\n```\n{table(r)}\n```", dry)
                 sent['picks'] = r['picks']
+                noticed = True
         save(OUT / 'state.json', state)
-        write_site(now)
-        push()
+        # 2026-11-03 発走40分前〜発走5分後は約1分おきに記録する(締切直前のオッズの動きを残し、何分前に買うのが良いかを後で決めるため)。
+        # その間の GitHub への保存は8分おきか、通知を送った時だけ(1分ごとの保存で履歴が埋まらないように)
+        fine = any(now - timedelta(minutes=5) < p <= now + timedelta(minutes=FINE_MIN) for p, _ in active)
+        if not fine or noticed or time.time() - last_push >= 8 * 60:
+            write_site(now)
+            push()
+            last_push = time.time()
         nxt = soon[0][0]
-        wait = 8 * 60 if active else min(30 * 60, max(60, (nxt - timedelta(hours=3) - now).total_seconds()))
+        if fine:
+            wait = max(10, 60 - (time.time() - loop_t))
+        else:
+            wait = 8 * 60 if active else min(30 * 60, max(60, (nxt - timedelta(hours=3) - now).total_seconds()))
+        # 当番の交代(時間切れ→次の見張りを起動)が、最終版〜締切の時間帯(発走30分前〜3分後)に重ならないようにする。
+        # 交代は時間切れの最大30分前に起きるので、その幅で重なりを見る。重なりそうで、まだ発走45分より前なら今のうちに交代する
+        end = now + timedelta(minutes=budget_min - (time.time() - t0) / 60)
+        if not fine and (time.time() - t0) / 60 > 20 and any(
+                end - timedelta(minutes=30) < p + timedelta(minutes=3) and p - timedelta(minutes=30) < end and p - now > timedelta(minutes=45)
+                for p, _ in soon):
+            print('交代が締切の時間帯に重なるので、早めに交代する')
+            write_site(now)
+            push()
+            break
         if (time.time() - t0 + wait) / 60 >= budget_min:
+            write_site(now)
+            push()
             break
         time.sleep(wait)
     if not dry and os.environ.get('GITHUB_ACTIONS'):
