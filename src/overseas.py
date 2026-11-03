@@ -35,6 +35,7 @@ import re
 import subprocess
 import time
 from datetime import datetime, timedelta
+from itertools import combinations
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -52,7 +53,14 @@ FINE_MIN = 40  # 発走の何分前から約1分おきに記録するか(2026-11
 # 基準(回収100%以上)に届かないが、ユーザーの判断で単勝は買い続ける。全部屋の決まりで、買い目を出す通知の1行目に必ず書く
 BELOW = '⚠ 基準未満(検証では回収95%)'
 VERIFY = '過去5年(2021〜2026年・JRA発売90レース)の検証では57点・6的中・回収95%で、基準の100%に届いていません'
-CONFIG = {'stake_per_pick': 1000, 'final_notice_min': 15}  # data/overseas/config.json で上書きできる
+# 2026-11-03 ユーザー「ワイドを買いとして出して」。過去5年(2021-11〜2026-10・JRA発売)の検証で、
+# 日本馬以外で現地の人気(勝率)上位5頭のワイドボックス(10点)が回収150%(87R・毎年103%以上・大きい配当3本を除いても116%)。
+# 結果を見る前に決めた19通りの1つで、決めておいた合格の決まり(全体・前半・後半とも100%超、100%超の確率90%以上)を満たした。
+# arc2026/research/bt5y_exotics.py。外国馬が5頭に満たないレースは検証でも買っていないので出さない
+WIDE_N = 5
+WIDE_OK = '✅ ワイドは検証で回収150%'
+WIDE_VERIFY = 'ワイドは過去5年(2021〜2026年・JRA発売87レース)の検証で回収150%(毎年プラス)。将来の儲けを約束するものではありません'
+CONFIG = {'stake_per_pick': 1000, 'final_notice_min': 15, 'wide_yen': 100}  # data/overseas/config.json で上書きできる(wide_yen はワイド1点の金額)
 WAIT = 3.0
 _last = [0.0]
 
@@ -562,7 +570,34 @@ def evaluate(r, pmu=None):
         e['pick'] = bool(e['ev'] and not e['jpn'] and e['jra_odds'] <= ODDS_MAX and e['ev'] >= EV_MIN)
         e['need'] = round(EV_MIN / e['p'], 1) if (e['p'] and not e['jpn'] and EV_MIN / e['p'] <= ODDS_MAX) else None
     r['picks'] = [e['num'] for e in sorted(r['entries'], key=lambda e: -(e['ev'] or 0)) if e['pick']]
+    # ワイド: 日本馬以外で現地の勝率が高い順に5頭(JRAのオッズは使わない)。5頭に満たなければ出さない
+    fo = [e for e in sorted(r['entries'], key=lambda e: -(e['p'] or 0)) if not e['jpn'] and e['p']]
+    r['wide'] = [e['num'] for e in fo[:WIDE_N]] if len(fo) >= WIDE_N else []
     return r
+
+
+def wide_yen():
+    return int(load(OUT / 'config.json', {}).get('wide_yen', CONFIG['wide_yen']))
+
+
+def wide_text(r, nums=None):
+    """「ワイド 20・2・24・12・11 ボックス 各100円(10点・1,000円)」"""
+    nums = r['wide'] if nums is None else nums
+    if not nums:
+        return ''
+    y, pts = wide_yen(), len(nums) * (len(nums) - 1) // 2
+    return f"ワイド {'・'.join(str(n) for n in nums)} ボックス 各{y:,}円({pts}点・{pts * y:,}円)"
+
+
+def wide_payouts(link):
+    """JRA公式の結果ページ(kaiko.html)のワイドの払戻 {(若番, 大番): 100円あたりの円}。まだ無ければ {}"""
+    page = re.sub(r'(index\.html|kaiko\.html)?$', 'kaiko.html', link)
+    x = text(re.sub(r'<!--.*?-->', '', get_opt(page), flags=re.S))
+    m = re.search(r'払戻金.*?ワイド\s+(.*?)\s+(?:馬単|3連複|3連単)', x)
+    if not m:
+        return {}
+    return {tuple(sorted(int(n) for n in c.split('-'))): int(y.replace(',', ''))
+            for c, y in re.findall(r'(\d+-\d+)\s+([\d,]+)\s*円', m.group(1))}
 
 
 # ---------------------------------------------------------------- 記録・通知
@@ -704,17 +739,26 @@ def stake_plan(r):
 def final_notice(r, now, dry):
     plan = stake_plan(r)
     has_jra = any(e['jra_odds'] for e in r['entries'])
+    wide = r.get('wide') or []
     # 2026-11-01 ユーザー「いちいち判断するの疲れる。断定して」→ 2行目で「買う/買わない」を言い切る
-    if plan:
-        head = '👉 **これを買う: ' + ' / '.join(f"単勝 {e['num']}番 {e['name']} {s:,}円" for e, s in plan) + '**'
+    # 2026-11-03 ワイド(検証150%)を先に。単勝(基準未満)を出す時は、全部屋の決まりで1行目に「基準未満」
+    buys = ([wide_text(r)] if wide else []) + [f"単勝 {e['num']}番 {e['name']} {s:,}円" for e, s in plan]
+    lab = ' / '.join(x for x in (WIDE_OK if wide else '', BELOW if plan else '') if x)
+    if buys:
+        head = '👉 **これを買う: ' + ' / '.join(buys) + '**'
     elif r['local']['ok'] and has_jra:
         head = '👉 **今回は買わない**(割安な馬がいない)'
     elif not r['local']['ok']:
         head = '👉 **今回は買わない**(現地の実際のオッズが取れず、判定できない)'
     else:
         head = '👉 **JRAのオッズが読めなかった**ので、下の目安で判断が必要です'
-    lines = [f"{BELOW} 🌏🎯 **海外発売 投票用 最終版**【{r['race']}】発走 {hm(r['post'])}(日本時間)", head,
+    lines = [f"{lab + ' ' if lab else ''}🌏🎯 **海外発売 投票用 最終版**【{r['race']}】発走 {hm(r['post'])}(日本時間)", head,
              f"JRAオッズ {hm(r['jra_time'])} / 現地のオッズ: {r['local']['source']} {hm(r['local']['time'])}"]
+    if wide:
+        ents = {e['num']: e for e in r['entries']}
+        lines.append('ワイド ボックス(日本馬以外で、現地の人気の上位5頭。JRAのオッズは使わない):\n```\n' + '\n'.join(
+            f"{n:>2}番 {ents[n]['name'][:12]}  現地{(ents[n]['ref_odds'] or 0):.1f}倍・勝率{(ents[n]['p'] or 0) * 100:.1f}%" for n in wide)
+            + f"\n{wide_text(r)}\n```")
     if not r['local']['ok']:
         lines.append(f"**判定できません → 見送り**({r['local']['source']}。現地の実際のオッズと比べられないため)")
     elif plan:
@@ -726,7 +770,7 @@ def final_notice(r, now, dry):
     elif not any(e['jra_odds'] for e in r['entries']):
         lines.append('**JRAのオッズが読めませんでした** → 下の目安を見て、JRAの画面の倍率で判断してください')
     else:
-        lines.append('**買い目なし**(日本馬以外で、現地より2割以上割安・20倍以下の単勝がありません)→ 見送り')
+        lines.append('**単勝は買い目なし**(日本馬以外で、現地より2割以上割安・20倍以下の単勝がありません)')
     th = thresholds(r) if r['local']['ok'] and not has_jra else []  # JRAのオッズがある時は目安を出さない(判断を求めない)
     if th:
         lines.append('買いの目安(締切直前にJRAの倍率がこの範囲に入った馬だけ買う):\n```\n' + '\n'.join(th) + '\n```')
@@ -739,10 +783,15 @@ def final_notice(r, now, dry):
             lines.append('買わない理由: ' + ' / '.join(x for x in why if x))
         lines.append(f"計算: 「JRAが○倍なら買い」の○ = 1.2 ÷ 現地の勝率(現地のオッズから控除を除いた値。{r.get('method', '')})")
     lines.append('```\n' + table(r) + '\n```')
-    lines.append('ルール: 日本馬は買わない / 期待値(現地の勝率×JRA単勝)1.2以上 / JRA20倍以下。'
+    lines.append(f'{WIDE_VERIFY}。')
+    lines.append('単勝のルール: 日本馬は買わない / 期待値(現地の勝率×JRA単勝)1.2以上 / JRA20倍以下。'
                  f'{VERIFY}。この後オッズが動いて買い目が変わったら、すぐ別に知らせます。')
     lines.append(f'🌐 {SITE_PAGE}')
     discord('\n'.join(lines), dry)
+    if not dry and wide:
+        append(OUT / 'wide_bets.csv', ['noticed_at', 'slug', 'race', 'date', 'nums', 'yen_per_point', 'points', 'stake'],
+               [[now.strftime('%Y-%m-%d %H:%M'), r['slug'], r['race'], r['date'], '-'.join(str(n) for n in wide), wide_yen(),
+                 len(wide) * (len(wide) - 1) // 2, wide_yen() * len(wide) * (len(wide) - 1) // 2]])
     if not dry:
         append(OUT / 'bets.csv', ['noticed_at', 'slug', 'race', 'date', 'num', 'name', 'jra_odds', 'ref_odds', 'p', 'ev', 'stake'],
                [[now.strftime('%Y-%m-%d %H:%M'), r['slug'], r['race'], r['date'], e['num'], e['name'], e['jra_odds'],
@@ -752,7 +801,7 @@ def final_notice(r, now, dry):
 def bedtime_notice(rs, now, dry):
     """前の晩23時台の「寝る前の目安」。払戻は締切時のオッズで決まるので、最終版より確度は下がる(記録はしない)"""
     rs = sorted(rs, key=lambda r: r.get('post', ''))
-    lines = [f"{BELOW} 🌙 **海外発売 寝る前の目安**({now.strftime('%H:%M')}時点・発走が深夜〜朝のレース)",
+    lines = [f"{WIDE_OK} / {BELOW} 🌙 **海外発売 寝る前の目安**({now.strftime('%H:%M')}時点・発走が深夜〜朝のレース)",
              f"最終版は各レースの締切15分前に届きます({hm(rs[0]['post'])}〜)。起きていられない時は、ここで先に買う手もあります。"
              'ただしJRAの払戻は締切時のオッズで決まるので、いまの倍率から動きます(確度は最終版より下がる)。']
     for r in rs:
@@ -760,18 +809,21 @@ def bedtime_notice(rs, now, dry):
         if not r['local']['ok']:
             lines.append(f"→ 現地の実際のオッズがまだ取れていません({r['local']['source']})。判定は最終版で")
             continue
+        if r.get('wide'):
+            lines.append(f"いまのワイド: **{wide_text(r)}**")
         plan = stake_plan(r)
         if plan:
-            lines.append('いまの買い条件: ' + ' / '.join(
+            lines.append('いまの単勝の買い条件: ' + ' / '.join(
                 f"単勝{e['num']}番 {e['name'][:10]} {s:,}円(JRA{e['jra_odds']:.1f}倍・現地{e['ref_odds']:.1f}倍・期待値{e['ev']:.2f})" for e, s in plan))
         elif any(e['jra_odds'] for e in r['entries']):
-            lines.append('いまの買い条件: なし')
+            lines.append('いまの単勝の買い条件: なし')
         else:
             lines.append('JRAのオッズはまだ(発売前)')
         th = thresholds(r, limit=4)
         if th:
             lines.append('```\n' + '\n'.join(th) + '\n```')
-    lines.append(f'ルール: 日本馬は買わない / 期待値1.2以上 / JRA20倍以下。{VERIFY}。')
+    lines.append(f'{WIDE_VERIFY}。')
+    lines.append(f'単勝のルール: 日本馬は買わない / 期待値1.2以上 / JRA20倍以下。{VERIFY}。')
     lines.append(f'🌐 {SITE_PAGE}')
     discord('\n'.join(lines), dry)
 
@@ -817,10 +869,49 @@ def settle(decs, now, state, dry):
     if rows and not dry:
         append(OUT / 'results.csv', ['settled_at', 'slug', 'race', 'date', 'num', 'name', 'final_odds', 'stake', 'payout', 'result'], rows)
     state['settled'] = sorted(done)
+    # ワイドの答え合わせ(2026-11-03)。払戻は JRA 公式の結果ページ(kaiko.html)のワイドの払戻。取消の馬がからむ組は返還
+    wbets = []
+    if (OUT / 'wide_bets.csv').exists():
+        with open(OUT / 'wide_bets.csv', encoding='utf-8') as f:
+            wbets = list(csv.DictReader(f))
+    wdone = set(state.get('settled_wide', []))
+    wrows = []
+    for b in wbets:
+        d = by_slug.get(b['slug'])
+        if b['slug'] in wdone or not d or not d['winner']:
+            continue
+        try:
+            link = find_race_page(d, state)
+            pays = wide_payouts(link) if link else {}
+            fin = race_page(link, now) if pays else None
+        except Exception as e:
+            print(f"{b['slug']} ワイドの結果の取得失敗: {e}")
+            continue
+        if not pays:  # 結果ページの払戻がまだ出ていない
+            continue
+        nums = [int(n) for n in b['nums'].split('-')]
+        ran = {e['num'] for e in fin['entries'] if e.get('jra_odds')} if fin and fin.get('entries') else set(nums)
+        y = int(b['yen_per_point'])
+        pay = hits = 0
+        for c in combinations(sorted(nums), 2):
+            if not set(c) <= ran:
+                pay += y  # 取消の馬がからむ組は返還
+            elif c in pays:
+                pay += pays[c] * y // 100
+                hits += 1
+        hit_txt = '、'.join(f'{a}-{c}' for a, c in combinations(sorted(nums), 2) if (a, c) in pays and {a, c} <= ran)
+        wrows.append([now.strftime('%Y-%m-%d %H:%M'), b['slug'], b['race'], b['date'], b['nums'], int(b['stake']), pay, hits, hit_txt])
+        msgs.append(f"{b['race']}: ワイド {b['nums'].replace('-', '・')} ボックス {int(b['stake']):,}円 → 払戻 {pay:,}円"
+                    + (f"(当たり {hit_txt})" if hit_txt else '(外れ)'))
+        wdone.add(b['slug'])
+    if wrows and not dry:
+        append(OUT / 'wide_results.csv', ['settled_at', 'slug', 'race', 'date', 'nums', 'stake', 'payout', 'hits', 'hit_pairs'], wrows)
+    state['settled_wide'] = sorted(wdone)
     if msgs:
-        rec = record()
+        rec, wr = record(), wide_record()
         discord('🌏 **海外発売の答え合わせ**\n' + '\n'.join(msgs)
-                + f"\n通算: {rec['bets']}点 {rec['stake']:,}円 → {rec['payout']:,}円(回収率{rec['roi']*100:.0f}%)", dry)
+                + (f"\nワイド通算: {wr['races']}レース {wr['stake']:,}円 → {wr['payout']:,}円(回収率{wr['roi']*100:.0f}%)" if wr['races'] else '')
+                + f"\n単勝通算: {rec['bets']}点 {rec['stake']:,}円 → {rec['payout']:,}円(回収率{rec['roi']*100:.0f}%)", dry)
 
 
 def record():
@@ -831,6 +922,17 @@ def record():
     s = sum(int(r['stake']) for r in rows)
     p = sum(int(r['payout']) for r in rows)
     return {'bets': len(rows), 'stake': s, 'payout': p, 'hits': sum(1 for r in rows if r['result'] == '1着'),
+            'roi': round(p / s, 3) if s else 0, 'list': rows[-30:]}
+
+
+def wide_record():
+    rows = []
+    if (OUT / 'wide_results.csv').exists():
+        with open(OUT / 'wide_results.csv', encoding='utf-8') as f:
+            rows = list(csv.DictReader(f))
+    s = sum(int(r['stake']) for r in rows)
+    p = sum(int(r['payout']) for r in rows)
+    return {'races': len(rows), 'stake': s, 'payout': p, 'hits': sum(1 for r in rows if int(r['hits'] or 0) > 0),
             'roi': round(p / s, 3) if s else 0, 'list': rows[-30:]}
 
 
@@ -854,11 +956,11 @@ def daily(now, state, dry):
     seen = set(state.get('seen_v2', []))
     new = [d for d in decs if d['slug'] not in seen and d['date'] >= today]
     if new and not first:
-        lines = [f'{BELOW} 🌏 **JRAが海外レースの馬券発売を決めました**']
+        lines = [f'{WIDE_OK} / {BELOW} 🌏 **JRAが海外レースの馬券発売を決めました**']
         for d in new:
             lines.append(f"・{d['date'][5:].replace('-', '/')} {d['country']} {d['track']} **{d['race']}** {d['distance']}")
         lines.append('→ 今日から毎日、出走馬・日本馬・現地オッズを集めて送ります。当日は締切15分前に「投票用 最終版」を送ります。'
-                     '\nルール: 日本馬は買わない / 現地より2割以上割安・JRA20倍以下の単勝だけ。')
+                     '\n買い方: ワイド=日本馬以外で現地の人気の上位5頭のボックス / 単勝=日本馬以外で現地より2割以上割安・JRA20倍以下')
         discord('\n'.join(lines), dry)
     state['seen_v2'] = sorted(seen | {d['slug'] for d in decs})
 
@@ -875,7 +977,7 @@ def daily(now, state, dry):
         races.append(r)
     ahead = [r for r in races if (r.get('post') or r['date'] + ' 23:59') > now.strftime('%Y-%m-%d %H:%M')]  # まだ走っていないレースだけ
     if ahead and now.hour >= 18 and state.get('digest_on') != today:
-        lines = [f'{BELOW} 🌏 **海外発売 毎日のまとめ**(日本馬🇯🇵は買わない / ✅=いま買い条件)']
+        lines = [f'{WIDE_OK} / {BELOW} 🌏 **海外発売 毎日のまとめ**(日本馬🇯🇵は買わない / ✅=いま単勝の買い条件)']
         for r in ahead:
             jp = [e['name'] for e in r['entries'] if e['jpn']]
             lines.append(f"\n**{r['race']}** 発走 {hm(r['post'])} / JRA発売開始 {hm(r['sale_start'])}")
@@ -886,8 +988,10 @@ def daily(now, state, dry):
                 lines.append('→ 当日、締切前の現地の実オッズ(PMU)が取れたら判定します')
             if r['entries']:
                 lines.append('```\n' + table(r) + '\n```')
+            if r.get('wide'):
+                lines.append(f"いまのワイド: {wide_text(r)}(最終判断は当日の締切15分前)")
             if r['picks']:
-                lines.append(f"いまの買い条件: {'、'.join(str(n) + '番' for n in r['picks'])}(最終判断は当日の締切15分前)")
+                lines.append(f"いまの単勝の買い条件: {'、'.join(str(n) + '番' for n in r['picks'])}(最終判断は当日の締切15分前)")
         discord('\n'.join(lines), dry)
         state['digest_on'] = today
     settle(decs, now, state, dry)
@@ -898,8 +1002,9 @@ def write_site(now):
     races = [load(p, {}) for p in sorted((OUT / 'races').glob('*.json'))] if (OUT / 'races').exists() else []
     races = [r for r in races if r.get('date', '') >= (now - timedelta(days=10)).strftime('%Y-%m-%d')]
     save(OUT / 'site.json', {'generated_at': now.strftime('%Y-%m-%d %H:%M'), 'schedule': load(OUT / 'schedule.json', {}),
-                             'races': races, 'record': record(),
-                             'rule': '日本馬は買わない / 現地の勝率×JRA単勝=期待値1.2以上 / JRA20倍以下'})
+                             'races': races, 'record': record(), 'wide_record': wide_record(),
+                             'rule': '日本馬は買わない / 現地の勝率×JRA単勝=期待値1.2以上 / JRA20倍以下',
+                             'wide_rule': '日本馬以外で現地の人気の上位5頭のワイドボックス(10点)'})
 
 
 def watch(now, state, dry, budget_min=340):
@@ -954,16 +1059,22 @@ def watch(now, state, dry, budget_min=340):
                 noticed = True
                 sent['final'] = now.strftime('%H:%M')
                 sent['final_picks'] = r['picks']
+                sent['final_wide'] = r.get('wide') or []
                 r['final'] = {'at': now.strftime('%Y-%m-%d %H:%M'), 'picks': r['picks'],
-                              'stake': int(load(OUT / 'config.json', {}).get('stake_per_pick', CONFIG['stake_per_pick']))}
+                              'stake': int(load(OUT / 'config.json', {}).get('stake_per_pick', CONFIG['stake_per_pick'])),
+                              'wide': r.get('wide') or [], 'wide_yen': wide_yen()}
                 save(OUT / 'races' / f"{d['slug']}.json", r)
-            elif sent.get('final') and r['picks'] != sent.get('final_picks') and mins > 3 and not sent.get('changed'):
+            elif sent.get('final') and (r['picks'] != sent.get('final_picks') or sorted(r.get('wide') or []) != sorted(sent.get('final_wide') or [])) \
+                    and mins > 3 and not sent.get('changed'):
                 was = set(sent.get('final_picks') or [])
                 drop = [n for n in was if n not in r['picks']]
                 add = [n for n in r['picks'] if n not in was]
-                discord(f"{BELOW} **{r['race']} 最終版のあとで買い目が変わりました**(締切直前のオッズ変動・あと{mins:.0f}分)\n"
-                        + (f"条件から外れた馬: {'、'.join(str(n) + '番' for n in drop)}(まだ買っていなければ買わなくてOK)\n" if drop else '')
-                        + (f"新しく条件に入った馬: {'、'.join(str(n) + '番' for n in add)}\n" if add else '')
+                wchg = sorted(r.get('wide') or []) != sorted(sent.get('final_wide') or [])
+                discord(f"{WIDE_OK if r.get('wide') else ''}{' / ' if r.get('wide') and r['picks'] else ''}{BELOW if r['picks'] else ''} "
+                        f"**{r['race']} 最終版のあとで買い目が変わりました**(締切直前のオッズ変動・あと{mins:.0f}分)\n"
+                        + (f"ワイドの5頭が変わりました → **{wide_text(r) or 'ワイドは見送り'}**(まだ買っていなければこちら)\n" if wchg else '')
+                        + (f"単勝の条件から外れた馬: {'、'.join(str(n) + '番' for n in drop)}(まだ買っていなければ買わなくてOK)\n" if drop else '')
+                        + (f"単勝の条件に新しく入った馬: {'、'.join(str(n) + '番' for n in add)}\n" if add else '')
                         + f"```\n{table(r)}\n```", dry)
                 noticed = True
                 sent['changed'] = now.strftime('%H:%M')

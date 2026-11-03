@@ -83,6 +83,17 @@ check('予想(predict.py)', lambda: run(['src/predict.py', PAST_RACE, '--no-pedi
 check('国内の言い切り配信', lambda: run(['src/domestic_picks.py', '--race-id', PAST_RACE, '--dry'], ['これを買う', '今回は買わない']))
 check('海外の見張り', lambda: run(['src/overseas.py', 'daily', '--dry'], [''], bad=('取得失敗', 'PMU失敗', 'JRA公式オッズ失敗', '読めず')))
 
+
+def wide_pay():
+    # ワイドの答え合わせは JRA 公式の結果ページの払戻を読む(2026-11-03)。形が変わると答え合わせが止まるので、決まったレースで確かめる
+    import overseas
+    p = overseas.wide_payouts('/keiba/overseas/race/2026melbourne/')
+    assert p.get((11, 20)) == 1350 and len(p) == 3, p
+    return ''
+
+
+check('海外のワイドの払戻(結果ページ)', wide_pay)
+
 ng = [r for r in results if not r[1]]
 for name, ok, msg in results:
     print(('OK ' if ok else 'NG ') + name + (f' … {msg}' if msg else ''))
