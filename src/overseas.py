@@ -6,7 +6,8 @@
   - 日本馬(調教師が JPN)は買わない … JRAでは日本馬が買われすぎ(全部買うと回収45%)
   - 現地の参考オッズから出した勝率 × JRA単勝オッズ = 期待値 が 1.2以上(=現地より2割以上割安)
   - JRA単勝が20倍以下(大穴の割安は当てにならない)
-  検証: 香港51R 178%、香港以外72R 188%。ただし大きい当たり2本を除くと80%で、未確定。→ 少額で実戦検証する。
+  検証(2026-11-03 やり直し): 2021-11〜2026-10 にJRAが発売した90レースで 57点・6的中・回収95%(基準未満)。
+  10月の「香港178%・香港以外188%」は、データの漏れと発売の無いレースの混ざりで甘く出ていた。ユーザーの判断で単勝は買い続ける。
   勝率の出し方: 参考オッズが公営(PMU・HKJCなどのトート)なら (1/オッズ)^1.03 を合計1に、
                ブックメーカーなら Shin 法で控除を除く。日本馬も含めた全馬で計算する。
 
@@ -46,6 +47,10 @@ UA = {'User-Agent': 'Mozilla/5.0 (keiba-bot; record only)'}
 SITE_PAGE = 'https://kamirobo-keiba.keiba-bot-site.workers.dev/overseas/'
 EV_MIN, ODDS_MAX, TOTE_A = 1.2, 20.0, 1.03
 FINE_MIN = 40  # 発走の何分前から約1分おきに記録するか(2026-11-03)
+# 2026-11-03 過去5年の検証(arc2026/research/bt5y_*.py): 2021-11〜2026-10 にJRAが発売した90レースで 57点・6的中・回収95%。
+# 基準(回収100%以上)に届かないが、ユーザーの判断で単勝は買い続ける。全部屋の決まりで、買い目を出す通知の1行目に必ず書く
+BELOW = '⚠ 基準未満(検証では回収95%)'
+VERIFY = '過去5年(2021〜2026年・JRA発売90レース)の検証では57点・6的中・回収95%で、基準の100%に届いていません'
 CONFIG = {'stake_per_pick': 1000, 'final_notice_min': 15}  # data/overseas/config.json で上書きできる
 WAIT = 3.0
 _last = [0.0]
@@ -642,7 +647,7 @@ def final_notice(r, now, dry):
         head = '👉 **今回は買わない**(現地の実際のオッズが取れず、判定できない)'
     else:
         head = '👉 **JRAのオッズが読めなかった**ので、下の目安で判断が必要です'
-    lines = [f"🌏🎯 **海外発売 投票用 最終版**【{r['race']}】発走 {hm(r['post'])}(日本時間)", head,
+    lines = [f"{BELOW} 🌏🎯 **海外発売 投票用 最終版**【{r['race']}】発走 {hm(r['post'])}(日本時間)", head,
              f"JRAオッズ {hm(r['jra_time'])} / 現地のオッズ: {r['local']['source']} {hm(r['local']['time'])}"]
     if not r['local']['ok']:
         lines.append(f"**判定できません → 見送り**({r['local']['source']}。現地の実際のオッズと比べられないため)")
@@ -669,7 +674,7 @@ def final_notice(r, now, dry):
         lines.append(f"計算: 「JRAが○倍なら買い」の○ = 1.2 ÷ 現地の勝率(現地のオッズから控除を除いた値。{r.get('method', '')})")
     lines.append('```\n' + table(r) + '\n```')
     lines.append('ルール: 日本馬は買わない / 期待値(現地の勝率×JRA単勝)1.2以上 / JRA20倍以下。'
-                 '過去の検証で有望(香港178%・他188%)だけど未確定なので少額で。この後オッズが動いて買い目が変わったら、すぐ別に知らせます。')
+                 f'{VERIFY}。この後オッズが動いて買い目が変わったら、すぐ別に知らせます。')
     lines.append(f'🌐 {SITE_PAGE}')
     discord('\n'.join(lines), dry)
     if not dry:
@@ -681,7 +686,7 @@ def final_notice(r, now, dry):
 def bedtime_notice(rs, now, dry):
     """前の晩23時台の「寝る前の目安」。払戻は締切時のオッズで決まるので、最終版より確度は下がる(記録はしない)"""
     rs = sorted(rs, key=lambda r: r.get('post', ''))
-    lines = [f"🌙 **海外発売 寝る前の目安**({now.strftime('%H:%M')}時点・発走が深夜〜朝のレース)",
+    lines = [f"{BELOW} 🌙 **海外発売 寝る前の目安**({now.strftime('%H:%M')}時点・発走が深夜〜朝のレース)",
              f"最終版は各レースの締切15分前に届きます({hm(rs[0]['post'])}〜)。起きていられない時は、ここで先に買う手もあります。"
              'ただしJRAの払戻は締切時のオッズで決まるので、いまの倍率から動きます(確度は最終版より下がる)。']
     for r in rs:
@@ -700,7 +705,7 @@ def bedtime_notice(rs, now, dry):
         th = thresholds(r, limit=4)
         if th:
             lines.append('```\n' + '\n'.join(th) + '\n```')
-    lines.append('ルール: 日本馬は買わない / 期待値1.2以上 / JRA20倍以下。未確定のルールなので少額で。')
+    lines.append(f'ルール: 日本馬は買わない / 期待値1.2以上 / JRA20倍以下。{VERIFY}。')
     lines.append(f'🌐 {SITE_PAGE}')
     discord('\n'.join(lines), dry)
 
@@ -783,7 +788,7 @@ def daily(now, state, dry):
     seen = set(state.get('seen_v2', []))
     new = [d for d in decs if d['slug'] not in seen and d['date'] >= today]
     if new and not first:
-        lines = ['🌏 **JRAが海外レースの馬券発売を決めました**']
+        lines = [f'{BELOW} 🌏 **JRAが海外レースの馬券発売を決めました**']
         for d in new:
             lines.append(f"・{d['date'][5:].replace('-', '/')} {d['country']} {d['track']} **{d['race']}** {d['distance']}")
         lines.append('→ 今日から毎日、出走馬・日本馬・現地オッズを集めて送ります。当日は締切15分前に「投票用 最終版」を送ります。'
@@ -804,7 +809,7 @@ def daily(now, state, dry):
         races.append(r)
     ahead = [r for r in races if (r.get('post') or r['date'] + ' 23:59') > now.strftime('%Y-%m-%d %H:%M')]  # まだ走っていないレースだけ
     if ahead and now.hour >= 18 and state.get('digest_on') != today:
-        lines = ['🌏 **海外発売 毎日のまとめ**(日本馬🇯🇵は買わない / ✅=いま買い条件)']
+        lines = [f'{BELOW} 🌏 **海外発売 毎日のまとめ**(日本馬🇯🇵は買わない / ✅=いま買い条件)']
         for r in ahead:
             jp = [e['name'] for e in r['entries'] if e['jpn']]
             lines.append(f"\n**{r['race']}** 発走 {hm(r['post'])} / JRA発売開始 {hm(r['sale_start'])}")
@@ -890,14 +895,14 @@ def watch(now, state, dry, budget_min=340):
                 was = set(sent.get('final_picks') or [])
                 drop = [n for n in was if n not in r['picks']]
                 add = [n for n in r['picks'] if n not in was]
-                discord(f"⚠ **{r['race']} 最終版のあとで買い目が変わりました**(締切直前のオッズ変動・あと{mins:.0f}分)\n"
+                discord(f"{BELOW} **{r['race']} 最終版のあとで買い目が変わりました**(締切直前のオッズ変動・あと{mins:.0f}分)\n"
                         + (f"条件から外れた馬: {'、'.join(str(n) + '番' for n in drop)}(まだ買っていなければ買わなくてOK)\n" if drop else '')
                         + (f"新しく条件に入った馬: {'、'.join(str(n) + '番' for n in add)}\n" if add else '')
                         + f"```\n{table(r)}\n```", dry)
                 noticed = True
                 sent['changed'] = now.strftime('%H:%M')
             elif not sent.get('final') and r['picks'] != sent.get('picks') and any(e['jra_odds'] for e in r['entries']):
-                discord(f"🌏 **{r['race']}** 途中経過 {now.strftime('%H:%M')}(発走 {hm(r['post'])}・あと{mins:.0f}分)\n"
+                discord(f"{BELOW} 🌏 **{r['race']}** 途中経過 {now.strftime('%H:%M')}(発走 {hm(r['post'])}・あと{mins:.0f}分)\n"
                         f"いまの買い条件: {'、'.join(str(n) + '番' for n in r['picks']) or 'なし'}\n```\n{table(r)}\n```", dry)
                 sent['picks'] = r['picks']
                 noticed = True
