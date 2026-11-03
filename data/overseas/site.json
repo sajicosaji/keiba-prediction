@@ -1,7 +1,7 @@
 {
- "generated_at": "2026-11-03 13:04",
+ "generated_at": "2026-11-03 16:59",
  "schedule": {
-  "checked_at": "2026-11-03 11:48",
+  "checked_at": "2026-11-03 16:59",
   "designated": [
    {
     "date": "2026-11-03",
@@ -83,7 +83,7 @@
     "country": "オーストラリア",
     "track": "フレミントン",
     "distance": "芝3,200 メートル",
-    "winner": "",
+    "winner": "ポイントオブロー",
     "link": "/keiba/overseas/race/2026melbourne/",
     "news": "",
     "slug": "2026-11-03_メルボルンカップ"
@@ -1864,18 +1864,17 @@
    },
    "ref_time": "2026-11-02 09:00",
    "ref_source": "下記はTAB社から提供されたオッズであり、JRAのオッズとは異なりますので、参考としてご覧ください。",
-   "jra_time": "2026-11-03 13:00",
-   "entries_from": "参考オッズの表(出馬表ページが無いため)",
+   "jra_time": "2026-11-03 16:59",
    "date": "2026-11-03",
    "race": "メルボルンカップ（G1）",
    "country": "オーストラリア",
    "track": "フレミントン",
    "distance": "芝3,200 メートル",
-   "winner": "",
+   "winner": "ポイントオブロー",
    "slug": "2026-11-03_メルボルンカップ",
    "news": "",
    "en_race": "Melbourne Cup",
-   "jra_source": "JRA公式オッズ(13:00現在)",
+   "jra_source": "JRA公式オッズ",
    "pmu_race": "R7C7 LEXUS MELBOURNE CUP",
    "local": {
     "source": "JRAの海外参考オッズ(TAB社)",
@@ -1884,7 +1883,7 @@
    },
    "method": "Shin法",
    "picks": [],
-   "checked_at": "2026-11-03 13:04",
+   "checked_at": "2026-11-03 16:59",
    "final": {
     "at": "2026-11-03 12:39",
     "picks": [
@@ -1898,12 +1897,49 @@
   }
  ],
  "record": {
-  "bets": 0,
-  "stake": 0,
-  "payout": 0,
-  "hits": 0,
-  "roi": 0,
-  "list": []
+  "bets": 3,
+  "stake": 3000,
+  "payout": 8200,
+  "hits": 1,
+  "roi": 2.733,
+  "list": [
+   {
+    "settled_at": "2026-11-03 16:59",
+    "slug": "2026-11-03_メルボルンカップ",
+    "race": "メルボルンカップ（G1）",
+    "date": "2026-11-03",
+    "num": "12",
+    "name": "ホープウェルロック",
+    "final_odds": "12.8",
+    "stake": "1000",
+    "payout": "0",
+    "result": "外れ"
+   },
+   {
+    "settled_at": "2026-11-03 16:59",
+    "slug": "2026-11-03_メルボルンカップ",
+    "race": "メルボルンカップ（G1）",
+    "date": "2026-11-03",
+    "num": "20",
+    "name": "ポイントオブロー",
+    "final_odds": "8.2",
+    "stake": "1000",
+    "payout": "8200",
+    "result": "1着"
+   },
+   {
+    "settled_at": "2026-11-03 16:59",
+    "slug": "2026-11-03_メルボルンカップ",
+    "race": "メルボルンカップ（G1）",
+    "date": "2026-11-03",
+    "num": "24",
+    "name": "ショックレッツ",
+    "final_odds": "12.5",
+    "stake": "1000",
+    "payout": "0",
+    "result": "外れ"
+   }
+  ]
  },
  "rule": "日本馬は買わない / 現地の勝率×JRA単勝=期待値1.2以上 / JRA20倍以下"
 }
