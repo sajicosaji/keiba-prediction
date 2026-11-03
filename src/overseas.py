@@ -589,6 +589,38 @@ def wide_text(r, nums=None):
     return f"ワイド {'・'.join(str(n) for n in nums)} ボックス 各{y:,}円({pts}点・{pts * y:,}円)"
 
 
+def race_no(r, state):
+    """即PATのレース番号(=現地のレース番号)。PMUのレース番号と netkeiba の番号の末尾が一致した時だけ。分からなければ None"""
+    nums = set()
+    m = re.search(r'C(\d+)', r.get('pmu_race') or '')
+    if m:
+        nums.add(int(m.group(1)))
+    nk = state.get('nk_ids', {}).get(r.get('slug', ''))
+    if nk:
+        nums.add(int(nk[-2:]))
+    return nums.pop() if len(nums) == 1 else None
+
+
+def buy_data(r, state, notice, now):
+    """ユーザーの自動購入の仕組み向けの1行(2026-11-03 ユーザー「自動で買う仕組みを作っている。ディスコードに投げてくれればいい」)。
+    「🤖BUY 」+ JSON。ワイドがメイン(role=main)、単勝はおまけ(role=extra)。買わない時は bets が空。
+    最終版のあとで買い目が変わった時は notice=changed で、その時点の買い目を全部入れ直して送る(前のものと置き換える)"""
+    bets = []
+    wide = r.get('wide') or []
+    if wide:
+        pts, y = len(wide) * (len(wide) - 1) // 2, wide_yen()
+        bets.append({'role': 'main', 'type': 'ワイド', 'method': 'BOX', 'horses': wide, 'yen_per_point': y, 'points': pts, 'yen': pts * y})
+    for e, s in stake_plan(r):
+        bets.append({'role': 'extra', 'type': '単勝', 'method': 'NORMAL', 'horses': [e['num']], 'yen_per_point': s, 'points': 1, 'yen': s})
+    post = datetime.strptime(r['post'], '%Y-%m-%d %H:%M')
+    d = {'v': 1, 'notice': notice, 'sent_at': now.strftime('%Y-%m-%d %H:%M'), 'race_id': r.get('slug', ''), 'race': r['race'],
+         'venue': r.get('track', ''), 'country': r.get('country', ''), 'race_no': race_no(r, state),
+         'post': r['post'], 'close': (post - timedelta(minutes=2)).strftime('%Y-%m-%d %H:%M'),
+         'bets': bets, 'total': sum(b['yen'] for b in bets),
+         'note': ' / '.join(x for x in ('ワイドは検証で回収150%' if wide else '', '⚠ 単勝は基準未満(検証では回収95%)' if any(b['type'] == '単勝' for b in bets) else '') if x)}
+    return '🤖BUY ' + json.dumps(d, ensure_ascii=False, separators=(',', ':'))
+
+
 def wide_payouts(link):
     """JRA公式の結果ページ(kaiko.html)のワイドの払戻 {(若番, 大番): 100円あたりの円}。まだ無ければ {}"""
     page = re.sub(r'(index\.html|kaiko\.html)?$', 'kaiko.html', link)
@@ -742,7 +774,8 @@ def final_notice(r, now, dry):
     wide = r.get('wide') or []
     # 2026-11-01 ユーザー「いちいち判断するの疲れる。断定して」→ 2行目で「買う/買わない」を言い切る
     # 2026-11-03 ワイド(検証150%)を先に。単勝(基準未満)を出す時は、全部屋の決まりで1行目に「基準未満」
-    buys = ([wide_text(r)] if wide else []) + [f"単勝 {e['num']}番 {e['name']} {s:,}円" for e, s in plan]
+    # 2026-11-03 ユーザー「ワイド メイン 単勝おまけ」
+    buys = ([f'【メイン】{wide_text(r)}'] if wide else []) + [f"【おまけ】単勝 {e['num']}番 {e['name']} {s:,}円" for e, s in plan]
     lab = ' / '.join(x for x in (WIDE_OK if wide else '', BELOW if plan else '') if x)
     if buys:
         head = '👉 **これを買う: ' + ' / '.join(buys) + '**'
@@ -756,13 +789,13 @@ def final_notice(r, now, dry):
              f"JRAオッズ {hm(r['jra_time'])} / 現地のオッズ: {r['local']['source']} {hm(r['local']['time'])}"]
     if wide:
         ents = {e['num']: e for e in r['entries']}
-        lines.append('ワイド ボックス(日本馬以外で、現地の人気の上位5頭。JRAのオッズは使わない):\n```\n' + '\n'.join(
+        lines.append('【メイン】ワイド ボックス(日本馬以外で、現地の人気の上位5頭。JRAのオッズは使わない):\n```\n' + '\n'.join(
             f"{n:>2}番 {ents[n]['name'][:12]}  現地{(ents[n]['ref_odds'] or 0):.1f}倍・勝率{(ents[n]['p'] or 0) * 100:.1f}%" for n in wide)
             + f"\n{wide_text(r)}\n```")
     if not r['local']['ok']:
         lines.append(f"**判定できません → 見送り**({r['local']['source']}。現地の実際のオッズと比べられないため)")
     elif plan:
-        lines.append('```')
+        lines.append('【おまけ】単勝:\n```')
         for e, s in plan:
             lines.append(f"単勝 {e['num']:>2}番 {e['name']}  {s:,}円  (JRA{e['jra_odds']:.1f}倍・現地{e['ref_odds']:.1f}倍・期待値{e['ev']:.2f})")
         lines.append(f"合計 {sum(s for _, s in plan):,}円")
@@ -810,10 +843,10 @@ def bedtime_notice(rs, now, dry):
             lines.append(f"→ 現地の実際のオッズがまだ取れていません({r['local']['source']})。判定は最終版で")
             continue
         if r.get('wide'):
-            lines.append(f"いまのワイド: **{wide_text(r)}**")
+            lines.append(f"いまのワイド(メイン): **{wide_text(r)}**")
         plan = stake_plan(r)
         if plan:
-            lines.append('いまの単勝の買い条件: ' + ' / '.join(
+            lines.append('いまの単勝の買い条件(おまけ): ' + ' / '.join(
                 f"単勝{e['num']}番 {e['name'][:10]} {s:,}円(JRA{e['jra_odds']:.1f}倍・現地{e['ref_odds']:.1f}倍・期待値{e['ev']:.2f})" for e, s in plan))
         elif any(e['jra_odds'] for e in r['entries']):
             lines.append('いまの単勝の買い条件: なし')
@@ -989,9 +1022,9 @@ def daily(now, state, dry):
             if r['entries']:
                 lines.append('```\n' + table(r) + '\n```')
             if r.get('wide'):
-                lines.append(f"いまのワイド: {wide_text(r)}(最終判断は当日の締切15分前)")
+                lines.append(f"いまのワイド(メイン): {wide_text(r)}(最終判断は当日の締切15分前)")
             if r['picks']:
-                lines.append(f"いまの単勝の買い条件: {'、'.join(str(n) + '番' for n in r['picks'])}(最終判断は当日の締切15分前)")
+                lines.append(f"いまの単勝の買い条件(おまけ): {'、'.join(str(n) + '番' for n in r['picks'])}(最終判断は当日の締切15分前)")
         discord('\n'.join(lines), dry)
         state['digest_on'] = today
     settle(decs, now, state, dry)
@@ -1056,6 +1089,7 @@ def watch(now, state, dry, budget_min=340):
             fn = int(load(OUT / 'config.json', {}).get('final_notice_min', CONFIG['final_notice_min']))
             if 3 < mins <= fn + 6 and not sent.get('final'):
                 final_notice(r, now, dry)
+                discord(buy_data(r, state, 'final', now), dry)  # ユーザーの自動購入の仕組み向けの1行
                 noticed = True
                 sent['final'] = now.strftime('%H:%M')
                 sent['final_picks'] = r['picks']
@@ -1076,6 +1110,7 @@ def watch(now, state, dry, budget_min=340):
                         + (f"単勝の条件から外れた馬: {'、'.join(str(n) + '番' for n in drop)}(まだ買っていなければ買わなくてOK)\n" if drop else '')
                         + (f"単勝の条件に新しく入った馬: {'、'.join(str(n) + '番' for n in add)}\n" if add else '')
                         + f"```\n{table(r)}\n```", dry)
+                discord(buy_data(r, state, 'changed', now), dry)  # 変わった後の買い目を全部入れ直して送る
                 noticed = True
                 sent['changed'] = now.strftime('%H:%M')
             elif not sent.get('final') and r['picks'] != sent.get('picks') and any(e['jra_odds'] for e in r['entries']):
