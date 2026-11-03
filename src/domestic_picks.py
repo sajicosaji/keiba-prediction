@@ -66,7 +66,8 @@ def make(rid, grade, post_hm, cfg):
         n = int(ana['num'])
         lines_buy.append(f"単勝 ☆{n}番 {ana['name']} {cfg['ana_yen']:,}円({win[n]:.1f}倍)")
         bets.append(('単勝', str(n), cfg['ana_yen'], win[n]))
-    L = [f"🎯 **国内 投票用**【{title}】{grade} 発走 {post_hm}"]
+    # 2026-11-03 全部屋の決まり: 基準(回収100%以上)に届かない買い目は、1行目に「基準未満(検証では回収◯%)」と書く
+    L = [f"⚠ 基準未満(検証では回収約80%) 🎯 **国内 投票用**【{title}】{grade} 発走 {post_hm}"]
     if lines_buy:
         L.append('👉 **これを買う:**\n' + '\n'.join(f'**{x}**' for x in lines_buy))
     else:
