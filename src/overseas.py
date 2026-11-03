@@ -26,6 +26,7 @@
 """
 import argparse
 import csv
+import gzip
 import html
 import json
 import math
@@ -467,6 +468,71 @@ def pmu_lookup(r):
     return out
 
 
+# ---------------------------------------------------------------- 組み合わせ馬券のJRAオッズの記録(2026-11-03)
+# ユーザー「オッズのゆがみに注力して」。過去の海外レースの組み合わせのJRAオッズはどこにも残っていない(netkeiba も数日で消える)ので、
+# これから発売の海外レースは、発走40分前〜発走数分後に5分おきで、全券種・全組み合わせのJRAオッズを記録する(買い目には使わない)。
+# 取り元は netkeiba のオッズのデータ。2026年BC5レース・メルボルンカップで、JRA公式の確定単勝・全券種の当たり組の払戻と一致を確認した。
+NK_API = 'https://race.netkeiba.com/api/api_get_jra_odds.html'
+NK_TYPES = ('1', '4', '5', '6', '7', '8')  # 単勝・馬連・ワイド・馬単・3連複・3連単
+COMBO_EVERY = 5
+
+
+def nk_get(url, params=None, enc=None):
+    gap = time.time() - _last[0]
+    if gap < WAIT:
+        time.sleep(WAIT - gap)
+    r = requests.get(url, params=params, headers={'User-Agent': UA['User-Agent'], 'Referer': 'https://race.netkeiba.com/'}, timeout=25)
+    _last[0] = time.time()
+    if enc:
+        r.encoding = enc
+    return r
+
+
+def nk_odds(rid, typ):
+    """netkeiba のJRAオッズ {組番: [オッズ, …]}。発売前・無い時は {}"""
+    d = (nk_get(NK_API, {'race_id': rid, 'type': typ, 'action': 'update'}).json() or {}).get('data') or {}
+    odds = d.get('odds') if isinstance(d, dict) else None
+    return (odds.get(typ) or {}) if isinstance(odds, dict) else {}
+
+
+def nk_race_id(r, state):
+    """netkeiba の海外レースの番号。その日の海外レースの中から、単勝のオッズが JRA 公式とほぼ同じレースを探す。見つかれば state に覚える"""
+    ids = state.setdefault('nk_ids', {})
+    if r['slug'] in ids:
+        return ids[r['slug']]
+    jra = {e['num']: e['jra_odds'] for e in r['entries'] if e.get('jra_odds')}
+    if len(jra) < 3 or not r.get('post'):
+        return None
+    post = datetime.strptime(r['post'], '%Y-%m-%d %H:%M')
+    days = sorted({(post - timedelta(days=k)).strftime('%Y%m%d') for k in (0, 1)} | {r['date'].replace('-', '')})
+    words = set(re.sub(r'[^ァ-ヶー]', '', r['race']))
+    for day in days:
+        page = nk_get(f'https://db.netkeiba.com/race/list/{day}/', enc='EUC-JP').text
+        cands = {}
+        for m in re.finditer(r'href="[^"]*/race/(\d{4}[A-Z0-9]{8})/"[^>]*>([^<]*)<', page):
+            if not m.group(1)[4:6].isdigit():
+                cands.setdefault(m.group(1), m.group(2))
+        # レース名の文字が多く重なるものから試す(最大8つ)
+        for rid in sorted(cands, key=lambda k: -len(words & set(cands[k])))[:8]:
+            win = nk_odds(rid, '1')
+            same = sum(1 for k, v in win.items() if int(k) in jra and abs(float(str(v[0]).replace(',', '')) - jra[int(k)]) <= max(0.3, 0.1 * jra[int(k)]))
+            if win and same >= 0.7 * len(jra):
+                ids[r['slug']] = rid
+                return rid
+    return None
+
+
+def record_combos(r, rid, now):
+    """全券種・全組み合わせのJRAオッズを data/overseas/combo/<slug>/<日時>.json.gz に残す"""
+    out = {'at': now.strftime('%Y-%m-%d %H:%M'), 'post': r['post'], 'nk_id': rid}
+    for typ in NK_TYPES:
+        out[typ] = {k: (v[:2] if typ == '5' else v[0]) for k, v in nk_odds(rid, typ).items()}  # ワイドは下限と上限
+    f = OUT / 'combo' / r['slug'] / (now.strftime('%Y%m%d-%H%M') + '.json.gz')
+    f.parent.mkdir(parents=True, exist_ok=True)
+    f.write_bytes(gzip.compress(json.dumps(out, ensure_ascii=False).encode('utf-8')))
+    return sum(len(out[t]) for t in NK_TYPES)
+
+
 def evaluate(r, pmu=None):
     """各馬の現地勝率・期待値と買い目。日本馬は買わない。
     現地の勝率は ① PMUの締切前の実オッズ ② JRAの参考オッズ(市場の値の時だけ) の順。どちらも無ければ買い目なし"""
@@ -906,6 +972,25 @@ def watch(now, state, dry, budget_min=340):
                         f"いまの買い条件: {'、'.join(str(n) + '番' for n in r['picks']) or 'なし'}\n```\n{table(r)}\n```", dry)
                 sent['picks'] = r['picks']
                 noticed = True
+            # 組み合わせのJRAオッズの記録(2026-11-03・買い目には使わない)。番号探しは発走25分前より前だけ・1レース4回まで(最終版の邪魔をしない)。
+            # 記録は発走40分前〜発走5分後に5分おき(最後の1回は締切後=確定)。失敗しても通知には関係しない
+            try:
+                tries = state.setdefault('nk_tries', {})
+                rid = state.get('nk_ids', {}).get(key)
+                if not rid and mins > 25 and tries.get(key, 0) < 4 and any(e['jra_odds'] for e in r['entries']):
+                    tries[key] = tries.get(key, 0) + 1
+                    rid = nk_race_id(r, state)
+                    print(f"{key} netkeibaの番号: {rid or '見つからない'}")
+                ct = state.setdefault('combo_at', {})
+                last = datetime.strptime(ct[key], '%Y-%m-%d %H:%M').replace(tzinfo=JST) if key in ct else None
+                due = last is None or now - last >= timedelta(minutes=COMBO_EVERY) - timedelta(seconds=30)
+                final_due = last is None or last < post + timedelta(minutes=2)  # 締切後の確定を、発走3〜5分後にもう1回
+                if rid and ((-5 < mins <= FINE_MIN and due) or (-5 < mins <= -3 and final_due)):
+                    n = record_combos(r, rid, now)
+                    ct[key] = now.strftime('%Y-%m-%d %H:%M')
+                    print(f"{key} 組み合わせのオッズを記録 {n}件")
+            except Exception as e:
+                print(f"{key} 組み合わせのオッズ記録失敗: {e}")
         save(OUT / 'state.json', state)
         # 2026-11-03 発走40分前〜発走5分後は約1分おきに記録する(締切直前のオッズの動きを残し、何分前に買うのが良いかを後で決めるため)。
         # その間の GitHub への保存は8分おきか、通知を送った時だけ(1分ごとの保存で履歴が埋まらないように)
