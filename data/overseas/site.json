@@ -1,17 +1,8 @@
 {
- "generated_at": "2026-11-04 16:35",
+ "generated_at": "2026-11-05 03:04",
  "schedule": {
-  "checked_at": "2026-11-04 16:35",
+  "checked_at": "2026-11-05 03:04",
   "designated": [
-   {
-    "date": "2026-11-03",
-    "name": "メルボルンカップ",
-    "en": "Melbourne Cup",
-    "course": "芝・左 3,200 メートル",
-    "country": "オーストラリア",
-    "track": "フレミントン",
-    "sale": true
-   },
    {
     "date": "2026-11-07",
     "name": "チャンピオンズスプリント",
@@ -1864,7 +1855,7 @@
    },
    "ref_time": "2026-11-02 09:00",
    "ref_source": "下記はTAB社から提供されたオッズであり、JRAのオッズとは異なりますので、参考としてご覧ください。",
-   "jra_time": "2026-11-04 16:35",
+   "jra_time": "2026-11-05 03:04",
    "date": "2026-11-03",
    "race": "メルボルンカップ（G1）",
    "country": "オーストラリア",
@@ -1873,7 +1864,7 @@
    "winner": "ポイントオブロー",
    "slug": "2026-11-03_メルボルンカップ",
    "news": "",
-   "en_race": "Melbourne Cup",
+   "en_race": "",
    "jra_source": "JRA公式オッズ",
    "pmu_race": "R7C7 LEXUS MELBOURNE CUP",
    "local": {
@@ -1890,7 +1881,7 @@
     12,
     11
    ],
-   "checked_at": "2026-11-04 16:35",
+   "checked_at": "2026-11-05 03:04",
    "final": {
     "at": "2026-11-03 12:39",
     "picks": [
