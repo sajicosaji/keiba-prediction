@@ -1,33 +1,6 @@
 {
- "checked_at": "2026-11-08 16:29",
+ "checked_at": "2026-11-09 01:44",
  "designated": [
-  {
-   "date": "2026-11-07",
-   "name": "チャンピオンズスプリント",
-   "en": "Champions Sprint",
-   "course": "芝・直線 1,200 メートル",
-   "country": "オーストラリア",
-   "track": "フレミントン",
-   "sale": false
-  },
-  {
-   "date": "2026-11-07",
-   "name": "豪チャンピオンズマイル",
-   "en": "Champions Mile",
-   "course": "芝・左 1,600 メートル",
-   "country": "オーストラリア",
-   "track": "フレミントン",
-   "sale": false
-  },
-  {
-   "date": "2026-11-07",
-   "name": "チャンピオンズステークス",
-   "en": "Champions Stakes",
-   "course": "芝・左 2,000 メートル",
-   "country": "オーストラリア",
-   "track": "フレミントン",
-   "sale": false
-  },
   {
    "date": "2026-12-13",
    "name": "香港ヴァーズ",
