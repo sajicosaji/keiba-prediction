@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-14 21:18",
+ "generated_at": "2026-11-15 01:27",
  "bot": {
   "monitor_days": 42,
   "last_heartbeat": "2026-11-14 09:06",
@@ -19,8 +19,8 @@
  },
  "win5_carry": null,
  "totals": {
-  "bets": 156,
-  "stake": 90000,
+  "bets": 158,
+  "stake": 91600,
   "payout": 83970,
   "hits": 6
  },
@@ -312,6 +312,15 @@
    "hits": 0,
    "cum_profit": -6030,
    "cum_roi": 0.933
+  },
+  {
+   "date": "2026-11-14",
+   "stake": 1600,
+   "payout": 0,
+   "bets": 2,
+   "hits": 0,
+   "cum_profit": -7630,
+   "cum_roi": 0.917
   }
  ],
  "kinds": [
@@ -324,8 +333,8 @@
   },
   {
    "kind": "◎単勝",
-   "bets": 88,
-   "stake": 74700,
+   "bets": 90,
+   "stake": 76300,
    "payout": 71040,
    "hits": 4
   },
@@ -338,32 +347,6 @@
   }
  ],
  "recent": [
-  {
-   "date": "2026-10-03",
-   "race_id": "202605040101",
-   "race": "東京1R",
-   "kind": "馬連",
-   "num": "8-13",
-   "name": "スターフラッシュ×セイウンガジュマル",
-   "pos": "0",
-   "odds": 47.4,
-   "stake": 100,
-   "payout": 0,
-   "source": "BOT精算"
-  },
-  {
-   "date": "2026-10-03",
-   "race_id": "202605040101",
-   "race": "東京1R",
-   "kind": "馬連",
-   "num": "10-13",
-   "name": "スターフラッシュ×アオイノリプー",
-   "pos": "0",
-   "odds": 9.7,
-   "stake": 500,
-   "payout": 0,
-   "source": "BOT精算"
-  },
   {
    "date": "2026-10-03",
    "race_id": "202605040102",
@@ -724,6 +707,32 @@
    "name": "タントスペランツァ",
    "pos": "5",
    "odds": 46.6,
+   "stake": 800,
+   "payout": 0,
+   "source": "BOT精算"
+  },
+  {
+   "date": "2026-11-14",
+   "race_id": "202603030301",
+   "race": "福島1R",
+   "kind": "◎単勝",
+   "num": "9",
+   "name": "ジョン",
+   "pos": "9",
+   "odds": 21.4,
+   "stake": 800,
+   "payout": 0,
+   "source": "BOT精算"
+  },
+  {
+   "date": "2026-11-14",
+   "race_id": "202603030305",
+   "race": "福島5R",
+   "kind": "◎単勝",
+   "num": "6",
+   "name": "フレンドリーキング",
+   "pos": "15",
+   "odds": 54.8,
    "stake": 800,
    "payout": 0,
    "source": "BOT精算"
@@ -2457,81 +2466,6 @@
  ],
  "odds_moves": [
   {
-   "race_id": "202608040202",
-   "race": "京都2R",
-   "num": "1",
-   "name": "レインボースター",
-   "date": "2026-10-04",
-   "pos": "7",
-   "points": [
-    {
-     "m": 73,
-     "odds": 24.9,
-     "phase": "pre"
-    },
-    {
-     "m": 47,
-     "odds": 23.7,
-     "phase": "pre"
-    },
-    {
-     "m": 21,
-     "odds": 23.4,
-     "phase": "pre"
-    },
-    {
-     "m": -19,
-     "odds": 35.2,
-     "phase": "final"
-    }
-   ]
-  },
-  {
-   "race_id": "202608040205",
-   "race": "京都5R",
-   "num": "1",
-   "name": "クラウンソクラテス",
-   "date": "2026-10-04",
-   "pos": "5",
-   "points": [
-    {
-     "m": 144,
-     "odds": 25.8,
-     "phase": "pre"
-    },
-    {
-     "m": 117,
-     "odds": 25.1,
-     "phase": "pre"
-    },
-    {
-     "m": 91,
-     "odds": 25.9,
-     "phase": "pre"
-    },
-    {
-     "m": 64,
-     "odds": 25.6,
-     "phase": "pre"
-    },
-    {
-     "m": 38,
-     "odds": 29.3,
-     "phase": "pre"
-    },
-    {
-     "m": 12,
-     "odds": 35.5,
-     "phase": "pre"
-    },
-    {
-     "m": -15,
-     "odds": 44.1,
-     "phase": "final"
-    }
-   ]
-  },
-  {
    "race_id": "202605040210",
    "race": "東京10R",
    "num": "1",
@@ -3252,6 +3186,76 @@
     {
      "m": -73,
      "odds": 46.6,
+     "phase": "final"
+    }
+   ]
+  },
+  {
+   "race_id": "202603030301",
+   "race": "福島1R",
+   "num": "9",
+   "name": "ジョン",
+   "date": "2026-11-14",
+   "pos": "9",
+   "points": [
+    {
+     "m": 33,
+     "odds": 22.2,
+     "phase": "pre"
+    },
+    {
+     "m": -11,
+     "odds": 21.4,
+     "phase": "final"
+    },
+    {
+     "m": -272,
+     "odds": 21.4,
+     "phase": "final"
+    }
+   ]
+  },
+  {
+   "race_id": "202603030305",
+   "race": "福島5R",
+   "num": "6",
+   "name": "フレンドリーキング",
+   "date": "2026-11-14",
+   "pos": "15",
+   "points": [
+    {
+     "m": 143,
+     "odds": 23.7,
+     "phase": "pre"
+    },
+    {
+     "m": 114,
+     "odds": 25.0,
+     "phase": "pre"
+    },
+    {
+     "m": 87,
+     "odds": 25.4,
+     "phase": "pre"
+    },
+    {
+     "m": 60,
+     "odds": 25.7,
+     "phase": "pre"
+    },
+    {
+     "m": 31,
+     "odds": 27.7,
+     "phase": "pre"
+    },
+    {
+     "m": -23,
+     "odds": 54.8,
+     "phase": "final"
+    },
+    {
+     "m": -132,
+     "odds": 54.8,
      "phase": "final"
     }
    ]
