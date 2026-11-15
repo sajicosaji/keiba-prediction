@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-15 21:38",
+ "generated_at": "2026-11-16 01:52",
  "bot": {
   "monitor_days": 43,
   "last_heartbeat": "2026-11-15 09:05",
@@ -19,8 +19,8 @@
  },
  "win5_carry": null,
  "totals": {
-  "bets": 158,
-  "stake": 91600,
+  "bets": 159,
+  "stake": 92400,
   "payout": 83970,
   "hits": 6
  },
@@ -321,6 +321,15 @@
    "hits": 0,
    "cum_profit": -7630,
    "cum_roi": 0.917
+  },
+  {
+   "date": "2026-11-15",
+   "stake": 800,
+   "payout": 0,
+   "bets": 1,
+   "hits": 0,
+   "cum_profit": -8430,
+   "cum_roi": 0.909
   }
  ],
  "kinds": [
@@ -333,8 +342,8 @@
   },
   {
    "kind": "◎単勝",
-   "bets": 90,
-   "stake": 76300,
+   "bets": 91,
+   "stake": 77100,
    "payout": 71040,
    "hits": 4
   },
@@ -347,19 +356,6 @@
   }
  ],
  "recent": [
-  {
-   "date": "2026-10-03",
-   "race_id": "202605040102",
-   "race": "東京2R",
-   "kind": "穴単勝",
-   "num": "1",
-   "name": "セイウンオオゾラ",
-   "pos": "10",
-   "odds": 54.8,
-   "stake": 300,
-   "payout": 0,
-   "source": "BOT精算"
-  },
   {
    "date": "2026-10-03",
    "race_id": "202608040104",
@@ -733,6 +729,19 @@
    "name": "フレンドリーキング",
    "pos": "15",
    "odds": 54.8,
+   "stake": 800,
+   "payout": 0,
+   "source": "BOT精算"
+  },
+  {
+   "date": "2026-11-15",
+   "race_id": "202603030405",
+   "race": "福島5R",
+   "kind": "◎単勝",
+   "num": "5",
+   "name": "ヘルメスギャング",
+   "pos": "8",
+   "odds": 27.1,
    "stake": 800,
    "payout": 0,
    "source": "BOT精算"
@@ -2466,46 +2475,6 @@
  ],
  "odds_moves": [
   {
-   "race_id": "202605040210",
-   "race": "東京10R",
-   "num": "1",
-   "name": "ターコイズフリンジ",
-   "date": "2026-10-04",
-   "pos": "11",
-   "points": [
-    {
-     "m": 139,
-     "odds": 20.0,
-     "phase": "pre"
-    },
-    {
-     "m": 112,
-     "odds": 20.9,
-     "phase": "pre"
-    },
-    {
-     "m": 85,
-     "odds": 21.6,
-     "phase": "pre"
-    },
-    {
-     "m": 49,
-     "odds": 22.5,
-     "phase": "pre"
-    },
-    {
-     "m": 14,
-     "odds": 24.9,
-     "phase": "pre"
-    },
-    {
-     "m": -12,
-     "odds": 32.5,
-     "phase": "final"
-    }
-   ]
-  },
-  {
    "race_id": "202608040310",
    "race": "京都10R",
    "num": "14",
@@ -3256,6 +3225,51 @@
     {
      "m": -132,
      "odds": 54.8,
+     "phase": "final"
+    }
+   ]
+  },
+  {
+   "race_id": "202603030405",
+   "race": "福島5R",
+   "num": "5",
+   "name": "ヘルメスギャング",
+   "date": "2026-11-15",
+   "pos": "8",
+   "points": [
+    {
+     "m": 138,
+     "odds": 12.8,
+     "phase": "pre"
+    },
+    {
+     "m": 109,
+     "odds": 12.6,
+     "phase": "pre"
+    },
+    {
+     "m": 82,
+     "odds": 12.6,
+     "phase": "pre"
+    },
+    {
+     "m": 55,
+     "odds": 12.9,
+     "phase": "pre"
+    },
+    {
+     "m": 27,
+     "odds": 15.5,
+     "phase": "pre"
+    },
+    {
+     "m": -14,
+     "odds": 27.1,
+     "phase": "final"
+    },
+    {
+     "m": -136,
+     "odds": 27.1,
      "phase": "final"
     }
    ]
