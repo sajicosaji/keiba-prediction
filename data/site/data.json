@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-21 23:17",
+ "generated_at": "2026-11-22 02:14",
  "bot": {
   "monitor_days": 45,
   "last_heartbeat": "2026-11-21 09:06",
@@ -19,8 +19,8 @@
  },
  "win5_carry": null,
  "totals": {
-  "bets": 159,
-  "stake": 92400,
+  "bets": 162,
+  "stake": 94300,
   "payout": 83970,
   "hits": 6
  },
@@ -330,20 +330,29 @@
    "hits": 0,
    "cum_profit": -8430,
    "cum_roi": 0.909
+  },
+  {
+   "date": "2026-11-21",
+   "stake": 1900,
+   "payout": 0,
+   "bets": 3,
+   "hits": 0,
+   "cum_profit": -10330,
+   "cum_roi": 0.89
   }
  ],
  "kinds": [
   {
    "kind": "穴単勝",
-   "bets": 16,
-   "stake": 3800,
+   "bets": 17,
+   "stake": 4100,
    "payout": 5490,
    "hits": 1
   },
   {
    "kind": "◎単勝",
-   "bets": 91,
-   "stake": 77100,
+   "bets": 93,
+   "stake": 78700,
    "payout": 71040,
    "hits": 4
   },
@@ -356,45 +365,6 @@
   }
  ],
  "recent": [
-  {
-   "date": "2026-10-03",
-   "race_id": "202608040104",
-   "race": "京都4R",
-   "kind": "◎単勝",
-   "num": "3",
-   "name": "ビヨンドザスカイ",
-   "pos": "8",
-   "odds": 80.6,
-   "stake": 800,
-   "payout": 0,
-   "source": "BOT精算"
-  },
-  {
-   "date": "2026-10-03",
-   "race_id": "202608040109",
-   "race": "京都9R",
-   "kind": "◎単勝",
-   "num": "1",
-   "name": "ベニバナ",
-   "pos": "4",
-   "odds": 5.8,
-   "stake": 800,
-   "payout": 0,
-   "source": "BOT精算"
-  },
-  {
-   "date": "2026-10-04",
-   "race_id": "202605040210",
-   "race": "東京10R",
-   "kind": "◎単勝",
-   "num": "1",
-   "name": "ターコイズフリンジ",
-   "pos": "11",
-   "odds": 32.5,
-   "stake": 800,
-   "payout": 0,
-   "source": "BOT精算"
-  },
   {
    "date": "2026-10-04",
    "race_id": "202608040201",
@@ -742,6 +712,45 @@
    "name": "ヘルメスギャング",
    "pos": "8",
    "odds": 27.1,
+   "stake": 800,
+   "payout": 0,
+   "source": "BOT精算"
+  },
+  {
+   "date": "2026-11-21",
+   "race_id": "202603030506",
+   "race": "福島6R",
+   "kind": "◎単勝",
+   "num": "10",
+   "name": "バケラッタ",
+   "pos": "5",
+   "odds": 20.1,
+   "stake": 800,
+   "payout": 0,
+   "source": "BOT精算"
+  },
+  {
+   "date": "2026-11-21",
+   "race_id": "202608050506",
+   "race": "京都6R",
+   "kind": "穴単勝",
+   "num": "3",
+   "name": "コパノハーバード",
+   "pos": "7",
+   "odds": 46.7,
+   "stake": 300,
+   "payout": 0,
+   "source": "BOT精算"
+  },
+  {
+   "date": "2026-11-21",
+   "race_id": "202608050511",
+   "race": "京都11R",
+   "kind": "◎単勝",
+   "num": "5",
+   "name": "センツブラッド",
+   "pos": "10",
+   "odds": 35.3,
    "stake": 800,
    "payout": 0,
    "source": "BOT精算"
@@ -1923,121 +1932,6 @@
  ],
  "odds_moves": [
   {
-   "race_id": "202608040310",
-   "race": "京都10R",
-   "num": "14",
-   "name": "キングケープ",
-   "date": "2026-10-10",
-   "pos": "9",
-   "points": [
-    {
-     "m": 145,
-     "odds": 12.6,
-     "phase": "pre"
-    },
-    {
-     "m": 119,
-     "odds": 12.2,
-     "phase": "pre"
-    },
-    {
-     "m": 92,
-     "odds": 12.4,
-     "phase": "pre"
-    },
-    {
-     "m": 66,
-     "odds": 12.2,
-     "phase": "pre"
-    },
-    {
-     "m": 29,
-     "odds": 12.5,
-     "phase": "pre"
-    },
-    {
-     "m": -16,
-     "odds": 17.5,
-     "phase": "final"
-    }
-   ]
-  },
-  {
-   "race_id": "202608040402",
-   "race": "京都2R",
-   "num": "7",
-   "name": "ツーエムブレード",
-   "date": "2026-10-11",
-   "pos": "9",
-   "points": [
-    {
-     "m": 73,
-     "odds": 48.3,
-     "phase": "pre"
-    },
-    {
-     "m": 47,
-     "odds": 52.0,
-     "phase": "pre"
-    },
-    {
-     "m": 20,
-     "odds": 42.4,
-     "phase": "pre"
-    },
-    {
-     "m": -19,
-     "odds": 119.1,
-     "phase": "final"
-    }
-   ]
-  },
-  {
-   "race_id": "202605040408",
-   "race": "東京8R",
-   "num": "10",
-   "name": "ヴォートセレスト",
-   "date": "2026-10-11",
-   "pos": "2",
-   "points": [
-    {
-     "m": 149,
-     "odds": 15.4,
-     "phase": "pre"
-    },
-    {
-     "m": 122,
-     "odds": 15.7,
-     "phase": "pre"
-    },
-    {
-     "m": 96,
-     "odds": 16.5,
-     "phase": "pre"
-    },
-    {
-     "m": 69,
-     "odds": 17.0,
-     "phase": "pre"
-    },
-    {
-     "m": 43,
-     "odds": 18.5,
-     "phase": "pre"
-    },
-    {
-     "m": 16,
-     "odds": 21.5,
-     "phase": "pre"
-    },
-    {
-     "m": -20,
-     "odds": 18.5,
-     "phase": "final"
-    }
-   ]
-  },
-  {
    "race_id": "202608040412",
    "race": "京都12R",
    "num": "12",
@@ -2718,6 +2612,151 @@
     {
      "m": -136,
      "odds": 27.1,
+     "phase": "final"
+    }
+   ]
+  },
+  {
+   "race_id": "202603030506",
+   "race": "福島6R",
+   "num": "10",
+   "name": "バケラッタ",
+   "date": "2026-11-21",
+   "pos": "5",
+   "points": [
+    {
+     "m": 143,
+     "odds": 15.0,
+     "phase": "pre"
+    },
+    {
+     "m": 116,
+     "odds": 15.3,
+     "phase": "pre"
+    },
+    {
+     "m": 89,
+     "odds": 15.0,
+     "phase": "pre"
+    },
+    {
+     "m": 62,
+     "odds": 18.1,
+     "phase": "pre"
+    },
+    {
+     "m": 35,
+     "odds": 18.0,
+     "phase": "pre"
+    },
+    {
+     "m": 8,
+     "odds": 22.2,
+     "phase": "pre"
+    },
+    {
+     "m": -19,
+     "odds": 20.1,
+     "phase": "final"
+    },
+    {
+     "m": -87,
+     "odds": 20.1,
+     "phase": "final"
+    }
+   ]
+  },
+  {
+   "race_id": "202608050506",
+   "race": "京都6R",
+   "num": "3",
+   "name": "コパノハーバード",
+   "date": "2026-11-21",
+   "pos": "7",
+   "points": [
+    {
+     "m": 144,
+     "odds": 22.3,
+     "phase": "pre"
+    },
+    {
+     "m": 118,
+     "odds": 22.8,
+     "phase": "pre"
+    },
+    {
+     "m": 90,
+     "odds": 23.3,
+     "phase": "pre"
+    },
+    {
+     "m": 63,
+     "odds": 23.5,
+     "phase": "pre"
+    },
+    {
+     "m": 36,
+     "odds": 26.5,
+     "phase": "pre"
+    },
+    {
+     "m": 10,
+     "odds": 29.1,
+     "phase": "pre"
+    },
+    {
+     "m": -17,
+     "odds": 46.7,
+     "phase": "final"
+    },
+    {
+     "m": -72,
+     "odds": 46.7,
+     "phase": "final"
+    }
+   ]
+  },
+  {
+   "race_id": "202608050511",
+   "race": "京都11R",
+   "num": "5",
+   "name": "センツブラッド",
+   "date": "2026-11-21",
+   "pos": "10",
+   "points": [
+    {
+     "m": 148,
+     "odds": 17.6,
+     "phase": "pre"
+    },
+    {
+     "m": 121,
+     "odds": 18.4,
+     "phase": "pre"
+    },
+    {
+     "m": 93,
+     "odds": 19.9,
+     "phase": "pre"
+    },
+    {
+     "m": 65,
+     "odds": 20.4,
+     "phase": "pre"
+    },
+    {
+     "m": 38,
+     "odds": 22.2,
+     "phase": "pre"
+    },
+    {
+     "m": 11,
+     "odds": 27.0,
+     "phase": "pre"
+    },
+    {
+     "m": -16,
+     "odds": 35.3,
      "phase": "final"
     }
    ]
