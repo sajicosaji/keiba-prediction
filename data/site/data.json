@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-22 22:28",
+ "generated_at": "2026-11-23 02:42",
  "bot": {
   "monitor_days": 46,
   "last_heartbeat": "2026-11-22 09:05",
@@ -19,10 +19,10 @@
  },
  "win5_carry": null,
  "totals": {
-  "bets": 162,
-  "stake": 94300,
-  "payout": 83970,
-  "hits": 6
+  "bets": 165,
+  "stake": 96900,
+  "payout": 94770,
+  "hits": 7
  },
  "curve": [
   {
@@ -339,6 +339,15 @@
    "hits": 0,
    "cum_profit": -10330,
    "cum_roi": 0.89
+  },
+  {
+   "date": "2026-11-22",
+   "stake": 2600,
+   "payout": 10800,
+   "bets": 3,
+   "hits": 1,
+   "cum_profit": -2130,
+   "cum_roi": 0.978
   }
  ],
  "kinds": [
@@ -351,10 +360,10 @@
   },
   {
    "kind": "◎単勝",
-   "bets": 93,
-   "stake": 78700,
-   "payout": 71040,
-   "hits": 4
+   "bets": 96,
+   "stake": 81300,
+   "payout": 81840,
+   "hits": 5
   },
   {
    "kind": "馬連",
@@ -365,45 +374,6 @@
   }
  ],
  "recent": [
-  {
-   "date": "2026-10-04",
-   "race_id": "202608040201",
-   "race": "京都1R",
-   "kind": "◎単勝",
-   "num": "3",
-   "name": "プリメラエストレラ",
-   "pos": "3",
-   "odds": 18.8,
-   "stake": 800,
-   "payout": 0,
-   "source": "BOT精算"
-  },
-  {
-   "date": "2026-10-04",
-   "race_id": "202608040202",
-   "race": "京都2R",
-   "kind": "◎単勝",
-   "num": "1",
-   "name": "レインボースター",
-   "pos": "7",
-   "odds": 35.2,
-   "stake": 800,
-   "payout": 0,
-   "source": "BOT精算"
-  },
-  {
-   "date": "2026-10-04",
-   "race_id": "202608040205",
-   "race": "京都5R",
-   "kind": "◎単勝",
-   "num": "1",
-   "name": "クラウンソクラテス",
-   "pos": "5",
-   "odds": 44.1,
-   "stake": 800,
-   "payout": 0,
-   "source": "BOT精算"
-  },
   {
    "date": "2026-10-10",
    "race_id": "202608040310",
@@ -754,6 +724,45 @@
    "stake": 800,
    "payout": 0,
    "source": "BOT精算"
+  },
+  {
+   "date": "2026-11-22",
+   "race_id": "202605050504",
+   "race": "東京4R",
+   "kind": "◎単勝",
+   "num": "9",
+   "name": "ドンクベーラ",
+   "pos": "1",
+   "odds": 13.5,
+   "stake": 800,
+   "payout": 10800,
+   "source": "BOT精算"
+  },
+  {
+   "date": "2026-11-22",
+   "race_id": "202605050506",
+   "race": "東京6R",
+   "kind": "◎単勝",
+   "num": "16",
+   "name": "ユイノガルベス",
+   "pos": "7",
+   "odds": 76.7,
+   "stake": 800,
+   "payout": 0,
+   "source": "BOT精算"
+  },
+  {
+   "date": "2026-11-22",
+   "race_id": "202608050604",
+   "race": "京都4R",
+   "kind": "◎単勝",
+   "num": "4",
+   "name": "リープデイリズム",
+   "pos": "10",
+   "odds": 65.5,
+   "stake": 1000,
+   "payout": 0,
+   "source": "BOT精算"
   }
  ],
  "big_hits": [
@@ -784,6 +793,19 @@
    "source": "BOT精算"
   },
   {
+   "date": "2026-11-22",
+   "race_id": "202605050504",
+   "race": "東京4R",
+   "kind": "◎単勝",
+   "num": "9",
+   "name": "ドンクベーラ",
+   "pos": "1",
+   "odds": 13.5,
+   "stake": 800,
+   "payout": 10800,
+   "source": "BOT精算"
+  },
+  {
    "date": "2026-09-26",
    "race_id": "202609040807",
    "race": "阪神7R",
@@ -807,19 +829,6 @@
    "odds": 74.4,
    "stake": 100,
    "payout": 7440,
-   "source": "BOT精算"
-  },
-  {
-   "date": "2026-09-26",
-   "race_id": "202606040806",
-   "race": "中山6R",
-   "kind": "◎単勝",
-   "num": "3",
-   "name": "ノーブルクラウド",
-   "pos": "1",
-   "odds": 8.8,
-   "stake": 800,
-   "payout": 7040,
    "source": "BOT精算"
   }
  ],
@@ -1840,131 +1849,6 @@
  ],
  "odds_moves": [
   {
-   "race_id": "202608040412",
-   "race": "京都12R",
-   "num": "12",
-   "name": "レインボーステート",
-   "date": "2026-10-11",
-   "pos": "8",
-   "points": [
-    {
-     "m": 145,
-     "odds": 15.5,
-     "phase": "pre"
-    },
-    {
-     "m": 109,
-     "odds": 16.6,
-     "phase": "pre"
-    },
-    {
-     "m": 82,
-     "odds": 16.6,
-     "phase": "pre"
-    },
-    {
-     "m": 55,
-     "odds": 17.2,
-     "phase": "pre"
-    },
-    {
-     "m": 29,
-     "odds": 16.9,
-     "phase": "pre"
-    },
-    {
-     "m": -11,
-     "odds": 30.3,
-     "phase": "final"
-    }
-   ]
-  },
-  {
-   "race_id": "202605040504",
-   "race": "東京4R",
-   "num": "6",
-   "name": "クリアクォーツ",
-   "date": "2026-10-12",
-   "pos": "11",
-   "points": [
-    {
-     "m": 132,
-     "odds": 35.0,
-     "phase": "pre"
-    },
-    {
-     "m": 106,
-     "odds": 34.8,
-     "phase": "pre"
-    },
-    {
-     "m": 79,
-     "odds": 32.2,
-     "phase": "pre"
-    },
-    {
-     "m": 53,
-     "odds": 29.6,
-     "phase": "pre"
-    },
-    {
-     "m": 26,
-     "odds": 32.9,
-     "phase": "pre"
-    },
-    {
-     "m": -14,
-     "odds": 67.0,
-     "phase": "final"
-    }
-   ]
-  },
-  {
-   "race_id": "202608040511",
-   "race": "京都11R",
-   "num": "14",
-   "name": "ワイドラトゥール",
-   "date": "2026-10-12",
-   "pos": "12",
-   "points": [
-    {
-     "m": 145,
-     "odds": 23.9,
-     "phase": "pre"
-    },
-    {
-     "m": 119,
-     "odds": 24.3,
-     "phase": "pre"
-    },
-    {
-     "m": 86,
-     "odds": 24.4,
-     "phase": "pre"
-    },
-    {
-     "m": 60,
-     "odds": 23.4,
-     "phase": "pre"
-    },
-    {
-     "m": 33,
-     "odds": 24.0,
-     "phase": "pre"
-    },
-    {
-     "m": 7,
-     "odds": 25.6,
-     "phase": "pre"
-    },
-    {
-     "m": -20,
-     "odds": 28.4,
-     "phase": "final"
-    }
-   ]
-  },
-  {
    "race_id": "202605040602",
    "race": "東京2R",
    "num": "10",
@@ -2665,6 +2549,151 @@
     {
      "m": -16,
      "odds": 35.3,
+     "phase": "final"
+    }
+   ]
+  },
+  {
+   "race_id": "202605050504",
+   "race": "東京4R",
+   "num": "9",
+   "name": "ドンクベーラ",
+   "date": "2026-11-22",
+   "pos": "1",
+   "points": [
+    {
+     "m": 132,
+     "odds": 14.1,
+     "phase": "pre"
+    },
+    {
+     "m": 103,
+     "odds": 13.5,
+     "phase": "pre"
+    },
+    {
+     "m": 76,
+     "odds": 15.0,
+     "phase": "pre"
+    },
+    {
+     "m": 49,
+     "odds": 16.0,
+     "phase": "pre"
+    },
+    {
+     "m": 23,
+     "odds": 14.8,
+     "phase": "pre"
+    },
+    {
+     "m": -19,
+     "odds": 13.5,
+     "phase": "final"
+    },
+    {
+     "m": -167,
+     "odds": 13.5,
+     "phase": "final"
+    }
+   ]
+  },
+  {
+   "race_id": "202608050604",
+   "race": "京都4R",
+   "num": "4",
+   "name": "リープデイリズム",
+   "date": "2026-11-22",
+   "pos": "10",
+   "points": [
+    {
+     "m": 147,
+     "odds": 19.8,
+     "phase": "pre"
+    },
+    {
+     "m": 118,
+     "odds": 18.8,
+     "phase": "pre"
+    },
+    {
+     "m": 91,
+     "odds": 19.2,
+     "phase": "pre"
+    },
+    {
+     "m": 64,
+     "odds": 21.6,
+     "phase": "pre"
+    },
+    {
+     "m": 38,
+     "odds": 21.2,
+     "phase": "pre"
+    },
+    {
+     "m": 10,
+     "odds": 35.5,
+     "phase": "pre"
+    },
+    {
+     "m": -17,
+     "odds": 65.5,
+     "phase": "final"
+    },
+    {
+     "m": -152,
+     "odds": 65.5,
+     "phase": "final"
+    }
+   ]
+  },
+  {
+   "race_id": "202605050506",
+   "race": "東京6R",
+   "num": "16",
+   "name": "ユイノガルベス",
+   "date": "2026-11-22",
+   "pos": "7",
+   "points": [
+    {
+     "m": 143,
+     "odds": 35.5,
+     "phase": "pre"
+    },
+    {
+     "m": 116,
+     "odds": 35.0,
+     "phase": "pre"
+    },
+    {
+     "m": 89,
+     "odds": 34.7,
+     "phase": "pre"
+    },
+    {
+     "m": 61,
+     "odds": 33.6,
+     "phase": "pre"
+    },
+    {
+     "m": 35,
+     "odds": 29.5,
+     "phase": "pre"
+    },
+    {
+     "m": 8,
+     "odds": 48.2,
+     "phase": "pre"
+    },
+    {
+     "m": -19,
+     "odds": 76.7,
+     "phase": "final"
+    },
+    {
+     "m": -87,
+     "odds": 76.7,
      "phase": "final"
     }
    ]
