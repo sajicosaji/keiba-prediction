@@ -94,6 +94,21 @@ def wide_pay():
 
 check('海外のワイドの払戻(結果ページ)', wide_pay)
 
+
+def ledger_page():
+    # 帳簿(races.csv)に入れる db.netkeiba の結果ページが正しく読めるか(2026-11 に文字コードが EUC-JP→UTF-8 に変わり、
+    # 11/15・16 の結果が文字化けした行で入って2週間止まった)。決まったレースの1着を帳簿と同じ値で確かめる
+    import scraper
+    rows = scraper.scrape_race_result(PAST_RACE, delay=0)
+    w = [r for r in rows if r['finishing_pos'] == '1']
+    assert len(rows) == 18 and w, f'{len(rows)}行しか読めない'
+    got = (w[0]['race_date'], w[0]['horse_name'], w[0]['horse_num'], w[0]['odds'], w[0]['jockey'])
+    assert got == ('20261025', 'ゴーイントゥスカイ', '9', '12.0', '武豊'), got
+    return ''
+
+
+check('結果の帳簿の取り込み(db.netkeiba)', ledger_page)
+
 ng = [r for r in results if not r[1]]
 for name, ok, msg in results:
     print(('OK ' if ok else 'NG ') + name + (f' … {msg}' if msg else ''))

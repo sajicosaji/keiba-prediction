@@ -33,7 +33,7 @@ def fetch_real_date(race_id):
     url = f'https://db.netkeiba.com/race/{race_id}/'
     try:
         r = requests.get(url, headers=HEADERS, timeout=15)
-        r.encoding = 'EUC-JP'
+        r.encoding = r.apparent_encoding if r.encoding in (None, 'ISO-8859-1') else r.encoding  # 2026-11 にUTF-8へ変わった
         m = re.search(r'(\d{4})年(\d{1,2})月(\d{1,2})日', r.text)
         if m:
             return f'{m.group(1)}{int(m.group(2)):02d}{int(m.group(3)):02d}'

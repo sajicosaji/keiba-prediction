@@ -491,7 +491,7 @@ def nk_get(url, params=None, enc=None):
         time.sleep(WAIT - gap)
     r = requests.get(url, params=params, headers={'User-Agent': UA['User-Agent'], 'Referer': 'https://race.netkeiba.com/'}, timeout=25)
     _last[0] = time.time()
-    if enc:
+    if enc and r.encoding in (None, 'ISO-8859-1'):  # サーバーが文字コードを名乗らない時だけ使う予備（2026-11 にdbがUTF-8へ変わった）
         r.encoding = enc
     return r
 

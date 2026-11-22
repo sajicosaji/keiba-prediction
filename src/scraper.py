@@ -11,9 +11,21 @@ BASE_DB = 'https://db.netkeiba.com'
 BASE_RACE = 'https://race.netkeiba.com'
 
 
+def server_charset(res):
+    """サーバーが名乗る文字コード（ヘッダー→ページ内のmeta の順）。名乗っていなければ None"""
+    cs = requests.utils.get_encoding_from_headers(res.headers)
+    if cs and cs.lower() != 'iso-8859-1':  # requests は名乗りが無い時 ISO-8859-1 を返す
+        return cs
+    m = re.search(rb'<meta[^>]+charset=["\']?([\w-]+)', res.content[:4000], re.I)
+    return m.group(1).decode('ascii') if m else None
+
+
 def _get(url, params=None, encoding='EUC-JP'):
+    """encoding はサーバーが文字コードを名乗らない時の予備。
+    2026-11 に db.netkeiba.com が EUC-JP → UTF-8 に変わり、決め打ちのせいで
+    11/15・16の結果が文字化けした壊れた行として入った反省から、名乗りを優先する。"""
     res = requests.get(url, params=params, headers=HEADERS, timeout=20)
-    res.encoding = encoding
+    res.encoding = server_charset(res) or encoding
     return res
 
 
@@ -128,6 +140,15 @@ def scrape_race_result(race_id, delay=1.5):
 
     table = soup.find('table', class_='race_table_01')
     if not table:
+        time.sleep(delay)
+        return []
+    # 実開催日が読めない・文字化けしている時は帳簿に入れない（壊れた行が「取得済み」になるのを防ぐ）
+    # （番号の先頭8桁と実日付が偶然同じ日もある＝2026/5/2 東京2回3日目。なので「ページから読めたか」で見る）
+    intro = soup.find('div', class_='data_intro')
+    date_found = bool(intro and re.search(r'\d{4}年\d{1,2}月\d{1,2}日', intro.get_text(' ', strip=True)))
+    if not date_found or '�' in table.get_text():
+        print(f'  ！{race_id}: ページを正しく読めないので入れません'
+              f'（文字コード {res.encoding}・開催日 {info["race_date"]}）。netkeibaの変更を疑ってください')
         time.sleep(delay)
         return []
 
